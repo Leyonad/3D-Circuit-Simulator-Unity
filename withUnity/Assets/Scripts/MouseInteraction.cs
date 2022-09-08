@@ -8,13 +8,14 @@ public class MouseInteraction : MonoBehaviour
     [SerializeField] private Camera cam;
     public float speed = 100;
 
-    //make a reference to the CameraController script
+    //make a reference scripts
     CameraController cameraController;
 
     private void Start()
     {
         cameraController = FindObjectOfType<CameraController>();
     }
+
 
     void Update(){
         if(cameraController.dragginTheCamera)
@@ -26,19 +27,19 @@ public class MouseInteraction : MonoBehaviour
 
                 //stop if not clicked on any component, else select the component
                 if(hit.collider != null){
-                    foreach(Transform child in transform)
+                    if (hit.collider.gameObject.tag != null)
+                        selectedObject = hit.collider.gameObject;
+                    
+                    //do stuff if clicked on a metal of the battery
+                    if (selectedObject.tag == "MetalPositive" || selectedObject.tag == "MetalNegative")
                     {
-                        if (hit.collider.CompareTag(child.tag))
-                        {
-                            selectedObject = hit.collider.gameObject;
-                            break;
-                        }
-                    }
-                    if (selectedObject == null)
-                    {
+                        new Wire(selectedObject);
+                        selectedObject = null;
                         return;
                     }
                 }
+                else
+                    return;
 
                 Cursor.visible = false;
 
