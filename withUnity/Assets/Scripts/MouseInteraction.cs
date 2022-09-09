@@ -35,7 +35,7 @@ public class MouseInteraction : MonoBehaviour
                     //do stuff if clicked on a metal of the battery
                     if (selectedObject.tag == "MetalPositive" || selectedObject.tag == "MetalNegative")
                     {
-                        new Wire(selectedObject);
+                        new WireManager.Wire(selectedObject);
                         selectedObject = null;
                         return;
                     }
