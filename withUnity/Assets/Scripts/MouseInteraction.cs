@@ -21,15 +21,17 @@ public class MouseInteraction : MonoBehaviour
         if(cameraController.dragginTheCamera)
             return;
 
-        if(Mouse.current.leftButton.wasPressedThisFrame){
-            if(selectedObject == null){
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (selectedObject == null)
+            {
                 RaycastHit hit = CastRay();
 
-                //stop if not clicked on any component, else select the component
-                if(hit.collider != null){
+                if (hit.collider != null)
+                {
                     if (hit.collider.gameObject.tag != null)
                         selectedObject = hit.collider.gameObject;
-                    
+
                     //do stuff if clicked on a metal of the battery
                     if (selectedObject.tag == "MetalPositive" || selectedObject.tag == "MetalNegative")
                     {
@@ -50,6 +52,8 @@ public class MouseInteraction : MonoBehaviour
                 offsetOnScreen = mousePosition - screenPoint;
             }
         }
+
+
         //drag the object if there is a selected object
         if (selectedObject != null){
             if (Mouse.current.leftButton.wasReleasedThisFrame){

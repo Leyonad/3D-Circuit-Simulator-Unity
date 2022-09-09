@@ -135,11 +135,13 @@ public class CameraController : MonoBehaviour
         {
             speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
             transform.position += targetPosition * speed * Time.deltaTime;
+            //transform.position = Vector3.Lerp(transform.position, transform.position + targetPosition, speed * Time.deltaTime);
         }
         else
         {
             horizontalVelocity = Vector3.Lerp(horizontalVelocity, Vector3.zero, Time.deltaTime * damping);
             transform.position += horizontalVelocity * Time.deltaTime;
+            //transform.position = Vector3.Lerp(transform.position, transform.position + horizontalVelocity, Time.deltaTime);
         }
 
         targetPosition = Vector3.zero;

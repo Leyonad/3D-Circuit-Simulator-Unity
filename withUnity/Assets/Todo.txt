@@ -1,0 +1,7 @@
+Todo:
+[x] change color of components when hovering
+[ ] draw line to mouse when clicking on a metal
+
+
+Bugs:
+[?] problems with object color when dragging the object and releasing it
