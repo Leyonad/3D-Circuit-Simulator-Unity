@@ -11,7 +11,8 @@ public class Wire{
     public Wire(GameObject startObject)
     {
         this.startObject = startObject;
-        Debug.Log("new wire object created with startobject = " + startObject);
+        //GameObject.CreatePrimitive()
+        //Debug.Log("new wire object created with startobject = " + startObject);
     }
 
 }
