@@ -4,7 +4,7 @@ Todo:
 [x] cancel on right click
 [ ] make inputs of breadboard as cubes (for now)
 [ ] get connections from one point to another working
-
+[n] if the battery moves, the wires move too
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

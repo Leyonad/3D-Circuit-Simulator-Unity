@@ -34,20 +34,27 @@ public class WireManager : MonoBehaviour
             //finish creation of a new wire by adding it to _registry
             else if (Mouse.current.leftButton.wasPressedThisFrame)
             {
+                //add last point to the vertices of the new wire
+                Wire.justCreated.verticesOfWire[Wire.justCreated.verticesAmount - 1] = 
+                    RoundedVector(cam.ScreenToWorldPoint(Mouse.current.position.ReadValue()));
+
+
                 //Check if wire doesnt already exist
                 bool wireAlreadyExists = false;
                 foreach (Wire wire in Wire._registry)
                 {
-                    if (Wire.justCreated.verticesOfWire.FirstOrDefault() == wire.verticesOfWire.FirstOrDefault() 
-                      && Wire.justCreated.verticesOfWire.LastOrDefault() == wire.verticesOfWire.LastOrDefault())
+                    if (Wire.justCreated.verticesOfWire.First() == wire.verticesOfWire.First() 
+                      && Wire.justCreated.verticesOfWire.Last() == wire.verticesOfWire.Last())
                     {
+                        Debug.Log("WIRE ALREADY EXISTS!");
                         wireAlreadyExists = true;
                         break;
                     }
                         
                 }
                 if (!wireAlreadyExists) {
-                    Debug.Log("New Wire created");
+                    Debug.Log("New Wire created " + Wire.justCreated.verticesOfWire.First() + 
+                        " to " + Wire.justCreated.verticesOfWire.Last());
                     Wire._registry.Add(Wire.justCreated);
                 }
                 else {
@@ -59,9 +66,19 @@ public class WireManager : MonoBehaviour
         }
     }
 
+    public Vector3 RoundedVector(Vector3 vec)
+    {
+        vec *= 10f;
+        vec = new Vector3(Mathf.Round(vec.x), Mathf.Round(vec.y), Mathf.Round(vec.z));
+        vec /= 10f;
+
+        return vec;
+    }
+
     public class Wire
     {
         public static List<Wire> _registry = new List<Wire>();
+        public int verticesAmount = 2;
         public List<Vector3> verticesOfWire = new List<Vector3>();
         public GameObject lineObject;
         LineRenderer lineRenderer;
@@ -80,7 +97,7 @@ public class WireManager : MonoBehaviour
         public void wireFollowMouse(Wire justCreated)
         {
             Vector3 mousePositionWorld = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            justCreated.lineRenderer.SetPosition(verticesOfWire.Count-1, mousePositionWorld);
+            justCreated.lineRenderer.SetPosition(verticesAmount - 1, mousePositionWorld);
 
             //update the other vertices of the line based on the start and end position
             //with kinetic equation (Sebastian Lague Video)
