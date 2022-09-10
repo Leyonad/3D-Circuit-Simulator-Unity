@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static WireManager;
 
 public class MouseInteraction : MonoBehaviour
 {
@@ -16,7 +17,6 @@ public class MouseInteraction : MonoBehaviour
         cameraController = FindObjectOfType<CameraController>();
     }
 
-
     void Update(){
         if(cameraController.dragginTheCamera)
             return;
@@ -29,30 +29,36 @@ public class MouseInteraction : MonoBehaviour
 
                 if (hit.collider != null)
                 {
-                    if (hit.collider.gameObject.tag != null)
+                    if (hit.collider.gameObject.tag != "Untagged")
+                    {
                         selectedObject = hit.collider.gameObject;
 
-                    //do stuff if clicked on a metal of the battery
-                    if (selectedObject.tag == "MetalPositive" || selectedObject.tag == "MetalNegative")
-                    {
-                        new WireManager.Wire(selectedObject);
-                        selectedObject = null;
-                        return;
+                        //do stuff if clicked on a metal 
+                        if (selectedObject.transform.parent != null)
+                        {
+                            if (selectedObject.transform.parent.tag == "Metals")
+                            {
+                                new Wire(selectedObject, selectedObject.transform.parent.gameObject.transform.parent.tag);
+                                selectedObject = null;
+                                return;
+                            }
+                        }
                     }
                 }
-                else
-                    return;
+                else return;
 
-                Cursor.visible = false;
+                if (selectedObject != null)
+                {
+                    Cursor.visible = false;
 
-                //calculate the offset of the position where the mouse is clicked and 
-                //the actual screen position of the object
-                Vector2 mousePosition = Mouse.current.position.ReadValue();
-                Vector2 screenPoint = cam.WorldToScreenPoint(selectedObject.transform.position);
-                offsetOnScreen = mousePosition - screenPoint;
+                    //calculate the offset of the position where the mouse is clicked and 
+                    //the actual screen position of the object
+                    Vector2 mousePosition = Mouse.current.position.ReadValue();
+                    Vector2 screenPoint = cam.WorldToScreenPoint(selectedObject.transform.position);
+                    offsetOnScreen = mousePosition - screenPoint;
+                }
             }
         }
-
 
         //drag the object if there is a selected object
         if (selectedObject != null){
@@ -62,6 +68,8 @@ public class MouseInteraction : MonoBehaviour
                 return;
             }
             setNewPosition();
+            updateWiresPosition();
+
             //rotation on right click
             if (Mouse.current.rightButton.wasPressedThisFrame){
                 selectedObject.transform.rotation = Quaternion.Euler(new Vector3(
@@ -71,6 +79,11 @@ public class MouseInteraction : MonoBehaviour
                 ));
             }
         }
+    }
+
+    void updateWiresPosition()
+    {
+        
     }
 
     void setNewPosition(){

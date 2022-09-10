@@ -6,8 +6,11 @@ TagManager:
   tags:
   - Breadboard
   - Battery
-  - MetalPositive
-  - MetalNegative
+  - MBatteryP
+  - MBatteryN
+  - MBreadboardP
+  - MBreadboardN
+  - Metals
   layers:
   - Default
   - TransparentFX
