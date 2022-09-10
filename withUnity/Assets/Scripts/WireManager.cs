@@ -25,9 +25,9 @@ public class WireManager : MonoBehaviour
         //DEBUG PRINT VERTICES-------------------------------------------
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            foreach (Wire wire in Wire._registry)
-                foreach (Vector3 vertice in wire.verticesOfWire)
-                    print(vertice);
+            //foreach (Wire wire in Wire._registry)
+            //    foreach (Vector3 vertice in wire.verticesOfWire)
+            //       print(vertice);
             //Debug.Log(debugObject.transform.localPosition);
         }
         //DEBUG PRINT VERTICES-------------------------------------------
@@ -59,13 +59,13 @@ public class WireManager : MonoBehaviour
                 {
                     //add last point to the vertices of the new wire
                     Wire.justCreated.verticesOfWire[Wire.justCreated.verticesAmount - 1] =
-                        hit.collider.gameObject.transform.localPosition;
+                        hit.collider.gameObject.transform.position;
 
                     //Check if the wire doesnt already exist
                     if (!WireAlreadyExists(Wire.justCreated))
                     {
                         Debug.Log("New Wire created " + Wire.justCreated.verticesOfWire.First() +
-                            " to " + Wire.justCreated.verticesOfWire.Last());
+                                    " to " + Wire.justCreated.verticesOfWire.Last());
                         Wire.justCreated.updateLinesOfWire();
                         Wire._registry.Add(Wire.justCreated);
                     }
@@ -79,21 +79,6 @@ public class WireManager : MonoBehaviour
         }
     }
 
-    public static bool WireAlreadyExists(Wire wire)
-    {
-        foreach (Wire existingWire in Wire._registry)
-        {
-            if (wire.verticesOfWire.First() == existingWire.verticesOfWire.First()
-                || wire.verticesOfWire.First() == existingWire.verticesOfWire.Last()
-                || wire.verticesOfWire.Last() == existingWire.verticesOfWire.First()
-                || wire.verticesOfWire.Last() == existingWire.verticesOfWire.Last())
-            {
-                Debug.Log("WIRE ALREADY EXISTS!");
-                return true;
-            }
-        }
-        return false;
-    }
 
     public class Wire
     {
@@ -109,6 +94,8 @@ public class WireManager : MonoBehaviour
         public Wire(GameObject startObject, string tag)
         {
             //Later do this in a loop
+            //start and end positions must be the same in the beginning
+            //end position changes later to mouse position
             verticesOfWire.Add(startObject.transform.position);
             verticesOfWire.Add(startObject.transform.position);
             if (!WireAlreadyExists(this))
@@ -146,6 +133,22 @@ public class WireManager : MonoBehaviour
                 i++;
             }
         }
+    }
+
+    public static bool WireAlreadyExists(Wire wire)
+    {
+        foreach (Wire existingWire in Wire._registry)
+        {
+            if (wire.verticesOfWire.First() == existingWire.verticesOfWire.First()
+                || wire.verticesOfWire.First() == existingWire.verticesOfWire.Last()
+                || wire.verticesOfWire.Last() == existingWire.verticesOfWire.First()
+                || wire.verticesOfWire.Last() == existingWire.verticesOfWire.Last())
+            {
+                Debug.Log("WIRE ALREADY EXISTS!");
+                return true;
+            }
+        }
+        return false;
     }
 
     public Vector3 RoundedVector(Vector3 vec)
