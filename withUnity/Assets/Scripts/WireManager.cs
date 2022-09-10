@@ -34,9 +34,20 @@ public class WireManager : MonoBehaviour
             else if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 //Check if wire doesnt already exist
-                //
+                bool wireAlreadyExists = false;
+                foreach (Wire wire in Wire._registry)
+                {
+                    if (Wire.justCreated.verticesOfWire == wire.verticesOfWire)
+                        wireAlreadyExists = true;
+                        break;
+                }
+                if (!wireAlreadyExists) {
+                    Wire._registry.Add(Wire.justCreated);
+                }
+                else {
+                    Destroy(Wire.justCreated.lineObject);
+                }
 
-                Wire._registry.Add(Wire.justCreated);
                 Wire.justCreated = null;
             }
         }

@@ -8,4 +8,4 @@ Todo:
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
-[n] check if the wire doesnt already exist
+[x] check if the new wire doesnt already exist
