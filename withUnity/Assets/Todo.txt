@@ -1,10 +1,11 @@
 Todo:
 [x] change color of components when hovering
-[n] draw line to mouse when clicking on a metal
+[x] draw line to mouse when clicking on a metal
+[x] cancel on right click
 [ ] make inputs of breadboard as cubes (for now)
 [ ] get connections from one point to another working
 
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
-[ ] check if the wire doesnt already exist
+[n] check if the wire doesnt already exist
