@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class WireManager : MonoBehaviour
 {
@@ -37,11 +38,16 @@ public class WireManager : MonoBehaviour
                 bool wireAlreadyExists = false;
                 foreach (Wire wire in Wire._registry)
                 {
-                    if (Wire.justCreated.verticesOfWire == wire.verticesOfWire)
+                    if (Wire.justCreated.verticesOfWire.FirstOrDefault() == wire.verticesOfWire.FirstOrDefault() 
+                      && Wire.justCreated.verticesOfWire.LastOrDefault() == wire.verticesOfWire.LastOrDefault())
+                    {
                         wireAlreadyExists = true;
                         break;
+                    }
+                        
                 }
                 if (!wireAlreadyExists) {
+                    Debug.Log("New Wire created");
                     Wire._registry.Add(Wire.justCreated);
                 }
                 else {
@@ -65,7 +71,7 @@ public class WireManager : MonoBehaviour
         {   
             //Later do this in a loop
             verticesOfWire.Add(startObject.transform.position);
-            verticesOfWire.Add(new Vector3(5, 5, 5));
+            verticesOfWire.Add(startObject.transform.position);
 
             createLineObject();
             justCreated = this;
@@ -73,8 +79,8 @@ public class WireManager : MonoBehaviour
 
         public void wireFollowMouse(Wire justCreated)
         {
-            Vector3 mouseWorld = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            justCreated.lineRenderer.SetPosition(verticesOfWire.Count-1, mouseWorld);
+            Vector3 mousePositionWorld = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            justCreated.lineRenderer.SetPosition(verticesOfWire.Count-1, mousePositionWorld);
 
             //update the other vertices of the line based on the start and end position
             //with kinetic equation (Sebastian Lague Video)
@@ -95,7 +101,6 @@ public class WireManager : MonoBehaviour
                 lineRenderer.SetPosition(i, pos);
                 i++;
             }
-            Debug.Log("New Wire created");
         }
     }
 
