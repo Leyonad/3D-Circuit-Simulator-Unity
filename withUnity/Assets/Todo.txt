@@ -7,7 +7,7 @@ Todo:
 [?] if the battery moves, make the wire move too
 [x] wires can be created in the breadboard
 [ ] wire has multiple vertices, kinematic equations
-[n] when creating a wire, attach it to its nearest metal
+[x] when creating a wire, attach it to its gameobject
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

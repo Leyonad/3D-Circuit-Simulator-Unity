@@ -25,10 +25,10 @@ public class WireManager : MonoBehaviour
         //DEBUG PRINT VERTICES-------------------------------------------
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            /*foreach (Wire wire in Wire._registry)
+            foreach (Wire wire in Wire._registry)
                 foreach (Vector3 vertice in wire.verticesOfWire)
-                    print(vertice);*/
-            Debug.Log(debugObject.transform.position);
+                    print(vertice);
+            //Debug.Log(debugObject.transform.localPosition);
         }
         //DEBUG PRINT VERTICES-------------------------------------------
 
@@ -45,33 +45,35 @@ public class WireManager : MonoBehaviour
             //finish creation of a new wire by adding it to _registry
             else if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                //check if clicken on a gameobject
+                //check if clicked on a gameobject
                 RaycastHit hit = CastRay();
 
                 bool wirePossible = false;
                 if (hit.collider != null)
-                    if (hit.collider.gameObject.tag != "Untagged")
+                    if (!hit.collider.gameObject.CompareTag("Untagged"))
                         if (hit.collider.gameObject.transform.parent != null)
-                            if (hit.collider.gameObject.transform.parent.tag == "Metals")
+                            if (hit.collider.gameObject.transform.parent.CompareTag("Metals"))
                                 wirePossible = true;
                 
                 if (wirePossible)
                 {
                     //add last point to the vertices of the new wire
                     Wire.justCreated.verticesOfWire[Wire.justCreated.verticesAmount - 1] =
-                        hit.collider.gameObject.transform.position;
-                    print(hit.collider.gameObject.tag + " at " + hit.collider.gameObject.transform.position);
+                        hit.collider.gameObject.transform.localPosition;
 
                     //Check if the wire doesnt already exist
                     if (!WireAlreadyExists(Wire.justCreated))
                     {
                         Debug.Log("New Wire created " + Wire.justCreated.verticesOfWire.First() +
                             " to " + Wire.justCreated.verticesOfWire.Last());
+                        Wire.justCreated.updateLinesOfWire();
                         Wire._registry.Add(Wire.justCreated);
                     }
                     else Destroy(Wire.justCreated.lineObject);
                 }
                 else Destroy(Wire.justCreated.lineObject);
+                
+                //always set to null if mouse pressed
                 Wire.justCreated = null;
             }
         }
@@ -91,16 +93,6 @@ public class WireManager : MonoBehaviour
             }
         }
         return false;
-    }
-
-
-    public Vector3 RoundedVector(Vector3 vec)
-    {
-        vec *= 10f;
-        vec = new Vector3(Mathf.Round(vec.x), Mathf.Round(vec.y), Mathf.Round(vec.z));
-        vec /= 10f;
-
-        return vec;
     }
 
     public class Wire
@@ -141,7 +133,12 @@ public class WireManager : MonoBehaviour
             lineRenderer.material = wireMaterial;
             lineRenderer.widthMultiplier = 0.1f;
             lineRenderer.numCapVertices = 4;
-            
+
+            updateLinesOfWire();
+        }
+
+        public void updateLinesOfWire()
+        {
             int i = 0;
             foreach (Vector3 pos in verticesOfWire)
             {
@@ -149,6 +146,15 @@ public class WireManager : MonoBehaviour
                 i++;
             }
         }
+    }
+
+    public Vector3 RoundedVector(Vector3 vec)
+    {
+        vec *= 10f;
+        vec = new Vector3(Mathf.Round(vec.x), Mathf.Round(vec.y), Mathf.Round(vec.z));
+        vec /= 10f;
+
+        return vec;
     }
 
     private RaycastHit CastRay()
