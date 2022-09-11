@@ -1,3 +1,4 @@
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static WireManager;
@@ -8,6 +9,8 @@ public class MouseInteraction : MonoBehaviour
     private Vector2 offsetOnScreen;
     [SerializeField] private Camera cam;
     public float speed = 100;
+
+    private Vector2 previousPosition = Vector2.zero;
 
     //make a reference scripts
     CameraController cameraController;
@@ -67,9 +70,16 @@ public class MouseInteraction : MonoBehaviour
                 Cursor.visible = true;
                 return;
             }
-            setNewPosition();
-            updateWiresPosition();
 
+            //avoid unnecessary calculations if the mouse positions stays the same
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            if (mousePosition != previousPosition)
+            {
+                previousPosition = mousePosition;
+                setNewPosition(mousePosition);
+                updateWiresPosition();
+            }
+            
             //rotation on right click
             if (Mouse.current.rightButton.wasPressedThisFrame){
                 selectedObject.transform.rotation = Quaternion.Euler(new Vector3(
@@ -83,11 +93,10 @@ public class MouseInteraction : MonoBehaviour
 
     void updateWiresPosition()
     {
-        
+        Debug.Log("new pos");
     }
 
-    void setNewPosition(){
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
+    void setNewPosition(Vector2 mousePosition){
         Vector3 screenPoint = cam.WorldToScreenPoint(selectedObject.transform.position);
 
         //calculate the target world position based on the mouse input
