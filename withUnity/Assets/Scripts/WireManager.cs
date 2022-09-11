@@ -10,17 +10,16 @@ public class WireManager : MonoBehaviour
     [SerializeField] 
     public static Camera cam;
     public static Material wireMaterial;
+    public static Material highlightWireMaterial;
     public int numCapVertices = 4;
 
-    public static GameObject breadboard;
+    public static Wire selectedWire;
 
     private void Start()
     {
-        breadboard = GameObject.FindGameObjectWithTag("Breadboard");
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        wireMaterial = Resources.Load("Materials/Wire_Material", typeof(Material)) as Material;
-        if (wireMaterial == null)
-            Debug.Log("Wire Material not found!");
+        wireMaterial = LoadMaterial("Wire_Material");
+        highlightWireMaterial = LoadMaterial("Highlight_Wire_Material");
     }
 
     private void Update()
@@ -52,7 +51,7 @@ public class WireManager : MonoBehaviour
                 {
                     //Check if the wire doesnt already exist
                     Wire.justCreated.endObject = hit.collider.gameObject;
-                    if (!WireAlreadyExists(Wire.justCreated))
+                    if (WireAlreadyExists(Wire.justCreated.endObject) == null)
                     {
                         Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
                         Wire.justCreated.UpdateLinesOfWire();
@@ -84,11 +83,22 @@ public class WireManager : MonoBehaviour
         public Wire(GameObject collideObject)
         {
             startObject = collideObject;
-            if (!WireAlreadyExists(this))
-            {
-                CreateLineObject();
-                justCreated = this;
-            }
+            CreateLineObject();
+            justCreated = this;
+        }
+
+        public void SelectWire()
+        {
+            selectedWire = this;
+            selectedWire.lineRenderer.material = highlightWireMaterial;
+        }
+
+        public static void UnselectWire()
+        {
+            if (selectedWire == null)
+                return;
+            selectedWire.lineRenderer.material = wireMaterial;
+            selectedWire = null;
         }
 
         public void WireFollowMouse(Wire justCreated)
@@ -158,20 +168,20 @@ public class WireManager : MonoBehaviour
     }
     */
 
-    public static bool WireAlreadyExists(Wire wire)
+    public static Wire WireAlreadyExists(GameObject wireToObject)
     {
         foreach (Wire existingWire in Wire._registry)
         {
-            if (wire.startObject == existingWire.startObject
-                || wire.startObject == existingWire.endObject
-                || wire.endObject == existingWire.startObject
-                || wire.endObject == existingWire.endObject)
+            if (wireToObject == existingWire.startObject
+                || wireToObject == existingWire.endObject
+                || wireToObject == existingWire.startObject
+                || wireToObject == existingWire.endObject)
             {
                 Debug.Log("WIRE ALREADY EXISTS!");
-                return true;
+                return existingWire;
             }
         }
-        return false;
+        return null;
     }
 
     public Vector3 RoundedVector(Vector3 vec)
@@ -205,6 +215,14 @@ public class WireManager : MonoBehaviour
         Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out hit);
 
         return hit;
+    }
+
+    private Material LoadMaterial(string name)
+    {
+        Material material = Resources.Load($"Materials/{name}", typeof(Material)) as Material;
+        if (material == null)
+            Debug.Log($"{name} not found!");
+        return material;
     }
 
 }
