@@ -2,7 +2,7 @@ Todo:
 [x] change color of components when hovering
 [x] draw line to mouse when clicking on a metal
 [x] cancel on right click
-[ ] make inputs of breadboard as cubes (for now)
+[x] make inputs of breadboard as cubes (for now)
 [ ] get connections from one point to another working
 [x] if the battery moves, make the wire move too
 [x] wires can be created in the breadboard

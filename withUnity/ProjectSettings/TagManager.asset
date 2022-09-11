@@ -11,6 +11,7 @@ TagManager:
   - MBreadboardP
   - MBreadboardN
   - Metals
+  - NMB
   layers:
   - Default
   - TransparentFX
