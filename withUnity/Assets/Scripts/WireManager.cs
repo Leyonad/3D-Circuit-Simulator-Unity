@@ -83,7 +83,7 @@ public class WireManager : MonoBehaviour
     {
         public static List<Wire> _registry = new List<Wire>();
 
-        public int verticesAmount = 2;
+        public int verticesAmount = 16;
         public GameObject startObject;
         public GameObject endObject;
         public GameObject lineObject;
@@ -109,6 +109,7 @@ public class WireManager : MonoBehaviour
             Vector3 targetPosition = MouseInteraction.GetNewPosition(cam, mousePosition, Vector2.zero, justCreated.lineRenderer.GetPosition(justCreated.verticesAmount-1));
             
             justCreated.lineRenderer.SetPosition(verticesAmount - 1, targetPosition);
+            UpdateLinesOfWire();
         }
 
         private void CreateLineObject()
@@ -117,6 +118,7 @@ public class WireManager : MonoBehaviour
             lineRenderer = lineObject.AddComponent<LineRenderer>();
             lineRenderer.material = wireMaterial;
             lineRenderer.widthMultiplier = 0.1f;
+            lineRenderer.positionCount = verticesAmount;
             lineRenderer.numCapVertices = 4;
             lineRenderer.SetPosition(0, startObject.transform.position);
             lineRenderer.SetPosition(verticesAmount - 1, startObject.transform.position);
@@ -126,8 +128,46 @@ public class WireManager : MonoBehaviour
 
         public void UpdateLinesOfWire()
         {
-            
+            Vector3 pos1 = lineRenderer.GetPosition(0);
+            Vector3 pos2 = lineRenderer.GetPosition(verticesAmount-1);
+
+            if (pos2 == pos1)
+            {
+                return;
+            }
+            Vector3 middle = (pos1 + pos2) / 2;
+            middle.y = 5;
+            Vector3[] positions = CalculateVertices(pos1, middle, pos2, verticesAmount);
+            positions[0] = pos1;
+            positions[verticesAmount - 1] = pos2;
+            lineRenderer.SetPositions(positions);
         }
+    }
+
+    static Vector3[] CalculateVertices(Vector3 from, Vector3 middle, Vector3 to, int vertices)
+    {
+        //divider must be between 0 and 1
+        //float divider = 1f / vertices;
+        //float linear = 0f;
+
+        Vector3[] result = new Vector3[vertices];
+
+        for (int i = 1; i < vertices+1; i++)
+        {
+            float t = i / (float)vertices;
+            result[i-1] = CalculateQuadraticBezierPoint(t, from, middle, to);
+            //linear += divider;
+            //result[i] = Vector3.Lerp(from, to, linear);
+            //result[i].y = -i * i + vertices * i/2;
+        }
+        return result;
+    }
+
+    static Vector3 CalculateQuadraticBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2)
+    {
+        // B(t) = (1-t)^2*p0 + 2*(1-t)*t*p1 + t^2*p2 , 0 < t < 1
+        Vector3 result = ((1 - t)*(1 - t)) * p0 + 2 * (1 - t) * t * p1 + t*t * p2;
+        return result;
     }
 
     /*

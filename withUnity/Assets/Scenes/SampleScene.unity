@@ -312,8 +312,8 @@ GameObject:
   - component: {fileID: 233698380}
   - component: {fileID: 233698379}
   m_Layer: 0
-  m_Name: MRN
-  m_TagString: MBreadboardN
+  m_Name: MRP
+  m_TagString: MBreadboardP
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -735,8 +735,8 @@ GameObject:
   - component: {fileID: 816067793}
   - component: {fileID: 816067792}
   m_Layer: 0
-  m_Name: MLN
-  m_TagString: MBreadboardN
+  m_Name: MLP
+  m_TagString: MBreadboardP
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -937,7 +937,7 @@ GameObject:
   - component: {fileID: 1045215248}
   - component: {fileID: 1045215247}
   m_Layer: 0
-  m_Name: MLP
+  m_Name: MLN
   m_TagString: MBreadboardN
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1303,14 +1303,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1721705112}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -2.08, y: 0.5, z: 3.36}
   m_LocalScale: {x: 10, y: 1, z: 5.5}
   m_Children:
   - {fileID: 137291948}
   m_Father: {fileID: 1999427958}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!54 &1721705118
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1397,7 +1397,7 @@ GameObject:
   - component: {fileID: 1928049804}
   - component: {fileID: 1928049803}
   m_Layer: 0
-  m_Name: MRP
+  m_Name: MRN
   m_TagString: MBreadboardN
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
