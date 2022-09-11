@@ -76,8 +76,10 @@ public class MouseInteraction : MonoBehaviour
             if (mousePosition != previousPosition)
             {
                 previousPosition = mousePosition;
-                setNewPosition(mousePosition);
-                updateWiresPosition();
+                Vector3 targetPosition = GetNewPosition(cam, mousePosition, offsetOnScreen, selectedObject.transform.position);
+                //move the object to the target position smoothly
+                selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, targetPosition, speed * Time.deltaTime);
+                UpdateWiresPosition();
             }
             
             //rotation on right click
@@ -91,9 +93,8 @@ public class MouseInteraction : MonoBehaviour
         }
     }
 
-    void updateWiresPosition()
+    void UpdateWiresPosition()
     {
-        Debug.Log("updateWiresPosition: ");
         foreach (Wire wire in Wire._registry)
         {
             bool updateVertices = false;
@@ -106,20 +107,19 @@ public class MouseInteraction : MonoBehaviour
                 updateVertices = true;
             }
             if (updateVertices)
-                wire.updateLinesOfWire();
+                wire.UpdateLinesOfWire();
         }
     }
 
-    void setNewPosition(Vector2 mousePosition){
-        Vector3 screenPoint = cam.WorldToScreenPoint(selectedObject.transform.position);
+    public static Vector3 GetNewPosition(Camera camera, Vector2 mousePosition, Vector2 offset, Vector3 toUpdatePosition){
+        Vector3 screenPoint = camera.WorldToScreenPoint(toUpdatePosition);
 
         //calculate the target world position based on the mouse input
-        Vector3 screenPosition = new Vector3(mousePosition.x-offsetOnScreen.x, mousePosition.y-offsetOnScreen.y, screenPoint.z);
-        Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
-        Vector3 targetPosition = new Vector3(worldPosition.x, selectedObject.transform.position.y, worldPosition.z);
-
-        //move the object to the target position smoothly
-        selectedObject.transform.position = Vector3.Lerp(selectedObject.transform.position, targetPosition, speed * Time.deltaTime);
+        Vector3 screenPosition = new Vector3(mousePosition.x- offset.x, mousePosition.y-offset.y, screenPoint.z);
+        Vector3 worldPosition = camera.ScreenToWorldPoint(screenPosition);
+        
+        Vector3 targetPosition = new Vector3(worldPosition.x, toUpdatePosition.y, worldPosition.z);
+        return targetPosition;
     }
     
     private RaycastHit CastRay(){

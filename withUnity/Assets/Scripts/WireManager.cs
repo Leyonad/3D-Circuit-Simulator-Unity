@@ -12,8 +12,11 @@ public class WireManager : MonoBehaviour
     public static Material wireMaterial;
     public int numCapVertices = 4;
 
+    public static GameObject breadboard;
+
     private void Start()
     {
+        breadboard = GameObject.FindGameObjectWithTag("Breadboard");
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         wireMaterial = Resources.Load("Materials/Wire_Material", typeof(Material)) as Material;
         if (wireMaterial == null)
@@ -34,7 +37,7 @@ public class WireManager : MonoBehaviour
 
         if (Wire.justCreated != null)
         {
-            Wire.justCreated.wireFollowMouse(Wire.justCreated);
+            Wire.justCreated.WireFollowMouse(Wire.justCreated);
 
             //cancel creation of a new wire by destroying it
             if (Mouse.current.rightButton.wasPressedThisFrame)
@@ -61,13 +64,16 @@ public class WireManager : MonoBehaviour
                     Wire.justCreated.verticesOfWire[Wire.justCreated.verticesAmount - 1] =
                         hit.collider.gameObject.transform.position;
 
+                    //add all points to the vertices of the new wire
+                    /*                   */
+
                     //Check if the wire doesnt already exist
                     if (!WireAlreadyExists(Wire.justCreated))
                     {
                         Debug.Log("New Wire created " + Wire.justCreated.verticesOfWire.First() +
                                     " to " + Wire.justCreated.verticesOfWire.Last());
                         Wire.justCreated.endObject = hit.collider.gameObject;
-                        Wire.justCreated.updateLinesOfWire();
+                        Wire.justCreated.UpdateLinesOfWire();
                         Wire._registry.Add(Wire.justCreated);
                     }
                     else Destroy(Wire.justCreated.lineObject);
@@ -103,30 +109,35 @@ public class WireManager : MonoBehaviour
             if (!WireAlreadyExists(this))
             {
                 startObject = collideObject;
-                createLineObject();
+                CreateLineObject();
                 justCreated = this;
             }
         }
 
-        public void wireFollowMouse(Wire justCreated)
+        public void WireFollowMouse(Wire justCreated)
         {
-            Vector3 mousePositionWorld = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            justCreated.lineRenderer.SetPosition(verticesAmount - 1, mousePositionWorld);
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            Vector3 targetPosition = MouseInteraction.GetNewPosition(cam, mousePosition, Vector2.zero, justCreated.lineRenderer.GetPosition(justCreated.verticesAmount-1));
+            
+            /*if (IsPointWithinCollider(breadboard.GetComponent<Collider>(), mousePositionWorld))
+            {
+                mousePositionWorld.y = breadboard.transform.position.y + breadboard.transform.localScale.y/2;
+            }*/
+            justCreated.lineRenderer.SetPosition(verticesAmount - 1, targetPosition);
         }
 
-        private void createLineObject()
+        private void CreateLineObject()
         {
             lineObject = new GameObject($"wire{_registry.Count + 1} [{startObject}]");
-            lineObject.tag = startObject.tag; // necessary??
             lineRenderer = lineObject.AddComponent<LineRenderer>();
             lineRenderer.material = wireMaterial;
             lineRenderer.widthMultiplier = 0.1f;
             lineRenderer.numCapVertices = 4;
 
-            updateLinesOfWire();
+            UpdateLinesOfWire();
         }
 
-        public void updateLinesOfWire()
+        public void UpdateLinesOfWire()
         {
             int i = 0;
             foreach (Vector3 pos in verticesOfWire)
@@ -135,6 +146,11 @@ public class WireManager : MonoBehaviour
                 i++;
             }
         }
+    }
+
+    public static bool IsPointWithinCollider(Collider collider, Vector3 point)
+    {
+        return collider.ClosestPoint(point) == point;
     }
 
     public static bool WireAlreadyExists(Wire wire)

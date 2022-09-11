@@ -7,6 +7,7 @@ Todo:
 [x] if the battery moves, make the wire move too
 [x] wires can be created in the breadboard
 [ ] wire has multiple vertices, kinematic equations
+[x] when wire is following the mouse, it should stay at one height
 [x] when creating a wire, attach it to its gameobject
 
 Bugs:
@@ -18,4 +19,5 @@ Bugs:
 
 Optimization:
 [x] only move component if delta is not zero
-[ ] maybe make updateWiresPosition() more efficient 
+[ ] maybe make UpdateWiresPosition() more efficient 
+[ ] maybe make WireAlreadyExists() more efficient
