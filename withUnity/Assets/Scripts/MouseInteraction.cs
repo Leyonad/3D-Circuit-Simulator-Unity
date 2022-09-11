@@ -89,6 +89,7 @@ public class MouseInteraction : MonoBehaviour
                     selectedObject.transform.rotation.eulerAngles.y + 90f,
                     selectedObject.transform.rotation.eulerAngles.z
                 ));
+                UpdateWiresPosition();
             }
         }
     }

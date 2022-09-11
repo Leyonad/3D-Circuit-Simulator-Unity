@@ -25,16 +25,6 @@ public class WireManager : MonoBehaviour
 
     private void Update()
     {
-        //DEBUG PRINT VERTICES-------------------------------------------
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            //foreach (Wire wire in Wire._registry)
-            //    foreach (Vector3 vertice in wire.verticesOfWire)
-            //       print(vertice);
-            //Debug.Log(debugObject.transform.localPosition);
-        }
-        //DEBUG PRINT VERTICES-------------------------------------------
-
         if (Wire.justCreated != null)
         {
             Wire.justCreated.WireFollowMouse(Wire.justCreated);
@@ -83,7 +73,8 @@ public class WireManager : MonoBehaviour
     {
         public static List<Wire> _registry = new List<Wire>();
 
-        public int verticesAmount = 16;
+        public int verticesAmount = 20;
+        private int middlePointHeight = 8;
         public GameObject startObject;
         public GameObject endObject;
         public GameObject lineObject;
@@ -92,9 +83,6 @@ public class WireManager : MonoBehaviour
 
         public Wire(GameObject collideObject)
         {
-            //Later do this in a loop
-            //start and end positions must be the same in the beginning
-            //end position changes later to mouse position
             startObject = collideObject;
             if (!WireAlreadyExists(this))
             {
@@ -136,7 +124,7 @@ public class WireManager : MonoBehaviour
                 return;
             }
             Vector3 middle = (pos1 + pos2) / 2;
-            middle.y = 5;
+            middle.y = middlePointHeight;
             Vector3[] positions = CalculateVertices(pos1, middle, pos2, verticesAmount);
             positions[0] = pos1;
             positions[verticesAmount - 1] = pos2;
@@ -146,19 +134,12 @@ public class WireManager : MonoBehaviour
 
     static Vector3[] CalculateVertices(Vector3 from, Vector3 middle, Vector3 to, int vertices)
     {
-        //divider must be between 0 and 1
-        //float divider = 1f / vertices;
-        //float linear = 0f;
-
         Vector3[] result = new Vector3[vertices];
 
         for (int i = 1; i < vertices+1; i++)
         {
             float t = i / (float)vertices;
             result[i-1] = CalculateQuadraticBezierPoint(t, from, middle, to);
-            //linear += divider;
-            //result[i] = Vector3.Lerp(from, to, linear);
-            //result[i].y = -i * i + vertices * i/2;
         }
         return result;
     }

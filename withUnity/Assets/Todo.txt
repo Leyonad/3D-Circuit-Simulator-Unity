@@ -9,7 +9,7 @@ Todo:
 [x] wire has multiple vertices, quadratic bezier curve
 [x] when wire is following the mouse, it should stay at one height
 [x] when creating a wire, attach it to its gameobject
-[ ] update the wires when rotating a component and before attaching a wire to an object
+[x] update the wires when rotating a component and before attaching a wire to an object
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
