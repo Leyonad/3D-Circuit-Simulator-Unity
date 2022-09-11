@@ -51,7 +51,7 @@ public class WireManager : MonoBehaviour
                 {
                     //Check if the wire doesnt already exist
                     Wire.justCreated.endObject = hit.collider.gameObject;
-                    if (WireAlreadyExists(Wire.justCreated.endObject) == null)
+                    if (Wire.justCreated.endObject != Wire.justCreated.startObject && WireAlreadyExists(Wire.justCreated.endObject) == null)
                     {
                         Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
                         Wire.justCreated.UpdateLinesOfWire();
@@ -129,10 +129,8 @@ public class WireManager : MonoBehaviour
             Vector3 pos1 = lineRenderer.GetPosition(0);
             Vector3 pos2 = lineRenderer.GetPosition(verticesAmount-1);
 
-            if (pos2 == pos1)
-            {
-                return;
-            }
+            if (pos2 == pos1) return;
+
             Vector3 middle = (pos1 + pos2) / 2;
             middle.y = middlePointHeight;
             Vector3[] positions = CalculateVertices(pos1, middle, pos2, verticesAmount);

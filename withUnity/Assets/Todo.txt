@@ -18,7 +18,8 @@ Bugs:
 [x] immediately makes a new wire when pressing mousebutton left to finish the last one
 [x] plane can be moved
 [x] apparently no tag on parent object when creating a wire
-[ ] middle point is buggy when creating a wire 
+[ ] points are buggy when creating a wire 
+[x] wire can be attached to its own gameobject
 
 Optimization:
 [x] only move component if delta is not zero
