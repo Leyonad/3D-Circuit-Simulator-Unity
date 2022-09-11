@@ -4,7 +4,7 @@ Todo:
 [x] cancel on right click
 [ ] make inputs of breadboard as cubes (for now)
 [ ] get connections from one point to another working
-[n] if the battery moves, make the wire move too
+[x] if the battery moves, make the wire move too
 [x] wires can be created in the breadboard
 [ ] wire has multiple vertices, kinematic equations
 [x] when creating a wire, attach it to its gameobject
@@ -15,3 +15,7 @@ Bugs:
 [x] immediately makes a new wire when pressing mousebutton left to finish the last one
 [x] plane can be moved
 [x] apparently no tag on parent object when creating a wire
+
+Optimization:
+[x] only move component if delta is not zero
+[ ] maybe make updateWiresPosition() more efficient 

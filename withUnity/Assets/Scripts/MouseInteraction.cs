@@ -41,7 +41,7 @@ public class MouseInteraction : MonoBehaviour
                         {
                             if (selectedObject.transform.parent.tag == "Metals")
                             {
-                                new Wire(selectedObject, selectedObject.transform.parent.gameObject.transform.parent.tag);
+                                new Wire(selectedObject);
                                 selectedObject = null;
                                 return;
                             }
@@ -93,7 +93,21 @@ public class MouseInteraction : MonoBehaviour
 
     void updateWiresPosition()
     {
-        Debug.Log("new pos");
+        Debug.Log("updateWiresPosition: ");
+        foreach (Wire wire in Wire._registry)
+        {
+            bool updateVertices = false;
+            if (wire.startObject.transform.parent.gameObject.transform.parent.gameObject == selectedObject) {
+                wire.verticesOfWire[0] = wire.startObject.transform.position;
+                updateVertices = true;
+            }
+            if (wire.endObject.transform.parent.gameObject.transform.parent.gameObject == selectedObject) {
+                wire.verticesOfWire[wire.verticesAmount - 1] = wire.endObject.transform.position;
+                updateVertices = true;
+            }
+            if (updateVertices)
+                wire.updateLinesOfWire();
+        }
     }
 
     void setNewPosition(Vector2 mousePosition){

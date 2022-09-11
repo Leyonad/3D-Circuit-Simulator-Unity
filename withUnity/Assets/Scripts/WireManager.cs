@@ -66,6 +66,7 @@ public class WireManager : MonoBehaviour
                     {
                         Debug.Log("New Wire created " + Wire.justCreated.verticesOfWire.First() +
                                     " to " + Wire.justCreated.verticesOfWire.Last());
+                        Wire.justCreated.endObject = hit.collider.gameObject;
                         Wire.justCreated.updateLinesOfWire();
                         Wire._registry.Add(Wire.justCreated);
                     }
@@ -86,21 +87,22 @@ public class WireManager : MonoBehaviour
 
         public List<Vector3> verticesOfWire = new List<Vector3>();
         public int verticesAmount = 2;
-        public string wireTag;
+        public GameObject startObject;
+        public GameObject endObject;
         public GameObject lineObject;
-        private LineRenderer lineRenderer;
+        public LineRenderer lineRenderer;
         public static Wire justCreated;
 
-        public Wire(GameObject startObject, string tag)
+        public Wire(GameObject collideObject)
         {
             //Later do this in a loop
             //start and end positions must be the same in the beginning
             //end position changes later to mouse position
-            verticesOfWire.Add(startObject.transform.position);
-            verticesOfWire.Add(startObject.transform.position);
+            verticesOfWire.Add(collideObject.transform.position);
+            verticesOfWire.Add(collideObject.transform.position);
             if (!WireAlreadyExists(this))
             {
-                wireTag = tag;
+                startObject = collideObject;
                 createLineObject();
                 justCreated = this;
             }
@@ -114,8 +116,8 @@ public class WireManager : MonoBehaviour
 
         private void createLineObject()
         {
-            lineObject = new GameObject($"wire{_registry.Count + 1} [{wireTag}]");
-            lineObject.tag = wireTag;
+            lineObject = new GameObject($"wire{_registry.Count + 1} [{startObject}]");
+            lineObject.tag = startObject.tag; // necessary??
             lineRenderer = lineObject.AddComponent<LineRenderer>();
             lineRenderer.material = wireMaterial;
             lineRenderer.widthMultiplier = 0.1f;
