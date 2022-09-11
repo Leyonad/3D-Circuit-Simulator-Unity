@@ -65,6 +65,16 @@ public class WireManager : MonoBehaviour
                 Wire.justCreated = null;
             }
         }
+
+        else if (Keyboard.current.deleteKey.wasReleasedThisFrame)
+        {
+            if (selectedWire != null)
+            {
+                Wire._registry.Remove(selectedWire);
+                Destroy(selectedWire.lineObject);
+                selectedWire = null;
+            }
+        }
     }
 
 
