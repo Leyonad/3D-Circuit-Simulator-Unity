@@ -60,19 +60,11 @@ public class WireManager : MonoBehaviour
                 
                 if (wirePossible)
                 {
-                    //add last point to the vertices of the new wire
-                    Wire.justCreated.verticesOfWire[Wire.justCreated.verticesAmount - 1] =
-                        hit.collider.gameObject.transform.position;
-
-                    //add all points to the vertices of the new wire
-                    /*                   */
-
                     //Check if the wire doesnt already exist
+                    Wire.justCreated.endObject = hit.collider.gameObject;
                     if (!WireAlreadyExists(Wire.justCreated))
                     {
-                        Debug.Log("New Wire created " + Wire.justCreated.verticesOfWire.First() +
-                                    " to " + Wire.justCreated.verticesOfWire.Last());
-                        Wire.justCreated.endObject = hit.collider.gameObject;
+                        Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
                         Wire.justCreated.UpdateLinesOfWire();
                         Wire._registry.Add(Wire.justCreated);
                     }
@@ -91,7 +83,6 @@ public class WireManager : MonoBehaviour
     {
         public static List<Wire> _registry = new List<Wire>();
 
-        public List<Vector3> verticesOfWire = new List<Vector3>();
         public int verticesAmount = 2;
         public GameObject startObject;
         public GameObject endObject;
@@ -104,11 +95,9 @@ public class WireManager : MonoBehaviour
             //Later do this in a loop
             //start and end positions must be the same in the beginning
             //end position changes later to mouse position
-            verticesOfWire.Add(collideObject.transform.position);
-            verticesOfWire.Add(collideObject.transform.position);
+            startObject = collideObject;
             if (!WireAlreadyExists(this))
             {
-                startObject = collideObject;
                 CreateLineObject();
                 justCreated = this;
             }
@@ -119,10 +108,6 @@ public class WireManager : MonoBehaviour
             Vector2 mousePosition = Mouse.current.position.ReadValue();
             Vector3 targetPosition = MouseInteraction.GetNewPosition(cam, mousePosition, Vector2.zero, justCreated.lineRenderer.GetPosition(justCreated.verticesAmount-1));
             
-            /*if (IsPointWithinCollider(breadboard.GetComponent<Collider>(), mousePositionWorld))
-            {
-                mousePositionWorld.y = breadboard.transform.position.y + breadboard.transform.localScale.y/2;
-            }*/
             justCreated.lineRenderer.SetPosition(verticesAmount - 1, targetPosition);
         }
 
@@ -133,34 +118,33 @@ public class WireManager : MonoBehaviour
             lineRenderer.material = wireMaterial;
             lineRenderer.widthMultiplier = 0.1f;
             lineRenderer.numCapVertices = 4;
+            lineRenderer.SetPosition(0, startObject.transform.position);
+            lineRenderer.SetPosition(verticesAmount - 1, startObject.transform.position);
 
             UpdateLinesOfWire();
         }
 
         public void UpdateLinesOfWire()
         {
-            int i = 0;
-            foreach (Vector3 pos in verticesOfWire)
-            {
-                lineRenderer.SetPosition(i, pos);
-                i++;
-            }
+            
         }
     }
 
+    /*
     public static bool IsPointWithinCollider(Collider collider, Vector3 point)
     {
         return collider.ClosestPoint(point) == point;
     }
+    */
 
     public static bool WireAlreadyExists(Wire wire)
     {
         foreach (Wire existingWire in Wire._registry)
         {
-            if (wire.verticesOfWire.First() == existingWire.verticesOfWire.First()
-                || wire.verticesOfWire.First() == existingWire.verticesOfWire.Last()
-                || wire.verticesOfWire.Last() == existingWire.verticesOfWire.First()
-                || wire.verticesOfWire.Last() == existingWire.verticesOfWire.Last())
+            if (wire.startObject == existingWire.startObject
+                || wire.startObject == existingWire.endObject
+                || wire.endObject == existingWire.startObject
+                || wire.endObject == existingWire.endObject)
             {
                 Debug.Log("WIRE ALREADY EXISTS!");
                 return true;

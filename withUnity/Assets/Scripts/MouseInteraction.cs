@@ -99,11 +99,11 @@ public class MouseInteraction : MonoBehaviour
         {
             bool updateVertices = false;
             if (wire.startObject.transform.parent.gameObject.transform.parent.gameObject == selectedObject) {
-                wire.verticesOfWire[0] = wire.startObject.transform.position;
+                wire.lineRenderer.SetPosition(0, wire.startObject.transform.position);
                 updateVertices = true;
             }
             if (wire.endObject.transform.parent.gameObject.transform.parent.gameObject == selectedObject) {
-                wire.verticesOfWire[wire.verticesAmount - 1] = wire.endObject.transform.position;
+                wire.lineRenderer.SetPosition(wire.verticesAmount - 1, wire.endObject.transform.position);
                 updateVertices = true;
             }
             if (updateVertices)

@@ -21,3 +21,4 @@ Optimization:
 [x] only move component if delta is not zero
 [ ] maybe make UpdateWiresPosition() more efficient 
 [ ] maybe make WireAlreadyExists() more efficient
+[x] do i need the list verticesOfWire
