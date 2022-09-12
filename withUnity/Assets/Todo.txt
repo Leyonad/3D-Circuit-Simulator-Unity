@@ -3,7 +3,6 @@ Todo:
 [x] draw line to mouse when clicking on a metal
 [x] cancel on right click
 [x] make inputs of breadboard as cubes (for now)
-[ ] get connections from one point to another working
 [x] if the battery moves, make the wire move too
 [x] wires can be created in the breadboard
 [x] wire has multiple vertices, quadratic bezier curve
@@ -12,6 +11,8 @@ Todo:
 [x] update the wires when rotating a component and before attaching a wire to an object
 [x] functionality to select a wire and highlight it
 [x] delete a wire that is selected by pressing the delete-button
+[n] connection should not depend on the gameobject, but on the position (something with round)
+[ ] get connections from one point to another working
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -21,10 +22,11 @@ Bugs:
 [x] apparently no tag on parent object when creating a wire
 [x] points are buggy when creating a wire 
 [x] wire can be attached to its own gameobject
-[?] somehow its always a kind of double click
+[?] somehow its always kind of a double click
 
 Optimization:
 [x] only move component if delta is not zero
 [ ] maybe make UpdateWiresPosition() more efficient 
 [ ] maybe make WireAlreadyExists() more efficient
 [x] do i need the list verticesOfWire
+[x] Wire class need its own file

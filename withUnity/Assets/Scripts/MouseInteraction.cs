@@ -32,7 +32,7 @@ public class MouseInteraction : MonoBehaviour
 
                 if (hit.collider != null)
                 {
-                    Wire.UnselectWire();
+                    WireManager.UnselectWire();
                     if (!hit.collider.gameObject.CompareTag("Untagged"))
                     {
                         selectedObject = hit.collider.gameObject;
@@ -53,7 +53,7 @@ public class MouseInteraction : MonoBehaviour
                                 //else select the wire that already exists
                                 else
                                 {
-                                    existingWire.SelectWire();
+                                    WireManager.SelectWire(existingWire);
                                 }
                             }
                         }
