@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Linq;
 
 public class WireManager : MonoBehaviour
 {
@@ -127,9 +127,14 @@ public class WireManager : MonoBehaviour
             lineRenderer.material = wireMaterial;
             lineRenderer.widthMultiplier = 0.1f;
             lineRenderer.positionCount = verticesAmount;
+
+            //set all positions of line renderer
+            Vector3[] positions = new Vector3[verticesAmount];
+            for (int i = 0; i < verticesAmount; i++)
+                positions[i] = startObject.transform.position;
+            
+            lineRenderer.SetPositions(positions);
             lineRenderer.numCapVertices = 4;
-            lineRenderer.SetPosition(0, startObject.transform.position);
-            lineRenderer.SetPosition(verticesAmount - 1, startObject.transform.position);
 
             UpdateLinesOfWire();
         }
@@ -154,10 +159,10 @@ public class WireManager : MonoBehaviour
     {
         Vector3[] result = new Vector3[vertices];
 
-        for (int i = 1; i < vertices+1; i++)
+        for (int i = 0; i < vertices; i++)
         {
             float t = i / (float)vertices;
-            result[i-1] = CalculateQuadraticBezierPoint(t, from, middle, to);
+            result[i] = CalculateQuadraticBezierPoint(t, from, middle, to);
         }
         return result;
     }

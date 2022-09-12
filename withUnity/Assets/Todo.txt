@@ -19,7 +19,7 @@ Bugs:
 [x] immediately makes a new wire when pressing mousebutton left to finish the last one
 [x] plane can be moved
 [x] apparently no tag on parent object when creating a wire
-[n] points are buggy when creating a wire 
+[x] points are buggy when creating a wire 
 [x] wire can be attached to its own gameobject
 [?] somehow its always a kind of double click
 
