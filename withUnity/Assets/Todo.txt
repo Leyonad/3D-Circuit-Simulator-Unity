@@ -11,7 +11,7 @@ Todo:
 [x] update the wires when rotating a component and before attaching a wire to an object
 [x] functionality to select a wire and highlight it
 [x] delete a wire that is selected by pressing the delete-button
-[n] connection should not depend on the gameobject, but on the position (something with round)
+[n] making each wire with working connections
 [ ] get connections from one point to another working
 
 Bugs:
@@ -23,10 +23,11 @@ Bugs:
 [x] points are buggy when creating a wire 
 [x] wire can be attached to its own gameobject
 [?] somehow its always kind of a double click
+[ ] metal can appear highlighted after cancelling making of wire
 
 Optimization:
 [x] only move component if delta is not zero
 [ ] maybe make UpdateWiresPosition() more efficient 
 [ ] maybe make WireAlreadyExists() more efficient
 [x] do i need the list verticesOfWire
-[x] Wire class need its own file
+[x] Wire class needs its own file

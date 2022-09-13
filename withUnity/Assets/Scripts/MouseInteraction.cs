@@ -32,15 +32,15 @@ public class MouseInteraction : MonoBehaviour
 
                 if (hit.collider != null)
                 {
-                    WireManager.UnselectWire();
+                    UnselectWire();
                     if (!hit.collider.gameObject.CompareTag("Untagged"))
                     {
                         selectedObject = hit.collider.gameObject;
                         
                         //do stuff if clicked on a metal 
-                        if (selectedObject.transform.parent != null)
+                        if (selectedObject.transform.parent != null && !selectedObject.transform.parent.CompareTag("Untagged"))
                         {
-                            if (selectedObject.transform.parent.CompareTag("Metals"))
+                            if (isMetal(selectedObject))
                             {
                                 //create a wire if there is no wire attached to the selectedObject
                                 Wire existingWire = WireAlreadyExists(selectedObject);
@@ -53,7 +53,7 @@ public class MouseInteraction : MonoBehaviour
                                 //else select the wire that already exists
                                 else
                                 {
-                                    WireManager.SelectWire(existingWire);
+                                    SelectWire(existingWire);
                                 }
                             }
                         }
@@ -82,7 +82,7 @@ public class MouseInteraction : MonoBehaviour
                 return;
             }
 
-            //avoid unnecessary calculations if the mouse positions stays the same
+            //avoid unnecessary calculations if the mouse positions remains the same
             Vector2 mousePosition = Mouse.current.position.ReadValue();
             if (mousePosition != previousPosition)
             {
@@ -107,14 +107,15 @@ public class MouseInteraction : MonoBehaviour
 
     void UpdateWiresPosition()
     {
+        //this method updates the wire positions when a component is being moved
         foreach (Wire wire in Wire._registry)
         {
             bool updateVertices = false;
-            if (wire.startObject.transform.parent.gameObject.transform.parent.gameObject == selectedObject) {
+            if (wire.startObject.transform.IsChildOf(selectedObject.transform)) {
                 wire.lineRenderer.SetPosition(0, wire.startObject.transform.position);
                 updateVertices = true;
             }
-            if (wire.endObject.transform.parent.gameObject.transform.parent.gameObject == selectedObject) {
+            if (wire.endObject.transform.IsChildOf(selectedObject.transform)) {
                 wire.lineRenderer.SetPosition(wire.verticesAmount - 1, wire.endObject.transform.position);
                 updateVertices = true;
             }
@@ -151,8 +152,7 @@ public class MouseInteraction : MonoBehaviour
         Vector3 worldMousePosFar = cam.ScreenToWorldPoint(screenMousePosFar);
         Vector3 worldMousePosNear = cam.ScreenToWorldPoint(screenMousePosNear);
 
-        RaycastHit hit;
-        Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out hit);
+        Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out RaycastHit hit);
 
         return hit;
     }

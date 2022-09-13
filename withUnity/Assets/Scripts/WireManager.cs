@@ -42,7 +42,7 @@ public class WireManager : MonoBehaviour
                 if (hit.collider != null)
                     if (!hit.collider.gameObject.CompareTag("Untagged"))
                         if (hit.collider.gameObject.transform.parent != null)
-                            if (hit.collider.gameObject.transform.parent.CompareTag("Metals"))
+                            if (isMetal(hit.collider.gameObject))
                                 wirePossible = true;
                 
                 if (wirePossible)
@@ -87,6 +87,16 @@ public class WireManager : MonoBehaviour
             return;
         selectedWire.lineRenderer.material = wireMaterial;
         selectedWire = null;
+    }
+
+    public static bool isMetal(GameObject obj)
+    {
+        if (obj.transform.parent.parent.parent != null)
+            if (obj.transform.parent.parent.parent.CompareTag("Metals"))
+                return true;
+        if (obj.transform.parent.CompareTag("Metals"))
+            return true;
+        return false;
     }
 
     public static Wire WireAlreadyExists(GameObject wireToObject)
