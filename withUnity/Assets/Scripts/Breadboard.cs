@@ -13,10 +13,7 @@ public class Breadboard
         breadboardObject.transform.localScale = size;
         breadboardObject.transform.position = new Vector3(0, size.y/2, 0);
 
-        breadboardObject.AddComponent<MeshRenderer>();
         breadboardObject.AddComponent<BoxCollider>();
-        breadboardObject.AddComponent<Rigidbody>();
-        breadboardObject.GetComponent<Rigidbody>().isKinematic = true;
 
         breadboardObject.AddComponent<MouseHovering>();
         ColorUtility.TryParseHtmlString("#D9D9D9", out breadboardObject.GetComponent<MouseHovering>().hoveringColor);
@@ -25,9 +22,9 @@ public class Breadboard
         metals.tag = "Metals";
         metals.transform.SetParent(breadboardObject.transform);
 
-        //create the metal strips
-        float distToNextRow = 0.09f;
-        float distToNextSide = 0.7f;
+        //create the metal strips (inside)
+        float distToNextRow = 0.1f;
+        float distToNextSide = 0.6f;
         float XlengthWithGap = rows * metalStripSize.x + (rows-1) * distToNextRow;
         float ZlengthWithGap = 2 * metalStripSize.z + distToNextSide;
         Vector3 offset = new Vector3(size.x/2f-metalStripSize.x/2f - (size.x-XlengthWithGap)/2f, 0, size.z/2f-metalStripSize.z/2f - (size.z - ZlengthWithGap)/2f);
@@ -39,5 +36,8 @@ public class Breadboard
                 new MetalStrip(position-offset, columns, metalStripSize, metals, distToNextRow);
             }
         }
+
+        //create the metal strips (outside)
+
     }
 }

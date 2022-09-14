@@ -34,7 +34,7 @@ public class Wire
     {
         lineObject = new GameObject($"wire{_registry.Count + 1} [{startObject}]");
         lineRenderer = lineObject.AddComponent<LineRenderer>();
-        lineRenderer.material = WireManager.wireMaterial;
+        lineRenderer.material = ResourcesManager.wireMaterial;
         lineRenderer.widthMultiplier = 0.1f;
         lineRenderer.positionCount = verticesAmount;
 

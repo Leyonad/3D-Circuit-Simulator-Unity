@@ -7,8 +7,6 @@ public class WireManager : MonoBehaviour
     GameObject debugObject;
     [SerializeField] 
     public static Camera cam;
-    public static Material wireMaterial;
-    public static Material highlightWireMaterial;
     public int numCapVertices = 4;
 
     public static Wire selectedWire;
@@ -16,8 +14,6 @@ public class WireManager : MonoBehaviour
     private void Start()
     {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        wireMaterial = LoadMaterial("Wire_Material");
-        highlightWireMaterial = LoadMaterial("Highlight_Wire_Material");
     }
 
     private void Update()
@@ -78,14 +74,14 @@ public class WireManager : MonoBehaviour
     public static void SelectWire(Wire wire)
     {
         selectedWire = wire;
-        selectedWire.lineRenderer.material = highlightWireMaterial;
+        selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
     }
 
     public static void UnselectWire()
     {
         if (selectedWire == null)
             return;
-        selectedWire.lineRenderer.material = wireMaterial;
+        selectedWire.lineRenderer.material = ResourcesManager.wireMaterial;
         selectedWire = null;
     }
 
@@ -148,12 +144,6 @@ public class WireManager : MonoBehaviour
         return hit;
     }
 
-    private Material LoadMaterial(string name)
-    {
-        Material material = Resources.Load($"Materials/{name}", typeof(Material)) as Material;
-        if (material == null)
-            Debug.Log($"{name} not found!");
-        return material;
-    }
+    
 
 }
