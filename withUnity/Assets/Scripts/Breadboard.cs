@@ -49,7 +49,6 @@ public class Breadboard
         float outerP = innerP+ eachMetalSize.x + distanceToNext;
         float p = outerP;
         int sign = -1;
-        material = ResourcesManager.blue;
         for (int i = 0; i < 4; i++)
         {
             if (sign == -1 && p == outerP || sign == 1 && p == innerP)

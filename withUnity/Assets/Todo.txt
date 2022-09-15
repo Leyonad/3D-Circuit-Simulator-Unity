@@ -24,6 +24,7 @@ Bugs:
 [x] wire can be attached to its own gameobject
 [?] somehow its always kind of a double click
 [ ] metal can appear highlighted after cancelling making of wire
+[x] plane material and sky are not how they should be
 
 Optimization:
 [x] only move component if delta is not zero
