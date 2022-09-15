@@ -12,6 +12,8 @@ Todo:
 [x] functionality to select a wire and highlight it
 [x] delete a wire that is selected by pressing the delete-button
 [x] breadboard can be created in script with parameters
+[x] battery can be created in script 
+[ ] different types of batteries
 [ ] get connections from one point to another working
 
 Bugs:

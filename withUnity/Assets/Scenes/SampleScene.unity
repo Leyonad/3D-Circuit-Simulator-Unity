@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 833456000}
-  m_IndirectSpecularColor: {r: 0.4465829, g: 0.49641728, b: 0.57482105, a: 1}
+  m_IndirectSpecularColor: {r: 0.20933005, g: 0.23315111, b: 0.22634053, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -32540,4 +32540,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7e44525dd70b5d45bb2c4c447b2edf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoveringColor: {r: 0.254717, g: 0.254717, b: 0.254717, a: 1}
+  hoveringColor: {r: 0.1981132, g: 0.1981132, b: 0.1981132, a: 1}

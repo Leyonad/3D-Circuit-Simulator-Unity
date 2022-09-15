@@ -9,6 +9,8 @@ public class ResourcesManager
     public static Material blue;
     public static Material breadboardMaterial;
 
+    public static GameObject prefabBattery9V;
+
     public static void LoadResources()
     {
         wireMaterial = LoadMaterial("Wire_Material");
@@ -17,6 +19,8 @@ public class ResourcesManager
         red = LoadMaterial("Red");
         blue = LoadMaterial("Blue");
         breadboardMaterial = LoadMaterial("Breadboard_Material");
+
+        prefabBattery9V = LoadPrefab("Battery9V");
     }
 
     private static Material LoadMaterial(string name)
@@ -25,5 +29,13 @@ public class ResourcesManager
         if (material == null)
             Debug.Log($"{name} -> Material not found!");
         return material;
+    }
+
+    private static GameObject LoadPrefab(string name)
+    {
+        GameObject gameobj = Resources.Load($"Prefabs/{name}", typeof(GameObject)) as GameObject;
+        if (gameobj == null)
+            Debug.Log($"{name} -> Prefab not found!");
+        return gameobj;
     }
 }
