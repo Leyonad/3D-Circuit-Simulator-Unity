@@ -45,6 +45,16 @@ public class WireManager : MonoBehaviour
                     Wire.justCreated.endObject = hit.collider.gameObject;
                     if (Wire.justCreated.endObject != Wire.justCreated.startObject && WireAlreadyExists(Wire.justCreated.endObject) == null)
                     {
+                        //current metalstrip endObject = current metalstrip startObject
+                        if (hit.collider.gameObject.transform.parent.CompareTag("MetalStrip")) {
+                            float startCurrent;
+                            if (Wire.justCreated.startObject.transform.parent.CompareTag("MetalStrip"))
+                                startCurrent = Wire.justCreated.startObject.transform.parent.GetComponent<MetalStripProperties>().current;
+                            else
+                                startCurrent = Wire.justCreated.startObject.GetComponent<BatteryProperties>().current;
+                            hit.collider.gameObject.transform.parent.GetComponent<MetalStripProperties>().current = startCurrent;
+                        }
+
                         Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
                         Wire.justCreated.UpdateLinesOfWire();
                         Wire._registry.Add(Wire.justCreated);
@@ -102,7 +112,7 @@ public class WireManager : MonoBehaviour
                 || wireToObject == existingWire.startObject
                 || wireToObject == existingWire.endObject)
             {
-                Debug.Log("WIRE ALREADY EXISTS!");
+                //Debug.Log("WIRE ALREADY EXISTS!");
                 return existingWire;
             }
         }

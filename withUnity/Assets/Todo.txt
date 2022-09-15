@@ -14,7 +14,7 @@ Todo:
 [x] breadboard can be created in script with parameters
 [x] battery can be created in script 
 [ ] different types of batteries
-[ ] get connections from one point to another working
+[x] get connections from one metal strip to another and to battery working
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

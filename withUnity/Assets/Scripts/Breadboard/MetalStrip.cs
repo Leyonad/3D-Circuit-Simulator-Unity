@@ -15,6 +15,7 @@ public class MetalStrip
         
         metalStripObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
         metalStripObject.name = "MetalStrip";
+        metalStripObject.tag = "MetalStrip";
         metalStripObject.transform.position = this.position;
         metalStripObject.transform.localScale = this.size;
         metalStripObject.transform.SetParent(this.parent.transform);
@@ -22,6 +23,8 @@ public class MetalStrip
 
         //dont render the metalstrip object
         metalStripObject.GetComponent<MeshRenderer>().enabled = false;
+
+        metalStripObject.AddComponent<MetalStripProperties>();
 
         float metalSize = eachMetalSize.x;
 

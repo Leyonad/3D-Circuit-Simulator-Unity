@@ -6,14 +6,10 @@ TagManager:
   tags:
   - Breadboard
   - Battery
-  - MBatteryP
-  - MBatteryN
-  - MBreadboardP
-  - MBreadboardN
   - Metals
-  - NMB
   - Components
   - Metal
+  - MetalStrip
   layers:
   - Default
   - TransparentFX

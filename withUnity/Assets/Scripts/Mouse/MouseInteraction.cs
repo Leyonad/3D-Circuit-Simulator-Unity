@@ -42,6 +42,15 @@ public class MouseInteraction : MonoBehaviour
                         {
                             //create a wire if there is no wire attached to the selectedObject
                             Wire existingWire = WireAlreadyExists(selectedObject);
+
+                            //print the current of the metal
+                            if (selectedObject.CompareTag("BatteryMetal")) {
+                                Debug.Log(selectedObject.GetComponent<BatteryProperties>().current);
+                            }
+                            else {
+                                Debug.Log(selectedObject.transform.parent.gameObject.GetComponent<MetalStripProperties>().current);
+                            }
+
                             if (existingWire == null)
                             {
                                 new Wire(selectedObject);

@@ -2,16 +2,14 @@ using UnityEngine;
 
 public class Metal
 {
-    private float elec;
     private Vector3 position;
     private Vector3 size;
     private GameObject metalObject;
 
-    public Metal(Vector3 position, Vector3 size, GameObject parent, Material material, float elec = 0f)
+    public Metal(Vector3 position, Vector3 size, GameObject parent, Material material)
     {
         this.position = position;
         this.size = size;
-        this.elec = elec;
 
         metalObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
         metalObject.name = "Metal";
