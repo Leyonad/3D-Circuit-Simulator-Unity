@@ -36,10 +36,8 @@ public class WireManager : MonoBehaviour
 
                 bool wirePossible = false;
                 if (hit.collider != null)
-                    if (!hit.collider.gameObject.CompareTag("Untagged"))
-                        if (hit.collider.gameObject.transform.parent != null)
-                            if (isMetal(hit.collider.gameObject))
-                                wirePossible = true;
+                    if (isMetal(hit.collider.gameObject))
+                        wirePossible = true;
                 
                 if (wirePossible)
                 {
@@ -87,11 +85,11 @@ public class WireManager : MonoBehaviour
 
     public static bool isMetal(GameObject obj)
     {
-        if (obj.transform.parent.parent.parent != null)
-            if (obj.transform.parent.parent.parent.CompareTag("Metals"))
-                return true;
-        if (obj.transform.parent.CompareTag("Metals"))
+        if (obj.CompareTag("Metal"))
             return true;
+        if (obj.transform.parent != null)
+            if (obj.transform.parent.gameObject.CompareTag("Metals"))
+                return true;
         return false;
     }
 

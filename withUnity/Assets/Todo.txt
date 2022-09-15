@@ -11,7 +11,7 @@ Todo:
 [x] update the wires when rotating a component and before attaching a wire to an object
 [x] functionality to select a wire and highlight it
 [x] delete a wire that is selected by pressing the delete-button
-[n] making each wire with working connections
+[x] breadboard can be created in script with parameters
 [ ] get connections from one point to another working
 
 Bugs:

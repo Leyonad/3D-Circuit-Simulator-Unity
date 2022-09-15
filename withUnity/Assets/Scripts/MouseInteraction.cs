@@ -38,23 +38,20 @@ public class MouseInteraction : MonoBehaviour
                         selectedObject = hit.collider.gameObject;
                         
                         //do stuff if clicked on a metal 
-                        if (selectedObject.transform.parent != null && !selectedObject.transform.parent.CompareTag("Untagged"))
+                        if (isMetal(selectedObject))
                         {
-                            if (isMetal(selectedObject))
+                            //create a wire if there is no wire attached to the selectedObject
+                            Wire existingWire = WireAlreadyExists(selectedObject);
+                            if (existingWire == null)
                             {
-                                //create a wire if there is no wire attached to the selectedObject
-                                Wire existingWire = WireAlreadyExists(selectedObject);
-                                if (existingWire == null)
-                                {
-                                    new Wire(selectedObject);
-                                    selectedObject = null;
-                                    return;
-                                }
-                                //else select the wire that already exists
-                                else
-                                {
-                                    SelectWire(existingWire);
-                                }
+                                new Wire(selectedObject);
+                                selectedObject = null;
+                                return;
+                            }
+                            //else select the wire that already exists
+                            else
+                            {
+                                SelectWire(existingWire);
                             }
                         }
                     }
