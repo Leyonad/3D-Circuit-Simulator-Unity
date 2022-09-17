@@ -94,7 +94,7 @@ public class WireManager : MonoBehaviour
 
 
         parentsLeft.Clear();
-        Debug.Log("\n START");
+        //Debug.Log("\n START");
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -124,17 +124,18 @@ public class WireManager : MonoBehaviour
                 if (!wire.updated)
                 {
                     wire.updated = true;
+                    wire.lineRenderer.material = ResourcesManager.yellow;
                     RecursiveUpdateCurrent(GetNextObject(parentsLeft[i], wire), wire);
                 }
             }
-            print("next parentobject: " + parentsLeft[i].transform.GetInstanceID());
+            //print("next parentobject: " + parentsLeft[i].transform.GetInstanceID());
         }
     }
 
     private bool RecursiveUpdateCurrent(GameObject startParent, Wire startWire)
     {
-        print("startWire: " + startWire.lineObject.name);
-        print("startParent: " + startParent.transform.GetInstanceID());
+        //print("startWire: " + startWire.lineObject.name);
+        //print("startParent: " + startParent.transform.GetInstanceID());
 
         int exit = 0;
         List<Wire> notVisited = new List<Wire>();
@@ -146,24 +147,29 @@ public class WireManager : MonoBehaviour
             }
         }
 
-        if (exit == 0) { //no exit
-            print("exit = 0");
+        if (exit == 0) { //---------------no exit-------------------
+            //print("exit = 0");
+            if (startParent.name == "Metal1")
+            {
+                Debug.Log("CIRCUIT COMPLETE");
+            }
             parentsLeft.Remove(startParent);
             return false;
         }
 
         foreach (Wire wire in notVisited)
         {
+            wire.lineRenderer.material = ResourcesManager.yellow;
             wire.updated = true;
-            if (exit == 1) //one exit
+            if (exit == 1) //------------one exit------------
             {
-                print("exit = 1");
+                //print("exit = 1");
                 parentsLeft.Remove(startParent);
                 return RecursiveUpdateCurrent(GetNextObject(startParent, wire), wire);
             }
 
-            //multiple exits
-            print("multiple exits");
+            //---------------multiple exits---------------
+            //print("multiple exits");
             parentsLeft.Add(startParent);
             return RecursiveUpdateCurrent(GetNextObject(startParent, wire), wire);
             
@@ -182,14 +188,14 @@ public class WireManager : MonoBehaviour
     public static void SelectWire(Wire wire)
     {
         selectedWire = wire;
-        selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
+        //selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
     }
 
     public static void UnselectWire()
     {
         if (selectedWire == null)
             return;
-        selectedWire.lineRenderer.material = ResourcesManager.wireMaterial;
+        //selectedWire.lineRenderer.material = ResourcesManager.wireMaterial;
         selectedWire = null;
     }
 

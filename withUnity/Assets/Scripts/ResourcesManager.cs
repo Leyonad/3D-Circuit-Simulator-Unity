@@ -7,6 +7,7 @@ public class ResourcesManager
     public static Material metalMaterial;
     public static Material red;
     public static Material blue;
+    public static Material yellow;
     public static Material breadboardMaterial;
 
     public static GameObject prefabBattery9V;
@@ -18,6 +19,7 @@ public class ResourcesManager
         metalMaterial = LoadMaterial("Breadboard_Metal_Normal_Material");
         red = LoadMaterial("Red");
         blue = LoadMaterial("Blue");
+        yellow = LoadMaterial("Yellow");
         breadboardMaterial = LoadMaterial("Breadboard_Material");
 
         prefabBattery9V = LoadPrefab("Battery9V");
