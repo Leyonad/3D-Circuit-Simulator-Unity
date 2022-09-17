@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour
     [Range(0f, 0.1f)]
     private float edgeTolerance = 0.05f;
     [SerializeField]
-    private bool useScreenEdge = true;
+    private bool useScreenEdge = false;
 
     //value set in various functions
     //used to update the position of the camera base object

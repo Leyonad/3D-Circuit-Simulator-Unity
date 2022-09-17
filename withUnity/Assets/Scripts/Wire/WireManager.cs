@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 public class WireManager : MonoBehaviour
 {
     public static Camera cam;
-    public static GameObject led;
     public int numCapVertices = 4;
 
     public static Wire selectedWire;
@@ -15,7 +14,6 @@ public class WireManager : MonoBehaviour
     private void Start()
     {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        led = GameObject.FindGameObjectWithTag("LED");
     }
 
     private void Update()
@@ -53,6 +51,7 @@ public class WireManager : MonoBehaviour
 
                         Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
                         Wire.justCreated.UpdateLinesOfWire();
+                        Wire.justCreated.UpdateMeshOfWire();
                         Wire._registry.Add(Wire.justCreated);
 
                         //Update the electricity parameters of all wires
@@ -89,14 +88,12 @@ public class WireManager : MonoBehaviour
     private void UpdateElectricityParameters()
     {
         parentsLeft.Clear();
-        led.GetComponent<MeshRenderer>().material = ResourcesManager.white;
-        //Debug.Log("\n START");
 
         //find the metal2 object, since that is the start object
         bool found = false;
         foreach (Wire wire in Wire._registry)
         {
-            //reset the updated parameter of each wire
+            //reset the updated-parameter of each wire
             wire.updated = false;
             wire.lineRenderer.material = ResourcesManager.wireMaterial;
 
@@ -125,15 +122,11 @@ public class WireManager : MonoBehaviour
                     RecursiveUpdateCurrent(GetNextObject(parentsLeft[i], wire), wire);
                 }
             }
-            //print("next parentobject: " + parentsLeft[i].transform.GetInstanceID());
         }
     }
 
     private bool RecursiveUpdateCurrent(GameObject startParent, Wire startWire)
     {
-        //print("startWire: " + startWire.lineObject.name);
-        //print("startParent: " + startParent.transform.GetInstanceID());
-
         int exit = 0;
         List<Wire> notVisited = new List<Wire>();
         foreach (Wire wire in startParent.GetComponent<Properties>().attachedWires) {
@@ -145,10 +138,8 @@ public class WireManager : MonoBehaviour
         }
 
         if (exit == 0) { //---------------no exit-------------------
-            //print("exit = 0");
             if (startParent.name == "Metal1")
             {
-                led.GetComponent<MeshRenderer>().material = ResourcesManager.red;
                 Debug.Log("CIRCUIT COMPLETE");
             }
             parentsLeft.Remove(startParent);
@@ -161,13 +152,11 @@ public class WireManager : MonoBehaviour
             wire.updated = true;
             if (exit == 1) //------------one exit------------
             {
-                //print("exit = 1");
                 parentsLeft.Remove(startParent);
                 return RecursiveUpdateCurrent(GetNextObject(startParent, wire), wire);
             }
 
             //---------------multiple exits---------------
-            //print("multiple exits");
             parentsLeft.Add(startParent);
             return RecursiveUpdateCurrent(GetNextObject(startParent, wire), wire);
             
@@ -186,14 +175,14 @@ public class WireManager : MonoBehaviour
     public static void SelectWire(Wire wire)
     {
         selectedWire = wire;
-        //selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
+        selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
     }
 
     public static void UnselectWire()
     {
         if (selectedWire == null)
             return;
-        //selectedWire.lineRenderer.material = ResourcesManager.wireMaterial;
+        selectedWire.lineRenderer.material = ResourcesManager.wireMaterial;
         selectedWire = null;
     }
 

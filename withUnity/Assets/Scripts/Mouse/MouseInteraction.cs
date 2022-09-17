@@ -29,27 +29,18 @@ public class MouseInteraction : MonoBehaviour
             if (selectedObject == null)
             {
                 RaycastHit hit = CastRay();
-
+                
                 if (hit.collider != null)
                 {
                     UnselectWire();
                     if (!hit.collider.gameObject.CompareTag("Untagged"))
                     {
                         selectedObject = hit.collider.gameObject;
-
                         //do stuff if clicked on a metal 
                         if (IsMetal(selectedObject))
                         {
                             //create a wire if there is no wire attached to the selectedObject
                             Wire existingWire = WireAlreadyExists(selectedObject);
-
-                            //print the current of the metal
-                            /*if (selectedObject.CompareTag("BatteryMetal")) {
-                                Debug.Log(selectedObject.GetComponent<Properties>().current);
-                            }
-                            else {
-                                Debug.Log(selectedObject.transform.parent.gameObject.GetComponent<Properties>().current);
-                            }*/
 
                             if (existingWire == null)
                             {
@@ -60,15 +51,26 @@ public class MouseInteraction : MonoBehaviour
                             //else select the wire that already exists
                             else
                             {
+                                selectedObject = null;
                                 SelectWire(existingWire);
+                                return;
                             }
                         }
-
-                        //NO BOX COLLIDER ??
-                        else if (selectedObject.CompareTag("Wire"))
+                        //clicked on a wire
+                        else if (hit.collider.GetComponent<LineRenderer>() != null)
                         {
-                            Debug.Log(selectedObject);
+                            selectedObject = null;
+                            Vector3 pos = hit.collider.GetComponent<LineRenderer>().GetPosition(0);
+                            foreach (Wire wire in Wire._registry)
+                            {
+                                if (wire.lineRenderer.GetPosition(0) == pos)
+                                {
+                                    SelectWire(wire);
+                                    return;
+                                }
+                            }
                         }
+                        
                     }
                 }
                 else return;
@@ -85,12 +87,17 @@ public class MouseInteraction : MonoBehaviour
                 }
             }
         }
+        else if (Mouse.current.middleButton.wasReleasedThisFrame)
+        {
+            Wire.UpdateAllMeshes();
+        }
 
         //drag the object if there is a selected object
         if (selectedObject != null){
             if (Mouse.current.leftButton.wasReleasedThisFrame){
                 selectedObject = null;
                 Cursor.visible = true;
+                Wire.UpdateAllMeshes();
                 return;
             }
 

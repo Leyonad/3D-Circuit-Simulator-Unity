@@ -14,6 +14,9 @@ public class Wire
     public LineRenderer lineRenderer;
     public static Wire justCreated;
 
+    MeshCollider meshCollider;
+    Mesh mesh;
+
     //for updateElectricityParameters() to check if wire has been visited
     public bool updated = false;
 
@@ -56,6 +59,9 @@ public class Wire
         lineRenderer.numCapVertices = 4;
 
         UpdateLinesOfWire();
+
+        meshCollider = lineObject.AddComponent<MeshCollider>();
+        mesh = new Mesh();
     }
 
     public float HasCurrent()
@@ -71,6 +77,20 @@ public class Wire
     public void SetCurrent(GameObject obj, float current)
     {
         obj.transform.parent.GetComponent<Properties>().current = current;
+    }
+
+    public void UpdateMeshOfWire()
+    {
+        lineRenderer.BakeMesh(mesh, WireManager.cam);
+        meshCollider.sharedMesh = mesh;
+    }
+
+    public static void UpdateAllMeshes()
+    {
+        foreach (Wire wire in Wire._registry)
+        {
+            wire.UpdateMeshOfWire();
+        }
     }
 
     public void UpdateLinesOfWire()
