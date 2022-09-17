@@ -1,15 +1,11 @@
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.HID;
 
 public class WireManager : MonoBehaviour
 {
-    [SerializeField]
     public static Camera cam;
+    public static GameObject led;
     public int numCapVertices = 4;
 
     public static Wire selectedWire;
@@ -19,6 +15,7 @@ public class WireManager : MonoBehaviour
     private void Start()
     {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        led = GameObject.FindGameObjectWithTag("LED");
     }
 
     private void Update()
@@ -91,9 +88,8 @@ public class WireManager : MonoBehaviour
 
     private void UpdateElectricityParameters()
     {
-
-
         parentsLeft.Clear();
+        led.GetComponent<MeshRenderer>().material = ResourcesManager.white;
         //Debug.Log("\n START");
 
         //find the metal2 object, since that is the start object
@@ -102,6 +98,7 @@ public class WireManager : MonoBehaviour
         {
             //reset the updated parameter of each wire
             wire.updated = false;
+            wire.lineRenderer.material = ResourcesManager.wireMaterial;
 
             if (!found)
             {
@@ -151,6 +148,7 @@ public class WireManager : MonoBehaviour
             //print("exit = 0");
             if (startParent.name == "Metal1")
             {
+                led.GetComponent<MeshRenderer>().material = ResourcesManager.red;
                 Debug.Log("CIRCUIT COMPLETE");
             }
             parentsLeft.Remove(startParent);

@@ -41,8 +41,8 @@ public class Wire
         };
 
         //NO BOX COLLIDER ??
-
         lineRenderer = lineObject.AddComponent<LineRenderer>();
+        lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lineRenderer.material = ResourcesManager.wireMaterial;
         lineRenderer.widthMultiplier = 0.1f;
         lineRenderer.positionCount = verticesAmount;

@@ -52,7 +52,7 @@ public class Breadboard
         {
             if (sign == -1 && p == outerP || sign == 1 && p == innerP)
                 material = ResourcesManager.blue;
-            else material = ResourcesManager.red;
+            else material = ResourcesManager.lightred;
             Vector3 position = new Vector3(positionBreadboard.x, size.y, positionBreadboard.z+p/2*sign);
             new MetalStrip(position, outsiderows, outsideSize, eachMetalSize, metals, margin, breadboardObject.transform.localScale, material, false);
             sign *= -1;

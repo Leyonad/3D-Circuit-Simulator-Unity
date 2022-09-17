@@ -16,6 +16,7 @@ Todo:
 [ ] different types of batteries
 [x] all connected wires get reached in an algorithm
 [x] get connections from one metal strip to another and to battery working
+[x] change color of led if circuit is complete
 [ ] can click on a wire and select it
 [ ] calculate mA whenever a resistor is being placed 
 

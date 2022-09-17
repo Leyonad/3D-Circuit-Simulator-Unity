@@ -2,24 +2,30 @@ using UnityEngine;
 
 public class ResourcesManager
 {
-    public static Material wireMaterial;
-    public static Material highlightWireMaterial;
-    public static Material metalMaterial;
+    public static Material white;
+    public static Material lightred;
     public static Material red;
     public static Material blue;
     public static Material yellow;
+
+    public static Material wireMaterial;
+    public static Material highlightWireMaterial;
+    public static Material metalMaterial;
     public static Material breadboardMaterial;
 
     public static GameObject prefabBattery9V;
 
     public static void LoadResources()
     {
-        wireMaterial = LoadMaterial("Wire_Material");
-        highlightWireMaterial = LoadMaterial("Highlight_Wire_Material");
-        metalMaterial = LoadMaterial("Breadboard_Metal_Normal_Material");
+        white = LoadMaterial("White");
+        lightred = LoadMaterial("Lightred");
         red = LoadMaterial("Red");
         blue = LoadMaterial("Blue");
         yellow = LoadMaterial("Yellow");
+
+        wireMaterial = LoadMaterial("Wire_Material");
+        highlightWireMaterial = LoadMaterial("Highlight_Wire_Material");
+        metalMaterial = LoadMaterial("Breadboard_Metal_Normal_Material");
         breadboardMaterial = LoadMaterial("Breadboard_Material");
 
         prefabBattery9V = LoadPrefab("Battery9V");
