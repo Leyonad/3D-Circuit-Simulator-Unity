@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.HID;
 
 public class WireManager : MonoBehaviour
 {
@@ -36,7 +39,7 @@ public class WireManager : MonoBehaviour
 
                 bool wirePossible = false;
                 if (hit.collider != null)
-                    if (isMetal(hit.collider.gameObject))
+                    if (IsMetal(hit.collider.gameObject))
                         wirePossible = true;
                 
                 if (wirePossible)
@@ -45,19 +48,16 @@ public class WireManager : MonoBehaviour
                     Wire.justCreated.endObject = hit.collider.gameObject;
                     if (Wire.justCreated.endObject != Wire.justCreated.startObject && WireAlreadyExists(Wire.justCreated.endObject) == null)
                     {
-                        //current metalstrip endObject = current metalstrip startObject
-                        if (hit.collider.gameObject.transform.parent.CompareTag("MetalStrip")) {
-                            float startCurrent;
-                            if (Wire.justCreated.startObject.transform.parent.CompareTag("MetalStrip"))
-                                startCurrent = Wire.justCreated.startObject.transform.parent.GetComponent<MetalStripProperties>().current;
-                            else
-                                startCurrent = Wire.justCreated.startObject.GetComponent<BatteryProperties>().current;
-                            hit.collider.gameObject.transform.parent.GetComponent<MetalStripProperties>().current = startCurrent;
-                        }
+                        //attach wire to attachedWires List of start/end object
+                        Wire.justCreated.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
+                        Wire.justCreated.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
 
                         Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
                         Wire.justCreated.UpdateLinesOfWire();
                         Wire._registry.Add(Wire.justCreated);
+
+                        //Update the electricity parameters of all wires
+                        UpdateElectricityParameters();
                     }
                     else Destroy(Wire.justCreated.lineObject);
                 }
@@ -68,13 +68,21 @@ public class WireManager : MonoBehaviour
             }
         }
 
+        //delete wire when pressing delete-key
         else if (Keyboard.current.deleteKey.wasReleasedThisFrame)
         {
             if (selectedWire != null)
             {
+                //remove wire from attachedWires List of start/end object
+                selectedWire.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
+                selectedWire.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
+
                 Wire._registry.Remove(selectedWire);
                 Destroy(selectedWire.lineObject);
                 selectedWire = null;
+
+                //Update the electricity parameters of all wires
+                UpdateElectricityParameters();
             }
         }
     }
@@ -93,13 +101,10 @@ public class WireManager : MonoBehaviour
         selectedWire = null;
     }
 
-    public static bool isMetal(GameObject obj)
+    public static bool IsMetal(GameObject obj)
     {
         if (obj.CompareTag("Metal"))
             return true;
-        if (obj.transform.parent != null)
-            if (obj.transform.parent.gameObject.CompareTag("Metals"))
-                return true;
         return false;
     }
 
@@ -119,13 +124,59 @@ public class WireManager : MonoBehaviour
         return null;
     }
 
-    public Vector3 RoundedVector(Vector3 vec)
+    private void UpdateElectricityParameters()
     {
-        vec *= 10f;
-        vec = new Vector3(Mathf.Round(vec.x), Mathf.Round(vec.y), Mathf.Round(vec.z));
-        vec /= 10f;
+        return;
+        GameObject startParent = null;
+        Wire startWire = null;
+        //reset all metalstrips and battery metals, except metal2 of the battery
+        foreach (Wire wire in Wire._registry)
+        {
+            if (wire.startObject.transform.parent.name != "Metal2") {
+                wire.startObject.transform.parent.GetComponent<Properties>().current = 0;
+            }
+            else {
+                startParent = wire.startObject.transform.parent.gameObject;
+                startWire = wire;
+            }
+            if (wire.endObject.transform.parent.name != "Metal2")  {
+                wire.endObject.transform.parent.GetComponent<Properties>().current = 0;
+            }
+            else {
+                startParent = wire.endObject.transform.parent.gameObject;
+                startWire = wire;
+            }
+        }
 
-        return vec;
+        if (startParent == null)
+            return;
+
+        RecursiveUpdateCurrent(startParent, startWire);
+    }
+
+    private void RecursiveUpdateCurrent(GameObject startParent, Wire startWire)
+    {
+        float startParentCurrent = startParent.GetComponent<Properties>().current;
+
+        foreach (Wire wire in startParent.GetComponent<Properties>().attachedWires)
+        {
+            if (wire != startWire) //doesnt work since the battery can only have one wire
+            {
+                //update startParent
+                if (startWire.endObject.transform.parent.gameObject != startParent)
+                    startParent = startWire.endObject.transform.parent.gameObject;
+                else 
+                    startParent = startWire.startObject.transform.parent.gameObject;
+
+                //update current
+                startParent.GetComponent<Properties>().current = startParentCurrent;
+
+                //update startWire
+                startWire = wire;
+
+                RecursiveUpdateCurrent(startParent, startWire);
+            }
+        }
     }
 
     private RaycastHit CastRay()

@@ -32,7 +32,13 @@ public class Wire
 
     private void CreateLineObject()
     {
-        lineObject = new GameObject($"wire{_registry.Count + 1} [{startObject}]");
+        lineObject = new GameObject($"wire{_registry.Count + 1} [{startObject}]")
+        {
+            tag = "Wire"
+        };
+
+        //NO BOX COLLIDER ??
+
         lineRenderer = lineObject.AddComponent<LineRenderer>();
         lineRenderer.material = ResourcesManager.wireMaterial;
         lineRenderer.widthMultiplier = 0.1f;
@@ -47,6 +53,21 @@ public class Wire
         lineRenderer.numCapVertices = 4;
 
         UpdateLinesOfWire();
+    }
+
+    public float HasCurrent()
+    {
+        if (this.startObject.transform.parent.GetComponent<Properties>().current != 0f)
+            return this.startObject.transform.parent.GetComponent<Properties>().current;
+        if (this.endObject.transform.parent.GetComponent<Properties>().current != 0f)
+            return this.endObject.transform.parent.GetComponent<Properties>().current;
+
+        return 0f;
+    }
+
+    public void SetCurrent(GameObject obj, float current)
+    {
+        obj.transform.parent.GetComponent<Properties>().current = current;
     }
 
     public void UpdateLinesOfWire()

@@ -10,6 +10,11 @@ TagManager:
   - Components
   - Metal
   - MetalStrip
+  - BatteryMetal
+  - NMB
+  - MBreadboardP
+  - MBreadboardN
+  - Wire
   layers:
   - Default
   - TransparentFX

@@ -14,7 +14,9 @@ Todo:
 [x] breadboard can be created in script with parameters
 [x] battery can be created in script 
 [ ] different types of batteries
-[x] get connections from one metal strip to another and to battery working
+[n] get connections from one metal strip to another and to battery working
+[ ] can click on a wire and select it
+[ ] calculate mA whenever a resistor is being placed 
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

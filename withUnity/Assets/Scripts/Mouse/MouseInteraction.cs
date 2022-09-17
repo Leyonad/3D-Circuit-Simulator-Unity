@@ -36,19 +36,19 @@ public class MouseInteraction : MonoBehaviour
                     if (!hit.collider.gameObject.CompareTag("Untagged"))
                     {
                         selectedObject = hit.collider.gameObject;
-                        
+
                         //do stuff if clicked on a metal 
-                        if (isMetal(selectedObject))
+                        if (IsMetal(selectedObject))
                         {
                             //create a wire if there is no wire attached to the selectedObject
                             Wire existingWire = WireAlreadyExists(selectedObject);
 
                             //print the current of the metal
                             if (selectedObject.CompareTag("BatteryMetal")) {
-                                Debug.Log(selectedObject.GetComponent<BatteryProperties>().current);
+                                Debug.Log(selectedObject.GetComponent<Properties>().current);
                             }
                             else {
-                                Debug.Log(selectedObject.transform.parent.gameObject.GetComponent<MetalStripProperties>().current);
+                                Debug.Log(selectedObject.transform.parent.gameObject.GetComponent<Properties>().current);
                             }
 
                             if (existingWire == null)
@@ -62,6 +62,12 @@ public class MouseInteraction : MonoBehaviour
                             {
                                 SelectWire(existingWire);
                             }
+                        }
+
+                        //NO BOX COLLIDER ??
+                        else if (selectedObject.CompareTag("Wire"))
+                        {
+                            Debug.Log(selectedObject);
                         }
                     }
                 }

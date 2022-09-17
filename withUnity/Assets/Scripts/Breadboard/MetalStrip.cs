@@ -24,7 +24,7 @@ public class MetalStrip
         //dont render the metalstrip object
         metalStripObject.GetComponent<MeshRenderer>().enabled = false;
 
-        metalStripObject.AddComponent<MetalStripProperties>();
+        metalStripObject.AddComponent<Properties>();
 
         float metalSize = eachMetalSize.x;
 
