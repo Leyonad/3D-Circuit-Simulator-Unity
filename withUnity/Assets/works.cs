@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
 
-public class WireManager : MonoBehaviour
+public class WireManager1 : MonoBehaviour
 {
     [SerializeField]
     public static Camera cam;
@@ -91,10 +91,9 @@ public class WireManager : MonoBehaviour
 
     private void UpdateElectricityParameters()
     {
-
-
+        //GameObject startParent = null;
+        Wire startWire = null;
         parentsLeft.Clear();
-        Debug.Log("\n START");
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -107,66 +106,87 @@ public class WireManager : MonoBehaviour
             {
                 if (wire.startObject.transform.parent.name == "Metal2")
                 {
-                    parentsLeft.Add(wire.startObject.transform.parent.gameObject);
+                    parentsLeft.Add(wire.endObject.transform.parent.gameObject);
+                    //startParent = wire.endObject.transform.parent.gameObject;
+                    //startWire = wire;
                     found = true;
                 }
                 if (wire.endObject.transform.parent.name == "Metal2")
                 {
-                    parentsLeft.Add(wire.endObject.transform.parent.gameObject);
+                    parentsLeft.Add(wire.startObject.transform.parent.gameObject);
+                    //startParent = wire.startObject.transform.parent.gameObject;
+                    //startWire = wire;
                     found = true;
                 }
             }
         }
-        for (int i = 0; i < parentsLeft.Count; i++)
+        Debug.Log(" ");
+        Debug.Log("START");
+        foreach (GameObject parentObject in parentsLeft)
         {
-            foreach (Wire wire in parentsLeft[i].GetComponent<Properties>().attachedWires)
+            foreach (Wire wire in parentObject.GetComponent<Properties>().attachedWires)
             {
                 if (!wire.updated)
                 {
-                    wire.updated = true;
-                    RecursiveUpdateCurrent(GetNextObject(parentsLeft[i], wire), wire);
+                    RecursiveUpdateCurrent(parentObject, wire);
                 }
             }
-            print("next parentobject: " + parentsLeft[i].transform.GetInstanceID());
         }
+        Debug.Log("\n PARENTS LEFT LIST ->");
+        foreach (GameObject parent in parentsLeft)
+            Debug.Log(parent.name);
+        Debug.Log("\n <- PARENTS LEFT LIST");
+        Debug.Log("END");
+        Debug.Log(" ");
     }
 
     private bool RecursiveUpdateCurrent(GameObject startParent, Wire startWire)
     {
-        print("startWire: " + startWire.lineObject.name);
-        print("startParent: " + startParent.transform.GetInstanceID());
-
-        int exit = 0;
-        List<Wire> notVisited = new List<Wire>();
-        foreach (Wire wire in startParent.GetComponent<Properties>().attachedWires) {
+        //stop if no exit wire exists
+        int count = 0;
+        foreach (Wire wire in startParent.GetComponent<Properties>().attachedWires)
+        {
             if (!wire.updated)
-            {
-                exit++;
-                notVisited.Add(wire);
-            }
+                count++;
         }
-
-        if (exit == 0) { //no exit
-            print("exit = 0");
-            parentsLeft.Remove(startParent);
+        //if (startParent.GetComponent<Properties>().attachedWires.Count == 1) {  
+        if (count == 1)
+        { //one entry
+            print("\n STOP ONLY ONE WIRE");
             return false;
         }
+        //wire has been visited
+        startWire.updated = true;
 
-        foreach (Wire wire in notVisited)
+        bool twoNextWires = false;
+        //if (startParent.GetComponent<Properties>().attachedWires.Count > 2) 
+        if (count > 2) //one entry, at least two exits
+            twoNextWires = true;
+        //with updated = false not count > 2
+
+        foreach (Wire wire in startParent.GetComponent<Properties>().attachedWires)
         {
-            wire.updated = true;
-            if (exit == 1) //one exit
+            Debug.Log("\n wirename: " + wire.lineObject.name);
+
+            if (!wire.updated)
             {
-                print("exit = 1");
-                parentsLeft.Remove(startParent);
+                if (!twoNextWires) //meaning one entry, one exit
+                {
+                    if (parentsLeft.Contains(startParent))
+                        parentsLeft.Remove(startParent);
+                    print("\n one entry one exit");
+                    return RecursiveUpdateCurrent(GetNextObject(startParent, wire), wire);
+                }
+
+                //if a wire found and its not the start wire, add the startparent to come back to it later
+                print("\n Wire found and added it");
+                parentsLeft.Add(startParent);
                 return RecursiveUpdateCurrent(GetNextObject(startParent, wire), wire);
             }
-
-            //multiple exits
-            print("multiple exits");
-            parentsLeft.Add(startParent);
-            return RecursiveUpdateCurrent(GetNextObject(startParent, wire), wire);
-            
+            else
+            {
+                print("\n already updated");
+            }
         }
         return false;
     }

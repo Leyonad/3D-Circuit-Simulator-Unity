@@ -14,6 +14,9 @@ public class Wire
     public LineRenderer lineRenderer;
     public static Wire justCreated;
 
+    //for updateElectricityParameters() to check if wire has been visited
+    public bool updated = false;
+
     public Wire(GameObject collideObject)
     {
         startObject = collideObject;

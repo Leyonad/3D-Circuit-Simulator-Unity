@@ -44,12 +44,12 @@ public class MouseInteraction : MonoBehaviour
                             Wire existingWire = WireAlreadyExists(selectedObject);
 
                             //print the current of the metal
-                            if (selectedObject.CompareTag("BatteryMetal")) {
+                            /*if (selectedObject.CompareTag("BatteryMetal")) {
                                 Debug.Log(selectedObject.GetComponent<Properties>().current);
                             }
                             else {
                                 Debug.Log(selectedObject.transform.parent.gameObject.GetComponent<Properties>().current);
-                            }
+                            }*/
 
                             if (existingWire == null)
                             {

@@ -14,6 +14,7 @@ Todo:
 [x] breadboard can be created in script with parameters
 [x] battery can be created in script 
 [ ] different types of batteries
+[x] all connected wires get reached in an algorithm
 [n] get connections from one metal strip to another and to battery working
 [ ] can click on a wire and select it
 [ ] calculate mA whenever a resistor is being placed 
