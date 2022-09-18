@@ -17,7 +17,7 @@ Todo:
 [x] get connections from one metal strip to another and to battery working
 [x] change color of led if circuit is complete
 [x] be able to remove the middle point of a wire so that its not a curve anymore
-[ ] be able to move a wire around if its selected
+[x] be able to move one end of wire around if its selected
 [ ] be able to move wires into a certain position
 [x] can click on a wire and select it
 [ ] different types of batteries
@@ -35,6 +35,8 @@ Bugs:
 [ ] metal can appear highlighted after cancelling making of wire
 [x] plane material and sky are not how they should be
 [x] after unselecting a wire its color should be the same as before
+[ ] color of wire is wrong after its made flat
+[ ] when trying to drag the wire thats attached to the battery its buggy
 
 Optimization:
 [x] only move component if delta is not zero
@@ -42,3 +44,4 @@ Optimization:
 [ ] maybe make WireAlreadyExists() more efficient
 [x] do i need the list verticesOfWire
 [x] Wire class needs its own file
+[ ] canClickThisFrame is inefficient since its value is set in Update()

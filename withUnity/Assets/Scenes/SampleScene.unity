@@ -29767,7 +29767,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedObject: {fileID: 0}
-  cam: {fileID: 2124332492}
   speed: 100
 --- !u!4 &1999427958
 Transform:

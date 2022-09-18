@@ -33,7 +33,7 @@ public class Wire
     public void WireFollowMouse(Wire justCreated)
     {
         Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Vector3 targetPosition = MouseInteraction.GetNewPosition(WireManager.cam, mousePosition, Vector2.zero, justCreated.lineRenderer.GetPosition(justCreated.verticesAmount - 1));
+        Vector3 targetPosition = MouseInteraction.GetNewPosition(mousePosition, Vector2.zero, justCreated.lineRenderer.GetPosition(justCreated.verticesAmount - 1));
 
         justCreated.lineRenderer.SetPosition(verticesAmount - 1, targetPosition);
         UpdateLinesOfWire();
@@ -46,7 +46,6 @@ public class Wire
             tag = "Wire"
         };
 
-        //NO BOX COLLIDER ??
         lineRenderer = lineObject.AddComponent<LineRenderer>();
         lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lineRenderer.material = ResourcesManager.wireMaterial;
@@ -166,5 +165,26 @@ public class Wire
         // B(t) = (1-t)^2*p0 + 2*(1-t)*t*p1 + t^2*p2 , 0 < t < 1
         Vector3 result = ((1 - t) * (1 - t)) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
         return result;
+    }
+
+    public static void UpdateWiresPosition(GameObject obj)
+    {
+        //this method updates the wire positions when a component is being moved
+        foreach (Wire wire in Wire._registry)
+        {
+            bool updateVertices = false;
+            if (wire.startObject.transform.IsChildOf(obj.transform))
+            {
+                wire.lineRenderer.SetPosition(0, wire.startObject.transform.position);
+                updateVertices = true;
+            }
+            if (wire.endObject.transform.IsChildOf(obj.transform))
+            {
+                wire.lineRenderer.SetPosition(wire.verticesAmount - 1, wire.endObject.transform.position);
+                updateVertices = true;
+            }
+            if (updateVertices)
+                wire.UpdateLinesOfWire();
+        }
     }
 }
