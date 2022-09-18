@@ -33,6 +33,7 @@ Bugs:
 [?] somehow its always kind of a double click
 [ ] metal can appear highlighted after cancelling making of wire
 [x] plane material and sky are not how they should be
+[x] after unselecting a wire its color should be the same as before
 
 Optimization:
 [x] only move component if delta is not zero

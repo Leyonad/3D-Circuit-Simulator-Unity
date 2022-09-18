@@ -8,6 +8,7 @@ public class WireManager : MonoBehaviour
     public int numCapVertices = 4;
 
     public static Wire selectedWire;
+    public static Material selectedWirePreviousMaterial;
 
     private List<GameObject> parentsLeft = new List<GameObject>();
 
@@ -174,7 +175,10 @@ public class WireManager : MonoBehaviour
 
     public static void SelectWire(Wire wire)
     {
+        if (wire == null)
+            return;
         selectedWire = wire;
+        selectedWirePreviousMaterial = wire.lineRenderer.material;
         selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
     }
 
@@ -182,8 +186,9 @@ public class WireManager : MonoBehaviour
     {
         if (selectedWire == null)
             return;
-        selectedWire.lineRenderer.material = ResourcesManager.wireMaterial;
+        selectedWire.lineRenderer.material = selectedWirePreviousMaterial;
         selectedWire = null;
+        selectedWirePreviousMaterial = null;
     }
 
     public static bool IsMetal(GameObject obj)
