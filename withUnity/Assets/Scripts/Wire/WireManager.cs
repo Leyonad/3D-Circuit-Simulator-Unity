@@ -84,6 +84,26 @@ public class WireManager : MonoBehaviour
                 UpdateElectricityParameters();
             }
         }
+
+        //make the wire flat if the F-key pressed
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if (selectedWire != null)
+            {
+                if (!selectedWire.flat)
+                {
+                    //make wire flat
+                    selectedWire.flat = true;
+                    selectedWire.MakeWireFlat();
+                }
+                else
+                {
+                    //back to curve
+                    selectedWire.flat = false;
+                    selectedWire.MakeWireCurve();
+                }
+            }
+        }
     }
 
     private void UpdateElectricityParameters()

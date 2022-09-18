@@ -5,8 +5,8 @@ using UnityEngine.InputSystem;
 public class Wire
 {
     public static List<Wire> _registry = new List<Wire>();
-
-    public int verticesAmount = 20;
+    public static int defaultVerticesAmount = 20;
+    public int verticesAmount = defaultVerticesAmount;
     private int middlePointHeight = 8;
     public GameObject startObject;
     public GameObject endObject;
@@ -19,6 +19,9 @@ public class Wire
 
     //for updateElectricityParameters() to check if wire has been visited
     public bool updated = false;
+
+    public bool flat = false;
+    public static float flatHeight = 1.25f;
 
     public Wire(GameObject collideObject)
     {
@@ -93,8 +96,46 @@ public class Wire
         }
     }
 
+    public void MakeWireFlat()
+    {
+        Vector3 vec3FlatHeight = Vector3.up * flatHeight;
+        Vector3[] temp = {
+                        lineRenderer.GetPosition(0),
+                        new Vector3(lineRenderer.GetPosition(0).x, vec3FlatHeight.y, lineRenderer.GetPosition(0).z),
+                        new Vector3(lineRenderer.GetPosition(verticesAmount-1).x, vec3FlatHeight.y, lineRenderer.GetPosition(verticesAmount-1).z),
+                        lineRenderer.GetPosition(verticesAmount - 1)
+                    };
+        verticesAmount = 4;
+        lineRenderer.positionCount = 4;
+        lineRenderer.SetPositions(temp);
+        UpdateMeshOfWire();
+    }
+
+    public void MakeWireCurve()
+    {
+        Vector3 startPos = lineRenderer.GetPosition(0);
+        Vector3 endPos = lineRenderer.GetPosition(verticesAmount - 1);
+
+        verticesAmount = defaultVerticesAmount;
+        lineRenderer.positionCount = 0;
+        lineRenderer.positionCount = defaultVerticesAmount;
+        lineRenderer.SetPosition(0, startPos);
+        lineRenderer.SetPosition(verticesAmount-1, endPos);
+        UpdateLinesOfWire();
+        UpdateMeshOfWire();
+    }
+
     public void UpdateLinesOfWire()
     {
+        if (flat)
+        {
+            Vector3 vec3FlatHeight = Vector3.up * flatHeight;
+            lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(0).x, vec3FlatHeight.y, lineRenderer.GetPosition(0).z));
+            lineRenderer.SetPosition(verticesAmount-2, new Vector3(lineRenderer.GetPosition(verticesAmount-1).x, vec3FlatHeight.y, lineRenderer.GetPosition(verticesAmount-1).z));
+            UpdateMeshOfWire();
+            return;
+        }
+
         Vector3 pos1 = lineRenderer.GetPosition(0);
         Vector3 pos2 = lineRenderer.GetPosition(verticesAmount - 1);
 

@@ -16,6 +16,7 @@ Todo:
 [x] all connected wires get reached in an algorithm
 [x] get connections from one metal strip to another and to battery working
 [x] change color of led if circuit is complete
+[x] be able to remove the middle point of a wire so that its not a curve anymore
 [ ] be able to move a wire around if its selected
 [ ] be able to move wires into a certain position
 [x] can click on a wire and select it
