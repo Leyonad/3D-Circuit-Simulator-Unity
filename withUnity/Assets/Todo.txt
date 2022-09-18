@@ -17,11 +17,12 @@ Todo:
 [x] get connections from one metal strip to another and to battery working
 [x] change color of led if circuit is complete
 [x] be able to remove the middle point of a wire so that its not a curve anymore
-[x] be able to move one end of wire around if its selected
+[?] be able to move one end of wire around if its selected
 [ ] be able to move wires into a certain position
 [x] can click on a wire and select it
 [ ] different types of batteries
 [ ] calculate mA whenever a resistor is being placed 
+[x] change the height of the middle point of a wire by clicking on the wire and dragging it
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -31,12 +32,12 @@ Bugs:
 [x] apparently no tag on parent object when creating a wire
 [x] points are buggy when creating a wire 
 [x] wire can be attached to its own gameobject
-[?] somehow its always kind of a double click
+[x] somehow its always kind of a double click
 [ ] metal can appear highlighted after cancelling making of wire
 [x] plane material and sky are not how they should be
 [x] after unselecting a wire its color should be the same as before
 [ ] color of wire is wrong after its made flat
-[ ] when trying to drag the wire thats attached to the battery its buggy
+[ ] when trying to drag the startobject part of the wire the other part moves
 
 Optimization:
 [x] only move component if delta is not zero

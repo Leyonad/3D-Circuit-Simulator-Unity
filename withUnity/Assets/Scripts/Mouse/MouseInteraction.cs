@@ -11,7 +11,8 @@ public class MouseInteraction : MonoBehaviour
 
     private Vector2 previousPosition = Vector2.zero;
 
-    public static bool dragWire = false;
+    public bool changeMiddlePoint = false;
+    readonly public static float changeMiddlePointSpeed = 0.05f;
 
     //make a reference scripts
     CameraController cameraController;
@@ -39,7 +40,7 @@ public class MouseInteraction : MonoBehaviour
                     if (IsMetal(selectedObject))
                     {
                         //create a wire if there is no wire attached to the selectedObject
-                        Wire existingWire = WireAlreadyExists(selectedObject);
+                        Wire existingWire = GetWireInMetal(selectedObject);
 
                         if (existingWire == null)
                         {
@@ -53,9 +54,6 @@ public class MouseInteraction : MonoBehaviour
                         {
                             if (existingWire != WireManager.selectedWire)
                                 SelectWire(existingWire);
-                            //if the wire is already selected, it can be dragged around
-                            else
-                                DragOneEndAround(selectedObject, existingWire);
                             selectedObject = null;
                             return;
                         }
@@ -70,6 +68,8 @@ public class MouseInteraction : MonoBehaviour
                             if (wire.lineRenderer.GetPosition(0) == pos)
                             {
                                 SelectWire(wire);
+                                changeMiddlePoint = true;
+                                previousPosition = Mouse.current.position.ReadValue();
                                 return;
                             }
                         }
@@ -114,29 +114,29 @@ public class MouseInteraction : MonoBehaviour
                 Wire.UpdateWiresPosition(selectedObject);
             }
         }
-    }
+        else if (WireManager.selectedWire != null)
+        {
+            if (changeMiddlePoint && Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                changeMiddlePoint = false;
+                WireManager.selectedWire.UpdateMeshOfWire();
+            }
 
-    private void DragOneEndAround(GameObject obj, Wire wire)
-    {
-        dragWire = true;
-        if (obj == wire.startObject) {
-            FlipStartEndOfWire(wire);
+            //change middle point height
+            else if (changeMiddlePoint)
+            {
+                Vector2 mousePos = Mouse.current.position.ReadValue();
+                if (mousePos != previousPosition)
+                {
+                    float delta = (mousePos.y - previousPosition.y) * changeMiddlePointSpeed;
+                    previousPosition = mousePos;
+                    float targetPositionY = Mathf.Min(Wire.maxMiddlePointHeight, Mathf.Max(Wire.minMiddlePointHeight, WireManager.selectedWire.middlePointHeight + delta));
+                    WireManager.selectedWire.middlePointHeight = targetPositionY;
+                    WireManager.selectedWire.UpdateLinesOfWire();
+                }
+            }
         }
-        Wire.justCreated = wire;
-    }
-        
-    private void FlipStartEndOfWire(Wire wire)
-    {
-        GameObject temp = wire.startObject;
-        wire.startObject = wire.endObject;
-        wire.endObject = temp;
-    }
 
-    public static void ResetDragWire(Wire wire)
-    {
-        wire.lineRenderer.SetPosition(wire.verticesAmount - 1, wire.endObject.transform.position);
-        wire.UpdateLinesOfWire();
-        wire.UpdateMeshOfWire();
     }
 
     public bool MoveObjectToPosition(GameObject obj)

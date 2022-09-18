@@ -26,7 +26,7 @@ public class WireManager : MonoBehaviour
         {
             Wire.justCreated.WireFollowMouse(Wire.justCreated);
 
-            //cancel creation of a new wire by destroying it
+            //cancel creation of a new wire
             if (Mouse.current.rightButton.wasPressedThisFrame)
             {
                 ResetWire();
@@ -34,7 +34,7 @@ public class WireManager : MonoBehaviour
                 return;
             }
             //finish creation of a new wire by adding it to _registry
-            else if (Mouse.current.leftButton.wasPressedThisFrame)
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 canClickThisFrame = false;
 
@@ -44,42 +44,25 @@ public class WireManager : MonoBehaviour
                 bool wirePossible = false;
                 if (hit.collider != null)
                     if (IsMetal(hit.collider.gameObject))
-                        wirePossible = true;
+                        if (hit.collider.gameObject != Wire.justCreated.startObject)
+                            if (GetWireInMetal(hit.collider.gameObject) == null)
+                                wirePossible = true;
 
                 if (wirePossible)
                 {
-                    //Check if the wire doesnt already exist
-                    if (hit.collider.gameObject != Wire.justCreated.startObject && WireAlreadyExists(hit.collider.gameObject) == null)
-                    {
-                        Wire.justCreated.endObject = hit.collider.gameObject;
-                        if (MouseInteraction.dragWire)
-                        {
-                            //remove the wire from its old parent gameobject
-                            Wire.justCreated.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(Wire.justCreated);
-                        }
-                        //attach wire to attachedWires List of start/end object
-                        else
-                        {
-                            //if dragging a wire, it is already attached to a startobject
-                            Wire.justCreated.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
-                        }
-                        Wire.justCreated.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
+                    Wire.justCreated.endObject = hit.collider.gameObject;
+                    
+                    Wire.justCreated.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
+                    Wire.justCreated.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
 
-                        Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
-                        Wire.justCreated.UpdateLinesOfWire();
-                        Wire.justCreated.UpdateMeshOfWire();
+                    Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
+                    Wire.justCreated.UpdateLinesOfWire();
+                    Wire.justCreated.UpdateMeshOfWire();
+                    Wire._registry.Add(Wire.justCreated);
 
-                        //dont add the wire again since its already there, only when making a new wire
-                        if (!MouseInteraction.dragWire)
-                        {
-                            Wire._registry.Add(Wire.justCreated);
-                        }
-                        else MouseInteraction.dragWire = false;
-                        print("NEW");
-                        //Update the electricity parameters of all wires
-                        UpdateElectricityParameters();
-                        Wire.justCreated = null;
-                    }
+                    //Update the electricity parameters of all wires
+                    UpdateElectricityParameters();
+                    Wire.justCreated = null;
                 }
             }
         }
@@ -125,13 +108,6 @@ public class WireManager : MonoBehaviour
 
     private void ResetWire()
     {
-        //set the last line position of the drag wire back to its previous position
-        if (MouseInteraction.dragWire)
-        {
-            MouseInteraction.dragWire = false;
-            MouseInteraction.ResetDragWire(Wire.justCreated);
-            return;
-        }
         //if its a new wire, delete it
         Destroy(Wire.justCreated.lineObject);
     }
@@ -227,6 +203,7 @@ public class WireManager : MonoBehaviour
     {
         if (wire == null)
             return;
+        UnselectWire();
         selectedWire = wire;
         selectedWirePreviousMaterial = wire.lineRenderer.material;
         selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
@@ -250,14 +227,14 @@ public class WireManager : MonoBehaviour
         return false;
     }
 
-    public static Wire WireAlreadyExists(GameObject wireToObject)
+    public static Wire GetWireInMetal(GameObject metal)
     {
         foreach (Wire existingWire in Wire._registry)
         {
-            if (wireToObject == existingWire.startObject
-                || wireToObject == existingWire.endObject
-                || wireToObject == existingWire.startObject
-                || wireToObject == existingWire.endObject)
+            if (metal == existingWire.startObject
+                || metal == existingWire.endObject
+                || metal == existingWire.startObject
+                || metal == existingWire.endObject)
             {
                 //Debug.Log("WIRE ALREADY EXISTS!");
                 return existingWire;

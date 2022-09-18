@@ -7,7 +7,11 @@ public class Wire
     public static List<Wire> _registry = new List<Wire>();
     public static int defaultVerticesAmount = 20;
     public int verticesAmount = defaultVerticesAmount;
-    private int middlePointHeight = 8;
+
+    public float middlePointHeight = 4;
+    public static float minMiddlePointHeight = 2f;
+    public static float maxMiddlePointHeight = 12f;
+
     public GameObject startObject;
     public GameObject endObject;
     public GameObject lineObject;
@@ -30,12 +34,12 @@ public class Wire
         justCreated = this;
     }
 
-    public void WireFollowMouse(Wire justCreated)
+    public void WireFollowMouse(Wire wire)
     {
         Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Vector3 targetPosition = MouseInteraction.GetNewPosition(mousePosition, Vector2.zero, justCreated.lineRenderer.GetPosition(justCreated.verticesAmount - 1));
+        Vector3 targetPosition = MouseInteraction.GetNewPosition(mousePosition, Vector2.zero, wire.lineRenderer.GetPosition(justCreated.verticesAmount - 1));
 
-        justCreated.lineRenderer.SetPosition(verticesAmount - 1, targetPosition);
+        wire.lineRenderer.SetPosition(verticesAmount - 1, targetPosition);
         UpdateLinesOfWire();
     }
 
@@ -138,8 +142,7 @@ public class Wire
         Vector3 pos1 = lineRenderer.GetPosition(0);
         Vector3 pos2 = lineRenderer.GetPosition(verticesAmount - 1);
 
-        if (pos2 == pos1) return;
-
+        if (pos2 == pos1) return; 
         Vector3 middle = (pos1 + pos2) / 2;
         middle.y = middlePointHeight;
         Vector3[] positions = CalculateVertices(pos1, middle, pos2, verticesAmount);
@@ -186,5 +189,12 @@ public class Wire
             if (updateVertices)
                 wire.UpdateLinesOfWire();
         }
+    }
+
+    public void FlipStartEndOfWire()
+    {
+        Vector3 temp = lineRenderer.GetPosition(0);
+        lineRenderer.SetPosition(0, lineRenderer.GetPosition(verticesAmount - 1));
+        lineRenderer.SetPosition(verticesAmount - 1, temp);
     }
 }
