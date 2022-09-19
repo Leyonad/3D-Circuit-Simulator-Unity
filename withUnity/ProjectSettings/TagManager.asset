@@ -12,7 +12,10 @@ TagManager:
   - MetalStrip
   - BatteryMetal
   - Wire
-  - LED
+  - NMB
+  - MBreadboardP
+  - MBreadboardN
+  - Item
   layers:
   - Default
   - TransparentFX

@@ -87,7 +87,7 @@ public class Wire
 
     public void UpdateMeshOfWire()
     {
-        lineRenderer.BakeMesh(mesh, WireManager.cam);
+        lineRenderer.BakeMesh(mesh, GameManager.cam);
         meshCollider.sharedMesh = mesh;
     }
 

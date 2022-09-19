@@ -6,42 +6,67 @@ public class MouseInteraction : MonoBehaviour
 {
     public GameObject selectedObject;
     private Vector2 offsetOnScreen;
-    public static Camera cam;
-    public float speed = 100;
+    public readonly float speed = 100;
 
     private Vector2 previousPosition = Vector2.zero;
 
     public bool changeMiddlePoint = false;
-    readonly public static float changeMiddlePointSpeed = 0.05f;
-
-    //make a reference scripts
-    CameraController cameraController;
-
-    private void Start()
-    {
-        cameraController = FindObjectOfType<CameraController>();
-        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-    }
+    public readonly static float changeMiddlePointSpeed = 0.05f;
 
     void Update(){
-        if(cameraController.dragginTheCamera)
+
+        if(CameraController.dragginTheCamera && Wire.justCreated == null)
             return;
 
-        if (Mouse.current.leftButton.wasPressedThisFrame && canClickThisFrame)
+        if (Wire.justCreated != null)
         {
-            RaycastHit hit = CastRay();
+            Wire.justCreated.WireFollowMouse(Wire.justCreated);
+        }
+        else if (selectedObject != null)
+        {
+            Cursor.visible = false;
+            if (MoveObjectToPosition(selectedObject))
+            {
+                Wire.UpdateWiresPosition(selectedObject);
+            }
+        }
+        else if (selectedWire != null)
+        {
+            if (changeMiddlePoint)
+            {
+                Vector2 mousePos = Mouse.current.position.ReadValue();
+                if (mousePos != previousPosition)
+                {
+                    float delta = (mousePos.y - previousPosition.y) * changeMiddlePointSpeed;
+                    previousPosition = mousePos;
+                    float targetPositionY = Mathf.Min(Wire.maxMiddlePointHeight, Mathf.Max(Wire.minMiddlePointHeight, WireManager.selectedWire.middlePointHeight + delta));
+                    selectedWire.middlePointHeight = targetPositionY;
+                    selectedWire.UpdateLinesOfWire();
+                }
+            }
+        }
+        else if (ItemManager.selectedItem != null)
+        {
+            
+        }
 
+        //------------LEFT BUTTON PRESSED-------------
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (selectedObject != null)
+                offsetOnScreen = GetOffsetOfObject(selectedObject);
+
+            RaycastHit hit = CastRay();
             if (hit.collider != null)
             {
-                if (!hit.collider.gameObject.CompareTag("Untagged"))
+                selectedObject = hit.collider.gameObject;
+                if (IsMetal(selectedObject))
                 {
-                    selectedObject = hit.collider.gameObject;
-                    //do stuff if clicked on a metal 
-                    if (IsMetal(selectedObject))
+                    //start creating a new wire
+                    if (Wire.justCreated == null)
                     {
                         //create a wire if there is no wire attached to the selectedObject
-                        Wire existingWire = GetWireInMetal(selectedObject);
-
+                        Wire existingWire = GetWireInMetal(selectedObject); 
                         if (existingWire == null)
                         {
                             UnselectWire();
@@ -49,63 +74,96 @@ public class MouseInteraction : MonoBehaviour
                             selectedObject = null;
                             return;
                         }
-                        //else select the wire that already exists
-                        else
+                        //else select the wire that already exists and dont create a new wire
+                        else if (existingWire != selectedWire)
+                            SelectWire(existingWire);
+                        selectedObject = null;
+                        return;
+                    }
+
+                    //finish creation of a new wire
+                    else
+                    {
+                        bool wirePossible = false;
+                        if (hit.collider.gameObject != Wire.justCreated.startObject)
+                            if (GetWireInMetal(hit.collider.gameObject) == null)
+                                wirePossible = true;
+
+                        if (wirePossible)
                         {
-                            if (existingWire != WireManager.selectedWire)
-                                SelectWire(existingWire);
+                            Wire.justCreated.endObject = hit.collider.gameObject;
+
+                            Wire.justCreated.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
+                            Wire.justCreated.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
+
+                            Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
+                            Wire.justCreated.UpdateLinesOfWire();
+                            Wire.justCreated.UpdateMeshOfWire();
+                            Wire._registry.Add(Wire.justCreated);
+
+                            //Update the electricity parameters of all wires
+                            UpdateElectricityParameters();
+                            Wire.justCreated = null;
                             selectedObject = null;
                             return;
                         }
                     }
-                    //clicked on a wire
-                    else if (hit.collider.GetComponent<LineRenderer>() != null)
+                }
+                //clicked on a wire
+                else if (IsWire(hit.collider))
+                {
+                    selectedObject = null;
+                    Vector3 pos = hit.collider.GetComponent<LineRenderer>().GetPosition(0);
+                    foreach (Wire wire in Wire._registry)
                     {
-                        selectedObject = null;
-                        Vector3 pos = hit.collider.GetComponent<LineRenderer>().GetPosition(0);
-                        foreach (Wire wire in Wire._registry)
+                        if (wire.lineRenderer.GetPosition(0) == pos)
                         {
-                            if (wire.lineRenderer.GetPosition(0) == pos)
-                            {
-                                SelectWire(wire);
-                                changeMiddlePoint = true;
-                                previousPosition = Mouse.current.position.ReadValue();
-                                return;
-                            }
+                            SelectWire(wire);
+                            changeMiddlePoint = true;
+                            previousPosition = Mouse.current.position.ReadValue();
+                            return;
                         }
                     }
-                    else UnselectWire();
+                }
+                //clicked on an item
+                else if (IsItem(selectedObject))
+                {
+                    ItemManager.selectedItem = selectedObject;
+                    selectedObject = null;
                 }
                 else UnselectWire();
             }
-            else return;
+        }
 
+        //-----------LEFT BUTTON RELEASED-------------
+        else if (Mouse.current.leftButton.wasReleasedThisFrame)
+        {
             if (selectedObject != null)
             {
-                Cursor.visible = false;
-                offsetOnScreen = GetOffsetOfObject(selectedObject);
-            }
-        }
-        else if (Mouse.current.middleButton.wasReleasedThisFrame)
-        {
-            Wire.UpdateAllMeshes();
-        }
-
-        //drag the object if there is a selected object
-        if (selectedObject != null){
-            if (Mouse.current.leftButton.wasReleasedThisFrame){
                 selectedObject = null;
                 Cursor.visible = true;
                 Wire.UpdateAllMeshes();
                 return;
             }
-
-            if (MoveObjectToPosition(selectedObject)) {
-                Wire.UpdateWiresPosition(selectedObject);
+            else if (selectedWire != null)
+            {
+                if (changeMiddlePoint )
+                changeMiddlePoint = false;
+                selectedWire.UpdateMeshOfWire();
             }
+        }
 
-            //rotation on right click
-            if (Mouse.current.rightButton.wasPressedThisFrame){
+        //-----------RIGHT BUTTON PRESSED-------------
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            if (Wire.justCreated != null) {
+                //cancel creation of a new wire
+                ResetWire();
+                Wire.justCreated = null;
+                return;
+            }
+            else if (selectedObject != null){
+                //rotation on right click
                 selectedObject.transform.rotation = Quaternion.Euler(new Vector3(
                     selectedObject.transform.rotation.eulerAngles.x,
                     selectedObject.transform.rotation.eulerAngles.y + 90f,
@@ -114,29 +172,51 @@ public class MouseInteraction : MonoBehaviour
                 Wire.UpdateWiresPosition(selectedObject);
             }
         }
-        else if (WireManager.selectedWire != null)
-        {
-            if (changeMiddlePoint && Mouse.current.leftButton.wasReleasedThisFrame)
-            {
-                changeMiddlePoint = false;
-                WireManager.selectedWire.UpdateMeshOfWire();
-            }
 
-            //change middle point height
-            else if (changeMiddlePoint)
+        //----------MIDDLE BUTTON RELEASED-------------
+        else if (Mouse.current.middleButton.wasReleasedThisFrame)
+        {
+            Wire.UpdateAllMeshes();
+        }
+
+        //----------KEYBOARD BUTTONS PRESSED------------
+        //delete wire when pressing delete-key
+        if (Keyboard.current.deleteKey.wasPressedThisFrame)
+        {
+            if (selectedWire != null)
             {
-                Vector2 mousePos = Mouse.current.position.ReadValue();
-                if (mousePos != previousPosition)
-                {
-                    float delta = (mousePos.y - previousPosition.y) * changeMiddlePointSpeed;
-                    previousPosition = mousePos;
-                    float targetPositionY = Mathf.Min(Wire.maxMiddlePointHeight, Mathf.Max(Wire.minMiddlePointHeight, WireManager.selectedWire.middlePointHeight + delta));
-                    WireManager.selectedWire.middlePointHeight = targetPositionY;
-                    WireManager.selectedWire.UpdateLinesOfWire();
-                }
+                //remove wire from attachedWires List of start/end object
+                selectedWire.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
+                selectedWire.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
+
+                Wire._registry.Remove(selectedWire);
+                Destroy(selectedWire.lineObject);
+                selectedWire = null;
+
+                //Update the electricity parameters of all wires
+                UpdateElectricityParameters();
             }
         }
 
+        //make the wire flat if the F-key pressed
+        else if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if (selectedWire != null)
+            {
+                if (!selectedWire.flat)
+                {
+                    //make wire flat
+                    selectedWire.flat = true;
+                    selectedWire.MakeWireFlat();
+                }
+                else
+                {
+                    //back to curve
+                    selectedWire.flat = false;
+                    selectedWire.MakeWireCurve();
+                }
+            }
+        }
     }
 
     public bool MoveObjectToPosition(GameObject obj)
@@ -157,16 +237,16 @@ public class MouseInteraction : MonoBehaviour
         //calculate the offset of the position where the mouse is clicked and 
         //the actual screen position of the object
         Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Vector2 screenPoint = cam.WorldToScreenPoint(obj.transform.position);
+        Vector2 screenPoint = GameManager.cam.WorldToScreenPoint(obj.transform.position);
         return mousePosition - screenPoint;
     }
 
     public static Vector3 GetNewPosition(Vector2 mousePosition, Vector2 offset, Vector3 toUpdatePosition){
-        Vector3 screenPoint = cam.WorldToScreenPoint(toUpdatePosition);
+        Vector3 screenPoint = GameManager.cam.WorldToScreenPoint(toUpdatePosition);
 
         //calculate the target world position based on the mouse input
         Vector3 screenPosition = new Vector3(mousePosition.x- offset.x, mousePosition.y-offset.y, screenPoint.z);
-        Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
+        Vector3 worldPosition = GameManager.cam.ScreenToWorldPoint(screenPosition);
         
         Vector3 targetPosition = new Vector3(worldPosition.x, toUpdatePosition.y, worldPosition.z);
         return targetPosition;
@@ -177,17 +257,17 @@ public class MouseInteraction : MonoBehaviour
         Vector3 screenMousePosFar = new Vector3(
             mousePosition.x,
             mousePosition.y,
-            cam.farClipPlane
+            GameManager.cam.farClipPlane
         );
 
         Vector3 screenMousePosNear = new Vector3(
             mousePosition.x,
             mousePosition.y,
-            cam.nearClipPlane
+            GameManager.cam.nearClipPlane
         );
 
-        Vector3 worldMousePosFar = cam.ScreenToWorldPoint(screenMousePosFar);
-        Vector3 worldMousePosNear = cam.ScreenToWorldPoint(screenMousePosNear);
+        Vector3 worldMousePosFar = GameManager.cam.ScreenToWorldPoint(screenMousePosFar);
+        Vector3 worldMousePosNear = GameManager.cam.ScreenToWorldPoint(screenMousePosNear);
 
         Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out RaycastHit hit);
 

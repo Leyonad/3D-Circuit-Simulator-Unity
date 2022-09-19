@@ -1,118 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class WireManager : MonoBehaviour
 {
-    public static Camera cam;
     public int numCapVertices = 4;
 
     public static Wire selectedWire;
     public static Material selectedWirePreviousMaterial;
 
-    private List<GameObject> parentsLeft = new List<GameObject>();
+    private static List<GameObject> parentsLeft = new List<GameObject>();
 
     public static bool canClickThisFrame = true;
 
-    private void Start()
-    {
-        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-    }
-
-    private void Update()
-    {
-        canClickThisFrame = true;
-        if (Wire.justCreated != null)
-        {
-            Wire.justCreated.WireFollowMouse(Wire.justCreated);
-
-            //cancel creation of a new wire
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-            {
-                ResetWire();
-                Wire.justCreated = null;
-                return;
-            }
-            //finish creation of a new wire by adding it to _registry
-            if (Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                canClickThisFrame = false;
-
-                //check if clicked on a gameobject
-                RaycastHit hit = MouseInteraction.CastRay();
-
-                bool wirePossible = false;
-                if (hit.collider != null)
-                    if (IsMetal(hit.collider.gameObject))
-                        if (hit.collider.gameObject != Wire.justCreated.startObject)
-                            if (GetWireInMetal(hit.collider.gameObject) == null)
-                                wirePossible = true;
-
-                if (wirePossible)
-                {
-                    Wire.justCreated.endObject = hit.collider.gameObject;
-                    
-                    Wire.justCreated.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
-                    Wire.justCreated.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
-
-                    Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
-                    Wire.justCreated.UpdateLinesOfWire();
-                    Wire.justCreated.UpdateMeshOfWire();
-                    Wire._registry.Add(Wire.justCreated);
-
-                    //Update the electricity parameters of all wires
-                    UpdateElectricityParameters();
-                    Wire.justCreated = null;
-                }
-            }
-        }
-
-        //delete wire when pressing delete-key
-        else if (Keyboard.current.deleteKey.wasPressedThisFrame)
-        {
-            if (selectedWire != null)
-            {
-                //remove wire from attachedWires List of start/end object
-                selectedWire.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
-                selectedWire.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
-
-                Wire._registry.Remove(selectedWire);
-                Destroy(selectedWire.lineObject);
-                selectedWire = null;
-
-                //Update the electricity parameters of all wires
-                UpdateElectricityParameters();
-            }
-        }
-
-        //make the wire flat if the F-key pressed
-        else if (Keyboard.current.fKey.wasPressedThisFrame)
-        {
-            if (selectedWire != null)
-            {
-                if (!selectedWire.flat)
-                {
-                    //make wire flat
-                    selectedWire.flat = true;
-                    selectedWire.MakeWireFlat();
-                }
-                else
-                {
-                    //back to curve
-                    selectedWire.flat = false;
-                    selectedWire.MakeWireCurve();
-                }
-            }
-        }
-    }
-
-    private void ResetWire()
+    public static void ResetWire()
     {
         //if its a new wire, delete it
         Destroy(Wire.justCreated.lineObject);
     }
 
-    private void UpdateElectricityParameters()
+    public static void UpdateElectricityParameters()
     {
         parentsLeft.Clear();
 
@@ -152,7 +58,7 @@ public class WireManager : MonoBehaviour
         }
     }
 
-    private bool RecursiveUpdateCurrent(GameObject startParent)
+    private static bool RecursiveUpdateCurrent(GameObject startParent)
     {
         int exit = 0;
         List<Wire> notVisited = new List<Wire>();
@@ -191,7 +97,7 @@ public class WireManager : MonoBehaviour
         return false;
     }
 
-    private GameObject GetNextObject(GameObject startParent, Wire wire)
+    private static GameObject GetNextObject(GameObject startParent, Wire wire)
     {
         if (wire.startObject.transform.parent.gameObject == startParent)
             return wire.endObject.transform.parent.gameObject;
@@ -226,6 +132,25 @@ public class WireManager : MonoBehaviour
             return true;
         return false;
     }
+
+    public static bool IsItem(GameObject obj)
+    {
+        if (obj == null) return false;
+
+        if (obj.CompareTag("Item")) 
+            return true;
+        return false;
+    }
+
+    public static bool IsWire(Collider collider)
+    {
+        if (collider == null) return false;
+
+        if (collider.GetComponent<LineRenderer>() != null)
+            return true;
+        return false;
+    }
+
 
     public static Wire GetWireInMetal(GameObject metal)
     {

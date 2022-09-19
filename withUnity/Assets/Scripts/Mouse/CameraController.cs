@@ -3,8 +3,6 @@ using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] Camera cam;
-
     private CameraControlActions cameraActions;
     private InputAction movement;
     private Transform cameraTransform;
@@ -50,7 +48,7 @@ public class CameraController : MonoBehaviour
 
     //tracks where the dragging action started
     Vector3 startDrag;
-    public bool dragginTheCamera = false;
+    public static bool dragginTheCamera = false;
 
     private void Awake()
     {
@@ -150,7 +148,7 @@ public class CameraController : MonoBehaviour
     private void ZoomCamera(InputAction.CallbackContext inputValue)
     {
         float value = inputValue.ReadValue<Vector2>().y;
-        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
+        GameManager.cam.orthographicSize = Mathf.Clamp(GameManager.cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
     }
 
 
@@ -192,7 +190,7 @@ public class CameraController : MonoBehaviour
         dragginTheCamera = true;
 
         Plane plane = new Plane(Vector3.up, Vector3.zero);
-        Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Ray ray = GameManager.cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         if(plane.Raycast(ray, out float distance))
         {

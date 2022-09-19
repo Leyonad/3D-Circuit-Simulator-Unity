@@ -23,6 +23,8 @@ Todo:
 [ ] different types of batteries
 [ ] calculate mA whenever a resistor is being placed 
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
+[ ] make a led in blender
+[n] handle item movement
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -46,3 +48,4 @@ Optimization:
 [x] do i need the list verticesOfWire
 [x] Wire class needs its own file
 [ ] canClickThisFrame is inefficient since its value is set in Update()
+[x] code clear up wireManager and MouseInteraction
