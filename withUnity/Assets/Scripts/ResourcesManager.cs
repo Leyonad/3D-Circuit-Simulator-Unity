@@ -14,6 +14,7 @@ public class ResourcesManager
     public static Material breadboardMaterial;
 
     public static GameObject prefabBattery9V;
+    public static GameObject prefabLED;
 
     public static void LoadResources()
     {
@@ -29,6 +30,7 @@ public class ResourcesManager
         breadboardMaterial = LoadMaterial("Breadboard_Material");
 
         prefabBattery9V = LoadPrefab("Battery9V");
+        prefabLED = LoadPrefab("LED");
     }
 
     private static Material LoadMaterial(string name)

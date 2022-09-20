@@ -3,6 +3,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static Camera cam;
+    public static int tabItem = 0;
 
     private void Awake()
     {

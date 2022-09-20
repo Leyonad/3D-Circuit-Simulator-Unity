@@ -24,7 +24,7 @@ Todo:
 [ ] calculate mA whenever a resistor is being placed 
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
 [ ] make a led in blender
-[n] handle item movement
+[x] can make LEDs instead of wires (switch with tab-key)
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -39,7 +39,8 @@ Bugs:
 [x] plane material and sky are not how they should be
 [x] after unselecting a wire its color should be the same as before
 [ ] color of wire is wrong after its made flat
-[ ] when trying to drag the startobject part of the wire the other part moves
+[ ] cant drag component properly
+[n] LED is on the wrong position when moving the mouse
 
 Optimization:
 [x] only move component if delta is not zero

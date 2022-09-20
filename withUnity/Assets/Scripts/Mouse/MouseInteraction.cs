@@ -15,12 +15,19 @@ public class MouseInteraction : MonoBehaviour
 
     void Update(){
 
-        if(CameraController.dragginTheCamera && Wire.justCreated == null)
-            return;
+        //if(CameraController.dragginTheCamera && Wire.justCreated == null)
+        //    return;
 
         if (Wire.justCreated != null)
         {
             Wire.justCreated.WireFollowMouse(Wire.justCreated);
+            if (LED.justCreated != null)
+            {
+                //update the led position so that its always between the start and mouse point
+                LED.justCreated.Move();
+                LED.justCreated.wire2.UpdateLinesOfWire();
+                LED.justCreated.wire1.UpdateLinesOfWire();
+            }
         }
         else if (selectedObject != null)
         {
@@ -62,47 +69,64 @@ public class MouseInteraction : MonoBehaviour
                 selectedObject = hit.collider.gameObject;
                 if (IsMetal(selectedObject))
                 {
-                    //start creating a new wire
-                    if (Wire.justCreated == null)
+                    Wire existingWire = GetWireInMetal(selectedObject);
+
+                    //if there is already a wire, select that wire and dont create a new one
+                    if (existingWire != null)
                     {
-                        //create a wire if there is no wire attached to the selectedObject
-                        Wire existingWire = GetWireInMetal(selectedObject); 
-                        if (existingWire == null)
+                        SelectWire(existingWire);
+                        selectedObject = null;
+                    }
+
+                    //WIRE
+                    else if (GameManager.tabItem == 0)
+                    {
+                        //start creating a new wire
+                        if (Wire.justCreated == null)
                         {
+                            //create a wire 
                             UnselectWire();
                             new Wire(selectedObject);
                             selectedObject = null;
                             return;
                         }
-                        //else select the wire that already exists and dont create a new wire
-                        else if (existingWire != selectedWire)
-                            SelectWire(existingWire);
-                        selectedObject = null;
-                        return;
-                    }
-
-                    //finish creation of a new wire
-                    else
-                    {
-                        bool wirePossible = false;
-                        if (hit.collider.gameObject != Wire.justCreated.startObject)
-                            if (GetWireInMetal(hit.collider.gameObject) == null)
-                                wirePossible = true;
-
-                        if (wirePossible)
+                        //finish creation of a new wire
+                        else if (hit.collider.gameObject != Wire.justCreated.startObject)
                         {
-                            Wire.justCreated.endObject = hit.collider.gameObject;
-
-                            Wire.justCreated.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
-                            Wire.justCreated.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(Wire.justCreated);
-
+                            Wire.justCreated.endObject = hit.collider.gameObject; 
                             Wire.justCreated.lineRenderer.SetPosition(Wire.justCreated.verticesAmount - 1, hit.collider.gameObject.transform.position);
-                            Wire.justCreated.UpdateLinesOfWire();
-                            Wire.justCreated.UpdateMeshOfWire();
-                            Wire._registry.Add(Wire.justCreated);
+
+                            Wire.justCreated.FinishWireCreation();
 
                             //Update the electricity parameters of all wires
                             UpdateElectricityParameters();
+                            Wire.justCreated = null;
+                            selectedObject = null;
+                            return;
+                        }
+                    }
+
+                    //LED
+                    else if (GameManager.tabItem == 1)
+                    {
+                        if (LED.justCreated == null)
+                        {
+                            new LED(selectedObject);
+                            selectedObject = null;
+                            return;
+                        }
+                        else if (hit.collider.gameObject != LED.justCreated.wire2.startObject && hit.collider.gameObject != LED.justCreated.wire1.endObject)
+                        {
+                            LED.justCreated.wire2.endObject = hit.collider.gameObject;
+                            LED.justCreated.wire2.lineRenderer.SetPosition(LED.justCreated.wire2.verticesAmount - 1, hit.collider.gameObject.transform.position);
+
+                            LED.justCreated.wire1.FinishWireCreation();
+                            LED.justCreated.wire2.FinishWireCreation();
+
+                            //Update the electricity parameters of all wires
+                            UpdateElectricityParameters();
+
+                            LED.justCreated = null;
                             Wire.justCreated = null;
                             selectedObject = null;
                             return;
@@ -156,6 +180,15 @@ public class MouseInteraction : MonoBehaviour
         //-----------RIGHT BUTTON PRESSED-------------
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
+            if (LED.justCreated != null)
+            {
+                Destroy(LED.justCreated.LEDObject);
+                Destroy(LED.justCreated.wire1.lineObject);
+                Destroy(LED.justCreated.wire2.lineObject);
+                LED.justCreated = null;
+                Wire.justCreated = null;
+                return;
+            }
             if (Wire.justCreated != null) {
                 //cancel creation of a new wire
                 ResetWire();
@@ -216,6 +249,15 @@ public class MouseInteraction : MonoBehaviour
                     selectedWire.MakeWireCurve();
                 }
             }
+        }
+
+        //go through list of possible items when pressing the tab-key
+        else if (Keyboard.current.tabKey.wasPressedThisFrame)
+        {
+            GameManager.tabItem += 1;
+            //reset if too high (for now there are only 2 items -> wire, led)
+            if (GameManager.tabItem > 1)
+                GameManager.tabItem = 0;
         }
     }
 

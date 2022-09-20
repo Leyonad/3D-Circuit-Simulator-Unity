@@ -27,11 +27,13 @@ public class Wire
     public bool flat = false;
     public static float flatHeight = 1.25f;
 
-    public Wire(GameObject collideObject)
+    public Wire(GameObject obj1, GameObject obj2 = null)
     {
-        startObject = collideObject;
+        startObject = obj1;
+        endObject = obj2;
+        if (obj2 == null)
+            justCreated = this;
         CreateLineObject();
-        justCreated = this;
     }
 
     public void WireFollowMouse(Wire wire)
@@ -196,5 +198,21 @@ public class Wire
         Vector3 temp = lineRenderer.GetPosition(0);
         lineRenderer.SetPosition(0, lineRenderer.GetPosition(verticesAmount - 1));
         lineRenderer.SetPosition(verticesAmount - 1, temp);
+    }
+
+
+    public void AttachToParent()
+    {
+        startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(this);
+        endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(this);
+    }
+
+
+    public void FinishWireCreation()
+    {
+        AttachToParent();
+        UpdateLinesOfWire();
+        UpdateMeshOfWire();
+        _registry.Add(this);
     }
 }
