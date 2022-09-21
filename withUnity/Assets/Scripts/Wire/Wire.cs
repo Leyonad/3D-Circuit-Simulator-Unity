@@ -8,6 +8,8 @@ public class Wire
     public static int defaultVerticesAmount = 20;
     public int verticesAmount = defaultVerticesAmount;
 
+    public readonly float wireMouseY = 1.1f;
+
     public float middlePointHeight = 4;
     public static float minMiddlePointHeight = 2f;
     public static float maxMiddlePointHeight = 12f;
@@ -61,7 +63,7 @@ public class Wire
         //set all positions of line renderer
         Vector3[] positions = new Vector3[verticesAmount];
         for (int i = 0; i < verticesAmount; i++)
-            positions[i] = startObject.transform.position;
+            positions[i] = new Vector3(startObject.transform.position.x, wireMouseY, startObject.transform.position.z);
 
         lineRenderer.SetPositions(positions);
         lineRenderer.numCapVertices = 4;

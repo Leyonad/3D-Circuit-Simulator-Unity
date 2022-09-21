@@ -60,14 +60,20 @@ public class MouseInteraction : MonoBehaviour
         //------------LEFT BUTTON PRESSED-------------
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            if (selectedObject != null)
-                offsetOnScreen = GetOffsetOfObject(selectedObject);
-
             RaycastHit hit = CastRay();
             if (hit.collider != null)
             {
-                selectedObject = hit.collider.gameObject;
-                if (IsMetal(selectedObject))
+                selectedObject = hit.collider.gameObject; 
+                offsetOnScreen = GetOffsetOfObject(selectedObject);
+
+                //clicked on plane for example
+                if (selectedObject.CompareTag("Untagged"))
+                {
+                    selectedObject = null;
+                }
+
+                //clicked on a metal
+                else if (IsMetal(selectedObject))
                 {
                     Wire existingWire = GetWireInMetal(selectedObject);
 
@@ -155,7 +161,10 @@ public class MouseInteraction : MonoBehaviour
                     ItemManager.selectedItem = selectedObject;
                     selectedObject = null;
                 }
-                else UnselectWire();
+                else
+                {
+                    UnselectWire();
+                } 
             }
         }
 
@@ -254,10 +263,13 @@ public class MouseInteraction : MonoBehaviour
         //go through list of possible items when pressing the tab-key
         else if (Keyboard.current.tabKey.wasPressedThisFrame)
         {
-            GameManager.tabItem += 1;
-            //reset if too high (for now there are only 2 items -> wire, led)
-            if (GameManager.tabItem > 1)
-                GameManager.tabItem = 0;
+            if (Wire.justCreated == null)
+            {
+                GameManager.tabItem += 1;
+                //reset if too high (for now there are only 2 items -> wire, led)
+                if (GameManager.tabItem > 1)
+                    GameManager.tabItem = 0;
+            }
         }
     }
 
