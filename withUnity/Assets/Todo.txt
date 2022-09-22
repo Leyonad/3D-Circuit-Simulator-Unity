@@ -23,7 +23,7 @@ Todo:
 [ ] different types of batteries
 [ ] calculate mA whenever a resistor is being placed 
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
-[ ] make a led in blender
+[x] make an led in blender
 [x] can make LEDs instead of wires (switch with tab-key)
 [ ] can select a LED and delete it
 
