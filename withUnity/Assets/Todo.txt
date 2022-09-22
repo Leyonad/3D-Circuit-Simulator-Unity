@@ -26,7 +26,8 @@ Todo:
 [x] make an led in blender
 [x] can make LEDs instead of wires (switch with tab-key)
 [ ] can select a LED and delete it
-[]
+[ ] different math formula for led wires
+[ ] when selecting one wire of an led, both get selected
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -45,7 +46,7 @@ Bugs:
 [x] LED is on the wrong position when moving the mouse
 [x] rotation of the led doesnt work right
 [x] cant connect an led with a metal
-[ ] normal wire is still selected while making a new led
+[x] normal wire is still selected while making a new led
 
 Optimization:
 [x] only move component if delta is not zero

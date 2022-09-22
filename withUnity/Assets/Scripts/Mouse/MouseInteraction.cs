@@ -117,6 +117,8 @@ public class MouseInteraction : MonoBehaviour
                     {
                         if (LED.justCreated == null)
                         {
+                            //create an led
+                            UnselectWire();
                             new LED(selectedObject);
                             selectedObject = null;
                             return;
