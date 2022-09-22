@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 2936440921521733381}
   - component: {fileID: 1091175388935736271}
   - component: {fileID: 1542533526397692946}
+  - component: {fileID: 3164896465596452195}
   m_Layer: 0
   m_Name: LED
   m_TagString: Item
@@ -192,6 +193,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3164896465596452195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451388660758243866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  voltage: 0
+  current: 0
 --- !u!1 &7807336388292960021
 GameObject:
   m_ObjectHideFlags: 0
