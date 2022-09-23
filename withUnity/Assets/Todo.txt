@@ -30,6 +30,7 @@ Todo:
 [x] can move led up and down
 [ ] when selecting one wire of an led, both get selected ?
 [x] update led position and rotation when moving a component
+[x] can move and rotate a component and led position and wires position update
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -49,7 +50,8 @@ Bugs:
 [x] rotation of the led doesnt work right
 [x] cant connect an led with a metal
 [x] normal wire is still selected while making a new led
-[ ] cant move component (error with linerenderer)
+[ ] cant move component (error with linerenderer)  #? cant reproduce
+[ ] when creating a wire the position is not correct
 
 Optimization:
 [x] only move component if delta is not zero
@@ -59,3 +61,4 @@ Optimization:
 [x] do i need the list verticesOfWire
 [x] Wire class needs its own file
 [x] code clear up wireManager and MouseInteraction
+[ ] transform LED class to item class

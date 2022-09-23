@@ -182,7 +182,7 @@ public class Wire
             //if wire is a part of an item, skip, since the wire is updated in a seperate function
             if (wire.lineObject.transform.parent != null && wire.lineObject.transform.parent.CompareTag("Item")) 
                 continue;
-            if (wire.startObject.transform.IsChildOf(obj.transform) || wire.endObject.transform.IsChildOf(obj.transform))
+            else if (wire.startObject.transform.IsChildOf(obj.transform) || wire.endObject.transform.IsChildOf(obj.transform))
             {
                 wire.lineRenderer.SetPosition(0, wire.startObject.transform.position);
                 wire.lineRenderer.SetPosition(wire.verticesAmount - 1, wire.endObject.transform.position);

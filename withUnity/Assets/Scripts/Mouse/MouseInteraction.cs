@@ -192,7 +192,11 @@ public class MouseInteraction : MonoBehaviour
         else if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
             if (ItemManager.itemSelected == true)
+            {
+                LED.selectedLED.wire1.UpdateMeshOfWire();
+                LED.selectedLED.wire2.UpdateMeshOfWire();
                 ItemManager.Unselect();
+            }
 
             if (selectedObject != null)
             {
@@ -235,6 +239,7 @@ public class MouseInteraction : MonoBehaviour
                     selectedObject.transform.rotation.eulerAngles.z
                 ));
                 Wire.UpdateWiresPosition(selectedObject);
+                LED.UpdatePositionsAndRotations(selectedObject);
             }
         }
 
