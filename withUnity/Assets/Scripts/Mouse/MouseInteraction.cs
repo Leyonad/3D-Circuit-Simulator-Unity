@@ -35,6 +35,7 @@ public class MouseInteraction : MonoBehaviour
             if (MoveObjectToPosition(selectedObject))
             {
                 Wire.UpdateWiresPosition(selectedObject);
+                LED.UpdatePositionsAndRotations(selectedObject);
             }
         }
         else if (selectedWire != null)
@@ -125,6 +126,9 @@ public class MouseInteraction : MonoBehaviour
                         }
                         else if (hit.collider.gameObject != LED.justCreated.wire2.startObject && hit.collider.gameObject != LED.justCreated.wire1.endObject)
                         {
+                            //endobject of LED item
+                            LED.justCreated.endObject = hit.collider.gameObject;
+
                             LED.justCreated.wire2.endObject = hit.collider.gameObject;
                             LED.justCreated.wire2.lineRenderer.SetPosition(LED.justCreated.wire2.verticesAmount - 1, hit.collider.gameObject.transform.position);
 

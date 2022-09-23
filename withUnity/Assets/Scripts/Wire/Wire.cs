@@ -179,19 +179,13 @@ public class Wire
         //this method updates the wire positions when a component is being moved
         foreach (Wire wire in Wire._registry)
         {
-            bool updateVertices = false;
-            if (wire.startObject.transform.IsChildOf(obj.transform))
+            if (wire.lineObject.transform.parent != null && wire.lineObject.transform.parent.CompareTag("Item")) continue;
+            if (wire.startObject.transform.IsChildOf(obj.transform) || wire.endObject.transform.IsChildOf(obj.transform))
             {
                 wire.lineRenderer.SetPosition(0, wire.startObject.transform.position);
-                updateVertices = true;
-            }
-            if (wire.endObject.transform.IsChildOf(obj.transform))
-            {
                 wire.lineRenderer.SetPosition(wire.verticesAmount - 1, wire.endObject.transform.position);
-                updateVertices = true;
-            }
-            if (updateVertices)
                 wire.UpdateLinesOfWire();
+            }
         }
     }
 

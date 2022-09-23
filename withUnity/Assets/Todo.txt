@@ -28,6 +28,7 @@ Todo:
 [ ] can select a LED and delete it
 [ ] different math formula for led wires
 [ ] when selecting one wire of an led, both get selected
+[x] update led position and rotation when moving a component
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -50,7 +51,7 @@ Bugs:
 
 Optimization:
 [x] only move component if delta is not zero
-[ ] maybe make UpdateWiresPosition() more efficient 
+[n] maybe make UpdateWiresPosition() more efficient 
 [ ] maybe make WireAlreadyExists() more efficient
 [x] do i need the list verticesOfWire
 [x] Wire class needs its own file
