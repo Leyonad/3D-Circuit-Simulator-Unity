@@ -29,13 +29,18 @@ public class Wire
     public bool flat = false;
     public static float flatHeight = 1.25f;
 
-    public Wire(GameObject obj1, GameObject obj2 = null)
+    public Wire(GameObject obj1, GameObject obj2=null, float _middlePointHeight=0f)
     {
         startObject = obj1;
         endObject = obj2;
+        if (_middlePointHeight > 0)
+            middlePointHeight = _middlePointHeight;
         if (obj2 == null)
             justCreated = this;
         CreateLineObject();
+        UpdateLinesOfWire();
+        meshCollider = lineObject.AddComponent<MeshCollider>();
+        mesh = new Mesh();
     }
 
     public void WireFollowMouse(Wire wire)
@@ -67,11 +72,6 @@ public class Wire
 
         lineRenderer.SetPositions(positions);
         lineRenderer.numCapVertices = 4;
-
-        UpdateLinesOfWire();
-
-        meshCollider = lineObject.AddComponent<MeshCollider>();
-        mesh = new Mesh();
     }
 
     public float HasCurrent()
@@ -179,7 +179,9 @@ public class Wire
         //this method updates the wire positions when a component is being moved
         foreach (Wire wire in Wire._registry)
         {
-            if (wire.lineObject.transform.parent != null && wire.lineObject.transform.parent.CompareTag("Item")) continue;
+            //if wire is a part of an item, skip, since the wire is updated in a seperate function
+            if (wire.lineObject.transform.parent != null && wire.lineObject.transform.parent.CompareTag("Item")) 
+                continue;
             if (wire.startObject.transform.IsChildOf(obj.transform) || wire.endObject.transform.IsChildOf(obj.transform))
             {
                 wire.lineRenderer.SetPosition(0, wire.startObject.transform.position);

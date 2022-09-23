@@ -27,7 +27,8 @@ Todo:
 [x] can make LEDs instead of wires (switch with tab-key)
 [ ] can select a LED and delete it
 [ ] different math formula for led wires
-[ ] when selecting one wire of an led, both get selected
+[x] can move led up and down
+[ ] when selecting one wire of an led, both get selected ?
 [x] update led position and rotation when moving a component
 
 Bugs:
@@ -48,12 +49,13 @@ Bugs:
 [x] rotation of the led doesnt work right
 [x] cant connect an led with a metal
 [x] normal wire is still selected while making a new led
+[ ] cant move component (error with linerenderer)
 
 Optimization:
 [x] only move component if delta is not zero
-[n] maybe make UpdateWiresPosition() more efficient 
+[x] maybe make UpdateWiresPosition() more efficient 
 [ ] maybe make WireAlreadyExists() more efficient
+[ ] find the wire when clicking on a wire to select it more efficiently
 [x] do i need the list verticesOfWire
 [x] Wire class needs its own file
-[ ] canClickThisFrame is inefficient since its value is set in Update()
 [x] code clear up wireManager and MouseInteraction

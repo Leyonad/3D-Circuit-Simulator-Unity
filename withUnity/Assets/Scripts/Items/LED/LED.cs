@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class LED
 {
-    public GameObject LEDObject;
-    private readonly float defaultYValue = 5f;
+    public GameObject itemObject;
+    private readonly float defaultYValue = 3f;
     public static LED justCreated = null;
     public Wire wire1;
     public Wire wire2;
@@ -15,20 +16,22 @@ public class LED
     public GameObject startObject;
     public GameObject endObject;
 
+    public static LED selectedLED = null;
+
     public static List<LED> _registry = new List<LED>();
 
     public LED(GameObject collideObject)
     {
         Vector3 spawnPosition = collideObject.transform.position;
         spawnPosition.y = defaultYValue;
-        LEDObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
-        LEDObject.transform.SetParent(ComponentsManager.components.transform);
+        itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
+        itemObject.transform.SetParent(ComponentsManager.components.transform);
 
-        m1obj = LEDObject.transform.Find("m1").gameObject;
-        m2obj = LEDObject.transform.Find("m2").gameObject;
+        m1obj = itemObject.transform.Find("m1").gameObject;
+        m2obj = itemObject.transform.Find("m2").gameObject;
 
-        wire1 = new Wire(collideObject, m1obj);
-        wire2 = new Wire(m2obj);
+        wire1 = new Wire(collideObject, m1obj, 1.5f);
+        wire2 = new Wire(m2obj, null, 1.5f);
 
         startObject = collideObject;
 
@@ -49,6 +52,17 @@ public class LED
         wire2.UpdateLinesOfWire();
     }
 
+    public void UpdateYPosition(Vector3 targetPosition)
+    {
+        LED.selectedLED.itemObject.transform.position = targetPosition;
+        wire1.lineRenderer.SetPosition(wire1.verticesAmount - 1, m1obj.transform.position);
+        wire2.lineRenderer.SetPosition(0, m2obj.transform.position);
+        wire1.UpdateLinesOfWire();
+        wire2.UpdateLinesOfWire();
+        wire1.UpdateMeshOfWire();
+        wire2.UpdateMeshOfWire();
+    }
+
     public static void UpdatePositionsAndRotations(GameObject obj)
     {
         foreach (LED led in LED._registry)
@@ -64,10 +78,10 @@ public class LED
     {
         //position = (A+B)/2
         Vector3 targetPosition = ((wire2.lineRenderer.GetPosition(wire2.verticesAmount - 1) + startObject.transform.position)) / 2;
-        LEDObject.transform.position = new Vector3(targetPosition.x, defaultYValue, targetPosition.z);
+        itemObject.transform.position = new Vector3(targetPosition.x, defaultYValue, targetPosition.z);
         
         //rotation = angle between p1 and p2
         float angle = Functions.GetYRotationBetween2Points(startObject.transform.position, wire2.lineRenderer.GetPosition(wire2.verticesAmount - 1));
-        LEDObject.transform.rotation = Quaternion.AngleAxis(-angle, Vector3.up);
+        itemObject.transform.rotation = Quaternion.AngleAxis(-angle, Vector3.up);
     }
 }

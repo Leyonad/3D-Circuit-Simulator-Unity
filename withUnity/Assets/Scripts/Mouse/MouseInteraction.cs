@@ -12,6 +12,7 @@ public class MouseInteraction : MonoBehaviour
 
     public bool changeMiddlePoint = false;
     public readonly static float changeMiddlePointSpeed = 0.05f;
+    public readonly static float changeItemYSpeed = 0.01f;
 
     void Update(){
 
@@ -53,9 +54,19 @@ public class MouseInteraction : MonoBehaviour
                 }
             }
         }
-        else if (ItemManager.selectedItem != null)
+        else if (ItemManager.itemSelected == true)
         {
-            
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            if (mousePos != previousPosition)
+            {
+                float delta = (mousePos.y - previousPosition.y) * changeItemYSpeed;
+                previousPosition = mousePos;
+
+                //LED
+                float targetPositionY = Mathf.Min(ItemManager.maxItemY, Mathf.Max(ItemManager.minItemY, LED.selectedLED.itemObject.transform.position.y + delta));
+                Vector3 pos = LED.selectedLED.itemObject.transform.position;
+                LED.selectedLED.UpdateYPosition(new Vector3(pos.x, targetPositionY, pos.z));
+            }
         }
 
         //------------LEFT BUTTON PRESSED-------------
@@ -67,11 +78,11 @@ public class MouseInteraction : MonoBehaviour
                 selectedObject = hit.collider.gameObject; 
                 offsetOnScreen = GetOffsetOfObject(selectedObject);
 
+                UnselectWire();
+
                 //clicked on plane for example
                 if (selectedObject.CompareTag("Untagged"))
-                {
                     selectedObject = null;
-                }
 
                 //clicked on a metal
                 else if (IsMetal(selectedObject))
@@ -92,7 +103,6 @@ public class MouseInteraction : MonoBehaviour
                         if (Wire.justCreated == null)
                         {
                             //create a wire 
-                            UnselectWire();
                             new Wire(selectedObject);
                             selectedObject = null;
                             return;
@@ -119,7 +129,6 @@ public class MouseInteraction : MonoBehaviour
                         if (LED.justCreated == null)
                         {
                             //create an led
-                            UnselectWire();
                             new LED(selectedObject);
                             selectedObject = null;
                             return;
@@ -164,19 +173,27 @@ public class MouseInteraction : MonoBehaviour
                 //clicked on an item
                 else if (IsItem(selectedObject))
                 {
-                    ItemManager.selectedItem = selectedObject;
+                    foreach (LED led in LED._registry)
+                    {
+                        if (selectedObject == led.itemObject)
+                        {
+                            ItemManager.itemSelected = true;
+                            LED.selectedLED = led;
+                            previousPosition = Mouse.current.position.ReadValue();
+                            break;
+                        }
+                    }
                     selectedObject = null;
                 }
-                else
-                {
-                    UnselectWire();
-                } 
             }
         }
 
         //-----------LEFT BUTTON RELEASED-------------
         else if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
+            if (ItemManager.itemSelected == true)
+                ItemManager.Unselect();
+
             if (selectedObject != null)
             {
                 selectedObject = null;
@@ -186,8 +203,8 @@ public class MouseInteraction : MonoBehaviour
             }
             else if (selectedWire != null)
             {
-                if (changeMiddlePoint )
-                changeMiddlePoint = false;
+                if (changeMiddlePoint)
+                    changeMiddlePoint = false;
                 selectedWire.UpdateMeshOfWire();
             }
         }
@@ -197,7 +214,7 @@ public class MouseInteraction : MonoBehaviour
         {
             if (LED.justCreated != null)
             {
-                Destroy(LED.justCreated.LEDObject);
+                Destroy(LED.justCreated.itemObject);
                 Destroy(LED.justCreated.wire1.lineObject);
                 Destroy(LED.justCreated.wire2.lineObject);
                 LED.justCreated = null;
