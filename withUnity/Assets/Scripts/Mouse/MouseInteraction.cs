@@ -22,12 +22,12 @@ public class MouseInteraction : MonoBehaviour
         if (Wire.justCreated != null)
         {
             Wire.justCreated.WireFollowMouse(Wire.justCreated);
-            if (LED.justCreated != null)
+            if (Item.justCreated != null)
             {
-                //update the led position so that its always between the start and mouse point
-                LED.justCreated.Move();
-                LED.justCreated.wire2.UpdateLinesOfWire();
-                LED.justCreated.wire1.UpdateLinesOfWire();
+                //update the items position so that its always between the start and mouse point
+                Item.justCreated.Move();
+                Item.justCreated.wire2.UpdateLinesOfWire();
+                Item.justCreated.wire1.UpdateLinesOfWire();
             }
         }
         else if (selectedObject != null)
@@ -36,7 +36,7 @@ public class MouseInteraction : MonoBehaviour
             if (MoveObjectToPosition(selectedObject))
             {
                 Wire.UpdateWiresPosition(selectedObject);
-                LED.UpdatePositionsAndRotations(selectedObject);
+                Item.UpdatePositionsAndRotations(selectedObject);
             }
         }
         else if (selectedWire != null)
@@ -54,7 +54,7 @@ public class MouseInteraction : MonoBehaviour
                 }
             }
         }
-        else if (ItemManager.itemSelected == true)
+        else if (Item.selectedItem != null)
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             if (mousePos != previousPosition)
@@ -62,10 +62,10 @@ public class MouseInteraction : MonoBehaviour
                 float delta = (mousePos.y - previousPosition.y) * changeItemYSpeed;
                 previousPosition = mousePos;
 
-                //LED
-                float targetPositionY = Mathf.Min(ItemManager.maxItemY, Mathf.Max(ItemManager.minItemY, LED.selectedLED.itemObject.transform.position.y + delta));
-                Vector3 pos = LED.selectedLED.itemObject.transform.position;
-                LED.selectedLED.UpdateYPosition(new Vector3(pos.x, targetPositionY, pos.z));
+                //ITEM
+                float targetPositionY = Mathf.Min(Item.maxItemY, Mathf.Max(Item.minItemY, Item.selectedItem.itemObject.transform.position.y + delta));
+                Vector3 pos = Item.selectedItem.itemObject.transform.position;
+                Item.selectedItem.UpdateYPosition(new Vector3(pos.x, targetPositionY, pos.z));
             }
         }
 
@@ -123,31 +123,35 @@ public class MouseInteraction : MonoBehaviour
                         }
                     }
 
-                    //LED
-                    else if (GameManager.tabItem == 1)
+                    //ITEM
+                    else if (GameManager.tabItem > 0)
                     {
-                        if (LED.justCreated == null)
+                        if (Item.justCreated == null)
                         {
-                            //create an led
-                            new LED(selectedObject);
+                            if (GameManager.tabItem == 1)
+                                new Item(selectedObject, "LED");
+                            else if (GameManager.tabItem == 2)
+                                new Item(selectedObject, "otheritem");
+
+                            //create an item
                             selectedObject = null;
                             return;
                         }
-                        else if (hit.collider.gameObject != LED.justCreated.wire2.startObject && hit.collider.gameObject != LED.justCreated.wire1.endObject)
+                        else if (hit.collider.gameObject != Item.justCreated.wire2.startObject && hit.collider.gameObject != Item.justCreated.wire1.endObject)
                         {
                             //endobject of LED item
-                            LED.justCreated.endObject = hit.collider.gameObject;
+                            Item.justCreated.endObject = hit.collider.gameObject;
 
-                            LED.justCreated.wire2.endObject = hit.collider.gameObject;
-                            LED.justCreated.wire2.lineRenderer.SetPosition(LED.justCreated.wire2.verticesAmount - 1, hit.collider.gameObject.transform.position);
+                            Item.justCreated.wire2.endObject = hit.collider.gameObject;
+                            Item.justCreated.wire2.lineRenderer.SetPosition(Item.justCreated.wire2.verticesAmount - 1, hit.collider.gameObject.transform.position);
 
-                            LED.justCreated.wire1.FinishWireCreation();
-                            LED.justCreated.wire2.FinishWireCreation();
+                            Item.justCreated.wire1.FinishWireCreation();
+                            Item.justCreated.wire2.FinishWireCreation();
 
                             //Update the electricity parameters of all wires
                             UpdateElectricityParameters();
 
-                            LED.justCreated = null;
+                            Item.justCreated = null;
                             Wire.justCreated = null;
                             selectedObject = null;
                             return;
@@ -173,12 +177,11 @@ public class MouseInteraction : MonoBehaviour
                 //clicked on an item
                 else if (IsItem(selectedObject))
                 {
-                    foreach (LED led in LED._registry)
+                    foreach (Item item in Item._registry)
                     {
-                        if (selectedObject == led.itemObject)
+                        if (selectedObject == item.itemObject)
                         {
-                            ItemManager.itemSelected = true;
-                            LED.selectedLED = led;
+                            Item.selectedItem = item;
                             previousPosition = Mouse.current.position.ReadValue();
                             break;
                         }
@@ -191,11 +194,11 @@ public class MouseInteraction : MonoBehaviour
         //-----------LEFT BUTTON RELEASED-------------
         else if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
-            if (ItemManager.itemSelected == true)
+            if (Item.selectedItem != null)
             {
-                LED.selectedLED.wire1.UpdateMeshOfWire();
-                LED.selectedLED.wire2.UpdateMeshOfWire();
-                ItemManager.Unselect();
+                Item.selectedItem.wire1.UpdateMeshOfWire();
+                Item.selectedItem.wire2.UpdateMeshOfWire();
+                Item.Unselect();
             }
 
             if (selectedObject != null)
@@ -216,12 +219,12 @@ public class MouseInteraction : MonoBehaviour
         //-----------RIGHT BUTTON PRESSED-------------
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            if (LED.justCreated != null)
+            if (Item.justCreated != null)
             {
-                Destroy(LED.justCreated.itemObject);
-                Destroy(LED.justCreated.wire1.lineObject);
-                Destroy(LED.justCreated.wire2.lineObject);
-                LED.justCreated = null;
+                Destroy(Item.justCreated.itemObject);
+                Destroy(Item.justCreated.wire1.lineObject);
+                Destroy(Item.justCreated.wire2.lineObject);
+                Item.justCreated = null;
                 Wire.justCreated = null;
                 return;
             }
@@ -239,7 +242,7 @@ public class MouseInteraction : MonoBehaviour
                     selectedObject.transform.rotation.eulerAngles.z
                 ));
                 Wire.UpdateWiresPosition(selectedObject);
-                LED.UpdatePositionsAndRotations(selectedObject);
+                Item.UpdatePositionsAndRotations(selectedObject);
             }
         }
 
@@ -255,6 +258,11 @@ public class MouseInteraction : MonoBehaviour
         {
             if (selectedWire != null)
             {
+                //delete an item
+                if (selectedWire.lineObject.transform.parent != null && selectedWire.lineObject.transform.parent.CompareTag("Item"))
+                {
+
+                }
                 //remove wire from attachedWires List of start/end object
                 selectedWire.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
                 selectedWire.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);

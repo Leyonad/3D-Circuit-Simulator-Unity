@@ -10,7 +10,7 @@ public class Wire
 
     public readonly float wireMouseY = 1.1f;
 
-    public float middlePointHeight = 4;
+    public float middlePointHeight = 4f;
     public static float minMiddlePointHeight = 2f;
     public static float maxMiddlePointHeight = 12f;
 
@@ -33,7 +33,7 @@ public class Wire
     {
         startObject = obj1;
         endObject = obj2;
-        if (_middlePointHeight > 0)
+        if (_middlePointHeight > 0f)
             middlePointHeight = _middlePointHeight;
         if (obj2 == null)
             justCreated = this;

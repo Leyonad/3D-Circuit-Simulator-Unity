@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LED
+public class Item
 {
     public GameObject itemObject;
     private static readonly float defaultYValue = 3f;
     private float currentYPosition;
-    public static LED justCreated = null;
+    public static Item justCreated = null;
+
+    public static float minItemY = 2f;
+    public static float maxItemY = 6f;
+
     public Wire wire1;
     public Wire wire2;
 
@@ -16,16 +20,19 @@ public class LED
     public GameObject startObject;
     public GameObject endObject;
 
-    public static LED selectedLED = null;
+    public static Item selectedItem = null;
 
-    public static List<LED> _registry = new List<LED>();
+    public static List<Item> _registry = new List<Item>();
 
-    public LED(GameObject collideObject)
+    public Item(GameObject collideObject, string type)
     {
         Vector3 spawnPosition = collideObject.transform.position;
         currentYPosition = defaultYValue;
         spawnPosition.y = defaultYValue;
-        itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
+
+        if (type == "LED")
+            itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
+
         itemObject.transform.SetParent(ComponentsManager.components.transform);
 
         m1obj = itemObject.transform.Find("m1").gameObject;
@@ -58,7 +65,7 @@ public class LED
     public void UpdateYPosition(Vector3 targetPosition)
     {
         currentYPosition = targetPosition.y;
-        LED.selectedLED.itemObject.transform.position = targetPosition;
+        Item.selectedItem.itemObject.transform.position = targetPosition;
         wire1.lineRenderer.SetPosition(wire1.verticesAmount - 1, m1obj.transform.position);
         wire2.lineRenderer.SetPosition(0, m2obj.transform.position);
         wire1.UpdateLinesOfWire();
@@ -79,8 +86,13 @@ public class LED
 
     public static void UpdatePositionsAndRotations(GameObject obj)
     {
-        foreach (LED led in LED._registry)
-            if (led.startObject.transform.IsChildOf(obj.transform) || led.endObject.transform.IsChildOf(obj.transform))
-                led.Move();
+        foreach (Item item in Item._registry)
+            if (item.startObject.transform.IsChildOf(obj.transform) || item.endObject.transform.IsChildOf(obj.transform))
+                item.Move();
+    }
+
+    public static void Unselect()
+    {
+        Item.selectedItem = null;
     }
 }
