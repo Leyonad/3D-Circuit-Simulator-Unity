@@ -17,7 +17,7 @@ public class Breadboard
         breadboardObject.AddComponent<BoxCollider>();
 
         breadboardObject.AddComponent<MouseHovering>();
-        ColorUtility.TryParseHtmlString("#D9D9D9", out breadboardObject.GetComponent<MouseHovering>().hoveringColor);
+        ColorUtility.TryParseHtmlString("#7E7E7E", out breadboardObject.GetComponent<MouseHovering>().hoveringColor);
 
         GameObject metals = new GameObject("Metals")
         {

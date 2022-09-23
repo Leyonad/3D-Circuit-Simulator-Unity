@@ -68,7 +68,8 @@ public class Wire
         //set all positions of line renderer
         Vector3[] positions = new Vector3[verticesAmount];
         for (int i = 0; i < verticesAmount; i++)
-            positions[i] = new Vector3(startObject.transform.position.x, wireMouseY, startObject.transform.position.z);
+            positions[i] = startObject.transform.position;
+            //positions[i] = new Vector3(startObject.transform.position.x, wireMouseY, startObject.transform.position.z);
 
         lineRenderer.SetPositions(positions);
         lineRenderer.numCapVertices = 4;

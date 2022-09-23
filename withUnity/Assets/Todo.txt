@@ -62,3 +62,4 @@ Optimization:
 [x] Wire class needs its own file
 [x] code clear up wireManager and MouseInteraction
 [x] transform LED class to item class
+[x] make led glow and other stuff (materials, spawn position, shadows)
