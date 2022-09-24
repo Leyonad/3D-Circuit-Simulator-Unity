@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Progress;
 using static WireManager;
 
 public class MouseInteraction : MonoBehaviour
@@ -56,16 +58,19 @@ public class MouseInteraction : MonoBehaviour
         }
         else if (Item.selectedItem != null)
         {
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            if (mousePos != previousPosition)
+            if (Item.moveItemUpDown)
             {
-                float delta = (mousePos.y - previousPosition.y) * changeItemYSpeed;
-                previousPosition = mousePos;
+                Vector2 mousePos = Mouse.current.position.ReadValue();
+                if (mousePos != previousPosition)
+                {
+                    float delta = (mousePos.y - previousPosition.y) * changeItemYSpeed;
+                    previousPosition = mousePos;
 
-                //ITEM
-                float targetPositionY = Mathf.Min(Item.maxItemY, Mathf.Max(Item.minItemY, Item.selectedItem.itemObject.transform.position.y + delta));
-                Vector3 pos = Item.selectedItem.itemObject.transform.position;
-                Item.selectedItem.UpdateYPosition(new Vector3(pos.x, targetPositionY, pos.z));
+                    //ITEM
+                    float targetPositionY = Mathf.Min(Item.maxItemY, Mathf.Max(Item.minItemY, Item.selectedItem.itemObject.transform.position.y + delta));
+                    Vector3 pos = Item.selectedItem.itemObject.transform.position;
+                    Item.selectedItem.UpdateYPosition(new Vector3(pos.x, targetPositionY, pos.z));
+                }
             }
         }
 
@@ -79,6 +84,7 @@ public class MouseInteraction : MonoBehaviour
                 offsetOnScreen = GetOffsetOfObject(selectedObject);
 
                 UnselectWire();
+                Item.Unselect();
 
                 //clicked on plane for example
                 if (selectedObject.CompareTag("Untagged"))
@@ -182,6 +188,7 @@ public class MouseInteraction : MonoBehaviour
                         if (selectedObject == item.itemObject)
                         {
                             Item.selectedItem = item;
+                            Item.moveItemUpDown = true;
                             previousPosition = Mouse.current.position.ReadValue();
                             break;
                         }
@@ -198,7 +205,7 @@ public class MouseInteraction : MonoBehaviour
             {
                 Item.selectedItem.wire1.UpdateMeshOfWire();
                 Item.selectedItem.wire2.UpdateMeshOfWire();
-                Item.Unselect();
+                Item.moveItemUpDown = false;
             }
 
             if (selectedObject != null)
@@ -256,21 +263,52 @@ public class MouseInteraction : MonoBehaviour
         //delete wire when pressing delete-key
         if (Keyboard.current.deleteKey.wasPressedThisFrame)
         {
-            if (selectedWire != null)
+            List<Wire> wiresToDelete = new List<Wire>();
+            bool deleteWires = false;
+
+            //delete a selected item
+            if (Item.selectedItem != null)
             {
-                //delete an item
-                if (selectedWire.lineObject.transform.parent != null && selectedWire.lineObject.transform.parent.CompareTag("Item"))
+                wiresToDelete = Item.selectedItem.wiresOfItem;
+                Item._registry.Remove(Item.selectedItem);
+                Destroy(Item.selectedItem.itemObject);
+                Item.Unselect();
+                deleteWires = true;
+            }
+            else if (selectedWire != null)
+            {
+                //delete item that wire is attached to
+                if (selectedWire.startObject.transform.parent.CompareTag("Item") || selectedWire.endObject.transform.parent.CompareTag("Item"))
                 {
-
+                    //find the item object
+                    foreach (Item item in Item._registry)
+                    {
+                        if (item.wire1 == selectedWire || item.wire2 == selectedWire)
+                        {
+                            wiresToDelete = item.wiresOfItem;
+                            Item._registry.Remove(item);
+                            Destroy(item.itemObject);
+                            break;
+                        }
+                    }
                 }
+                //else just delete the selected wire
+                else 
+                    wiresToDelete.Add(selectedWire);
+                deleteWires = true;
+            }
+            foreach (Wire wire in wiresToDelete)
+            {
                 //remove wire from attachedWires List of start/end object
-                selectedWire.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
-                selectedWire.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(selectedWire);
+                wire.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(wire);
+                wire.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(wire);
+                Wire._registry.Remove(wire);
+                Destroy(wire.lineObject);
+            }
 
-                Wire._registry.Remove(selectedWire);
-                Destroy(selectedWire.lineObject);
+            if (deleteWires)
+            {
                 selectedWire = null;
-
                 //Update the electricity parameters of all wires
                 UpdateElectricityParameters();
             }

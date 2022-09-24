@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6663608000233126462}
   - component: {fileID: 3020033688872760419}
   m_Layer: 0
-  m_Name: m2
+  m_Name: m1
   m_TagString: Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 5066880953956956782}
   - component: {fileID: 4884741154987887265}
   m_Layer: 0
-  m_Name: m1
+  m_Name: m0
   m_TagString: Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -7,6 +7,7 @@ public class Item
     private static readonly float defaultYValue = 3f;
     private float currentYPosition;
     public static Item justCreated = null;
+    public static bool moveItemUpDown = false;
 
     public static float minItemY = 2f;
     public static float maxItemY = 6f;
@@ -22,6 +23,8 @@ public class Item
 
     public static Item selectedItem = null;
 
+    public List<Wire> wiresOfItem = new List<Wire>();
+
     public static List<Item> _registry = new List<Item>();
 
     public Item(GameObject collideObject, string type)
@@ -35,11 +38,14 @@ public class Item
 
         itemObject.transform.SetParent(ComponentsManager.components.transform);
 
-        m1obj = itemObject.transform.Find("m1").gameObject;
-        m2obj = itemObject.transform.Find("m2").gameObject;
+        m1obj = itemObject.transform.Find("m0").gameObject;
+        m2obj = itemObject.transform.Find("m1").gameObject;
 
         wire1 = new Wire(collideObject, m1obj, 1.5f);
         wire2 = new Wire(m2obj, null, 1.5f);
+
+        wiresOfItem.Add(wire1);
+        wiresOfItem.Add(wire2);
 
         startObject = collideObject;
 
@@ -94,5 +100,6 @@ public class Item
     public static void Unselect()
     {
         Item.selectedItem = null;
+        Item.moveItemUpDown = false;
     }
 }
