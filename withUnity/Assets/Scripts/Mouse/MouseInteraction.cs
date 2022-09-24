@@ -279,17 +279,9 @@ public class MouseInteraction : MonoBehaviour
                 //delete item that wire is attached to
                 if (IsAttachedToItem(selectedWire))
                 {
-                    //find the item object
-                    foreach (Item item in Item._registry)
-                    {
-                        if (item.wire1 == selectedWire || item.wire2 == selectedWire)
-                        {
-                            wiresToDelete = item.wiresOfItem;
-                            Item._registry.Remove(item);
-                            Destroy(item.itemObject);
-                            break;
-                        }
-                    }
+                    wiresToDelete = selectedWire.parentItem.wiresOfItem;
+                    Item._registry.Remove(selectedWire.parentItem);
+                    Destroy(selectedWire.parentItem.itemObject);
                 }
                 //else just delete the selected wire
                 else 
