@@ -262,6 +262,7 @@ public class MouseInteraction : MonoBehaviour
         //delete wire when pressing delete-key
         if (Keyboard.current.deleteKey.wasPressedThisFrame)
         {
+            WireManager.ResetMaterialHighlight();
             List<Wire> wiresToDelete = new List<Wire>();
             bool deleteWires = false;
 
