@@ -7,6 +7,8 @@ public class WireManager : MonoBehaviour
 
     public static Wire selectedWire;
     public static Material selectedWirePreviousMaterial;
+    public static Material selectedWireMetalPreviousMaterialStart;
+    public static Material selectedWireMetalPreviousMaterialEnd;
 
     private static List<GameObject> parentsLeft = new List<GameObject>();
 
@@ -113,6 +115,11 @@ public class WireManager : MonoBehaviour
         selectedWire = wire;
         selectedWirePreviousMaterial = wire.lineRenderer.material;
         selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
+
+        selectedWireMetalPreviousMaterialStart = selectedWire.startObject.GetComponent<MeshRenderer>().material;
+        selectedWireMetalPreviousMaterialEnd = selectedWire.endObject.GetComponent<MeshRenderer>().material;
+        selectedWire.startObject.GetComponent<MeshRenderer>().material = ResourcesManager.highlightWireMaterial;
+        selectedWire.endObject.GetComponent<MeshRenderer>().material = ResourcesManager.highlightWireMaterial;
     }
 
     public static void UnselectWire()
@@ -120,6 +127,8 @@ public class WireManager : MonoBehaviour
         if (selectedWire == null)
             return;
         selectedWire.lineRenderer.material = selectedWirePreviousMaterial;
+        selectedWire.startObject.GetComponent<MeshRenderer>().material = selectedWireMetalPreviousMaterialStart;
+        selectedWire.endObject.GetComponent<MeshRenderer>().material = selectedWireMetalPreviousMaterialEnd;
         selectedWire = null;
         selectedWirePreviousMaterial = null;
     }
