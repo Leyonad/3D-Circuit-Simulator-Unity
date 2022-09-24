@@ -20,6 +20,8 @@ public class Wire
     public LineRenderer lineRenderer;
     public static Wire justCreated;
 
+    public Item parentItem = null;
+
     MeshCollider meshCollider;
     Mesh mesh;
 
@@ -29,8 +31,9 @@ public class Wire
     public bool flat = false;
     public static float flatHeight = 1.25f;
 
-    public Wire(GameObject obj1, GameObject obj2=null, float _middlePointHeight=0f)
+    public Wire(GameObject obj1, GameObject obj2=null, float _middlePointHeight=0f, Item _item=null)
     {
+        parentItem = _item;
         startObject = obj1;
         endObject = obj2;
         if (_middlePointHeight > 0f)
@@ -38,7 +41,7 @@ public class Wire
         if (obj2 == null)
             justCreated = this;
         CreateLineObject();
-        UpdateLinesOfWire();
+        UpdatePointsOfWire();
         meshCollider = lineObject.AddComponent<MeshCollider>();
         mesh = new Mesh();
     }
@@ -49,7 +52,7 @@ public class Wire
         Vector3 targetPosition = MouseInteraction.GetNewPosition(mousePosition, Vector2.zero, wire.lineRenderer.GetPosition(justCreated.verticesAmount - 1));
 
         wire.lineRenderer.SetPosition(verticesAmount - 1, targetPosition);
-        UpdateLinesOfWire();
+        UpdatePointsOfWire();
     }
 
     private void CreateLineObject()
@@ -67,27 +70,77 @@ public class Wire
 
         //set all positions of line renderer
         Vector3[] positions = new Vector3[verticesAmount];
+        Vector3 initPosition;
+
+        //get initial position for all points
+        if (parentItem != null) initPosition = parentItem.startObject.transform.position;
+        else initPosition = startObject.transform.position;
+
+        //set position of all points to initial position
         for (int i = 0; i < verticesAmount; i++)
-            positions[i] = startObject.transform.position;
-            //positions[i] = new Vector3(startObject.transform.position.x, wireMouseY, startObject.transform.position.z);
+            positions[i] = initPosition;
 
         lineRenderer.SetPositions(positions);
         lineRenderer.numCapVertices = 4;
     }
 
-    public float HasCurrent()
+    public static void UpdateWirePositionComponent(GameObject obj)
     {
-        if (this.startObject.transform.parent.GetComponent<Properties>().current != 0f)
-            return this.startObject.transform.parent.GetComponent<Properties>().current;
-        if (this.endObject.transform.parent.GetComponent<Properties>().current != 0f)
-            return this.endObject.transform.parent.GetComponent<Properties>().current;
-
-        return 0f;
+        //this method updates the wire positions when a component is being moved
+        foreach (Wire wire in Wire._registry)
+        {
+            if (wire.startObject.transform.IsChildOf(obj.transform) || wire.endObject.transform.IsChildOf(obj.transform))
+                wire.UpdateWirePosition();
+        }
     }
 
-    public void SetCurrent(GameObject obj, float current)
+    public void UpdateWirePosition()
     {
-        obj.transform.parent.GetComponent<Properties>().current = current;
+        this.lineRenderer.SetPosition(0, this.startObject.transform.position);
+        this.lineRenderer.SetPosition(this.verticesAmount - 1, this.endObject.transform.position);
+        this.UpdatePointsOfWire();
+    }
+
+    public void UpdatePointsOfWire()
+    {
+        if (flat)
+        {
+            Vector3 vec3FlatHeight = Vector3.up * flatHeight;
+            lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(0).x, vec3FlatHeight.y, lineRenderer.GetPosition(0).z));
+            lineRenderer.SetPosition(verticesAmount - 2, new Vector3(lineRenderer.GetPosition(verticesAmount - 1).x, vec3FlatHeight.y, lineRenderer.GetPosition(verticesAmount - 1).z));
+            UpdateMeshOfWire();
+            return;
+        }
+
+        Vector3 pos1 = lineRenderer.GetPosition(0);
+        Vector3 pos2 = lineRenderer.GetPosition(verticesAmount - 1);
+
+        if (pos2 == pos1) return;
+        Vector3 middle = (pos1 + pos2) / 2;
+        middle.y = middlePointHeight;
+        Vector3[] positions = CalculateVertices(pos1, middle, pos2, verticesAmount);
+        positions[0] = pos1;
+        positions[verticesAmount - 1] = pos2;
+        lineRenderer.SetPositions(positions);
+    }
+
+    static Vector3[] CalculateVertices(Vector3 from, Vector3 middle, Vector3 to, int vertices)
+    {
+        Vector3[] result = new Vector3[vertices];
+
+        for (int i = 0; i < vertices; i++)
+        {
+            float t = i / (float)vertices;
+            result[i] = CalculateQuadraticBezierPoint(t, from, middle, to);
+        }
+        return result;
+    }
+
+    static Vector3 CalculateQuadraticBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2)
+    {
+        // B(t) = (1-t)^2*p0 + 2*(1-t)*t*p1 + t^2*p2 , 0 < t < 1
+        Vector3 result = ((1 - t) * (1 - t)) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+        return result;
     }
 
     public void UpdateMeshOfWire()
@@ -128,68 +181,23 @@ public class Wire
         lineRenderer.positionCount = 0;
         lineRenderer.positionCount = defaultVerticesAmount;
         lineRenderer.SetPosition(0, startPos);
-        lineRenderer.SetPosition(verticesAmount-1, endPos);
-        UpdateLinesOfWire();
+        lineRenderer.SetPosition(verticesAmount - 1, endPos);
+        UpdatePointsOfWire();
         UpdateMeshOfWire();
     }
 
-    public void UpdateLinesOfWire()
+    public void AttachToParent()
     {
-        if (flat)
-        {
-            Vector3 vec3FlatHeight = Vector3.up * flatHeight;
-            lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(0).x, vec3FlatHeight.y, lineRenderer.GetPosition(0).z));
-            lineRenderer.SetPosition(verticesAmount-2, new Vector3(lineRenderer.GetPosition(verticesAmount-1).x, vec3FlatHeight.y, lineRenderer.GetPosition(verticesAmount-1).z));
-            UpdateMeshOfWire();
-            return;
-        }
-
-        Vector3 pos1 = lineRenderer.GetPosition(0);
-        Vector3 pos2 = lineRenderer.GetPosition(verticesAmount - 1);
-
-        if (pos2 == pos1) return; 
-        Vector3 middle = (pos1 + pos2) / 2;
-        middle.y = middlePointHeight;
-        Vector3[] positions = CalculateVertices(pos1, middle, pos2, verticesAmount);
-        positions[0] = pos1;
-        positions[verticesAmount - 1] = pos2;
-        lineRenderer.SetPositions(positions);
+        startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(this);
+        endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(this);
     }
 
-    static Vector3[] CalculateVertices(Vector3 from, Vector3 middle, Vector3 to, int vertices)
+    public void FinishWireCreation()
     {
-        Vector3[] result = new Vector3[vertices];
-
-        for (int i = 0; i < vertices; i++)
-        {
-            float t = i / (float)vertices;
-            result[i] = CalculateQuadraticBezierPoint(t, from, middle, to);
-        }
-        return result;
-    }
-
-    static Vector3 CalculateQuadraticBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2)
-    {
-        // B(t) = (1-t)^2*p0 + 2*(1-t)*t*p1 + t^2*p2 , 0 < t < 1
-        Vector3 result = ((1 - t) * (1 - t)) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
-        return result;
-    }
-
-    public static void UpdateWiresPosition(GameObject obj)
-    {
-        //this method updates the wire positions when a component is being moved
-        foreach (Wire wire in Wire._registry)
-        {
-            //if wire is a part of an item, skip, since the wire is updated in a seperate function
-            if (wire.lineObject.transform.parent != null && wire.lineObject.transform.parent.CompareTag("Item")) 
-                continue;
-            else if (wire.startObject.transform.IsChildOf(obj.transform) || wire.endObject.transform.IsChildOf(obj.transform))
-            {
-                wire.lineRenderer.SetPosition(0, wire.startObject.transform.position);
-                wire.lineRenderer.SetPosition(wire.verticesAmount - 1, wire.endObject.transform.position);
-                wire.UpdateLinesOfWire();
-            }
-        }
+        AttachToParent();
+        UpdateWirePosition();
+        UpdateMeshOfWire();
+        _registry.Add(this);
     }
 
     public void FlipStartEndOfWire()
@@ -199,19 +207,18 @@ public class Wire
         lineRenderer.SetPosition(verticesAmount - 1, temp);
     }
 
-
-    public void AttachToParent()
+    public float HasCurrent()
     {
-        startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(this);
-        endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Add(this);
+        if (this.startObject.transform.parent.GetComponent<Properties>().current != 0f)
+            return this.startObject.transform.parent.GetComponent<Properties>().current;
+        if (this.endObject.transform.parent.GetComponent<Properties>().current != 0f)
+            return this.endObject.transform.parent.GetComponent<Properties>().current;
+
+        return 0f;
     }
 
-
-    public void FinishWireCreation()
+    public void SetCurrent(GameObject obj, float current)
     {
-        AttachToParent();
-        UpdateLinesOfWire();
-        UpdateMeshOfWire();
-        _registry.Add(this);
+        obj.transform.parent.GetComponent<Properties>().current = current;
     }
 }

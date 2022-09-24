@@ -29,7 +29,9 @@ public class Item
 
     public Item(GameObject collideObject, string type)
     {
-        Vector3 spawnPosition = collideObject.transform.position;
+        startObject = collideObject;
+        Vector3 spawnPosition = startObject.transform.position;
+        Debug.Log(spawnPosition);
         currentYPosition = defaultYValue;
         spawnPosition.y = defaultYValue;
 
@@ -41,13 +43,11 @@ public class Item
         m1obj = itemObject.transform.Find("m0").gameObject;
         m2obj = itemObject.transform.Find("m1").gameObject;
 
-        wire1 = new Wire(collideObject, m1obj, 1.5f);
-        wire2 = new Wire(m2obj, null, 1.5f);
+        wire1 = new Wire(startObject, m1obj, 1.5f, this);
+        wire2 = new Wire(m2obj, null, 1.5f, this);
 
         wiresOfItem.Add(wire1);
         wiresOfItem.Add(wire2);
-
-        startObject = collideObject;
 
         wire1.lineRenderer.material = ResourcesManager.grey;
         wire2.lineRenderer.material = ResourcesManager.grey;
@@ -57,29 +57,25 @@ public class Item
         _registry.Add(this);
     }
 
-    public void Move()
+    public static void UpdateItemAll(GameObject obj)
     {
-        UpdatePositionAndRotation();
-
-        wire1.lineRenderer.SetPosition(wire1.verticesAmount - 1, m1obj.transform.position);
-        wire1.UpdateLinesOfWire();
-
-        wire2.lineRenderer.SetPosition(0, m2obj.transform.position);
-        wire2.UpdateLinesOfWire();
+        foreach (Item item in Item._registry)
+            if (item.startObject.transform.IsChildOf(obj.transform) || item.endObject.transform.IsChildOf(obj.transform))
+                item.UpdateItem();
     }
 
-    public void UpdateYPosition(Vector3 targetPosition)
+    public void UpdateItem()
     {
-        currentYPosition = targetPosition.y;
-        Item.selectedItem.itemObject.transform.position = targetPosition;
+        UpdateItemPositionAndRotation();
+
         wire1.lineRenderer.SetPosition(wire1.verticesAmount - 1, m1obj.transform.position);
         wire2.lineRenderer.SetPosition(0, m2obj.transform.position);
-        wire1.UpdateLinesOfWire();
-        wire2.UpdateLinesOfWire();
+        
+        wire1.UpdatePointsOfWire();
+        wire2.UpdatePointsOfWire();
     }
 
-
-    public void UpdatePositionAndRotation()
+    public void UpdateItemPositionAndRotation()
     {
         //position = (A+B)/2
         Vector3 targetPosition = ((wire2.lineRenderer.GetPosition(wire2.verticesAmount - 1) + startObject.transform.position)) / 2;
@@ -90,11 +86,14 @@ public class Item
         itemObject.transform.rotation = Quaternion.AngleAxis(-angle, Vector3.up);
     }
 
-    public static void UpdatePositionsAndRotations(GameObject obj)
+    public void UpdateYPosition(Vector3 targetPosition)
     {
-        foreach (Item item in Item._registry)
-            if (item.startObject.transform.IsChildOf(obj.transform) || item.endObject.transform.IsChildOf(obj.transform))
-                item.Move();
+        currentYPosition = targetPosition.y;
+        Item.selectedItem.itemObject.transform.position = targetPosition;
+        wire1.lineRenderer.SetPosition(wire1.verticesAmount - 1, m1obj.transform.position);
+        wire2.lineRenderer.SetPosition(0, m2obj.transform.position);
+        wire1.UpdatePointsOfWire();
+        wire2.UpdatePointsOfWire();
     }
 
     public static void Unselect()

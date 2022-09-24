@@ -175,6 +175,12 @@ public class WireManager : MonoBehaviour
         return false;
     }
 
+    public static bool IsAttachedToItem(Wire wire)
+    {
+        if (wire == null) return false;
+        return wire.startObject.transform.parent.CompareTag("Item") || 
+            wire.endObject.transform.parent.CompareTag("Item");
+    }
 
     public static Wire GetWireInMetal(GameObject metal)
     {

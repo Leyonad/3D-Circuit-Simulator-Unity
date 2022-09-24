@@ -26,9 +26,7 @@ public class MouseInteraction : MonoBehaviour
             if (Item.justCreated != null)
             {
                 //update the items position so that its always between the start and mouse point
-                Item.justCreated.Move();
-                Item.justCreated.wire2.UpdateLinesOfWire();
-                Item.justCreated.wire1.UpdateLinesOfWire();
+                Item.justCreated.UpdateItem();
             }
         }
         else if (selectedObject != null)
@@ -36,8 +34,8 @@ public class MouseInteraction : MonoBehaviour
             Cursor.visible = false;
             if (MoveObjectToPosition(selectedObject))
             {
-                Wire.UpdateWiresPosition(selectedObject);
-                Item.UpdatePositionsAndRotations(selectedObject);
+                Wire.UpdateWirePositionComponent(selectedObject);
+                Item.UpdateItemAll(selectedObject);
             }
         }
         else if (selectedWire != null)
@@ -51,7 +49,7 @@ public class MouseInteraction : MonoBehaviour
                     previousPosition = mousePos;
                     float targetPositionY = Mathf.Min(Wire.maxMiddlePointHeight, Mathf.Max(Wire.minMiddlePointHeight, WireManager.selectedWire.middlePointHeight + delta));
                     selectedWire.middlePointHeight = targetPositionY;
-                    selectedWire.UpdateLinesOfWire();
+                    selectedWire.UpdatePointsOfWire();
                 }
             }
         }
@@ -148,10 +146,11 @@ public class MouseInteraction : MonoBehaviour
                             Item.justCreated.endObject = hit.collider.gameObject;
 
                             Item.justCreated.wire2.endObject = hit.collider.gameObject;
-                            Item.justCreated.wire2.lineRenderer.SetPosition(Item.justCreated.wire2.verticesAmount - 1, hit.collider.gameObject.transform.position);
-
+                            
                             Item.justCreated.wire1.FinishWireCreation();
                             Item.justCreated.wire2.FinishWireCreation();
+
+                            Item.justCreated.UpdateItem();
 
                             //Update the electricity parameters of all wires
                             UpdateElectricityParameters();
@@ -247,8 +246,8 @@ public class MouseInteraction : MonoBehaviour
                     selectedObject.transform.rotation.eulerAngles.y + 90f,
                     selectedObject.transform.rotation.eulerAngles.z
                 ));
-                Wire.UpdateWiresPosition(selectedObject);
-                Item.UpdatePositionsAndRotations(selectedObject);
+                Wire.UpdateWirePositionComponent(selectedObject);
+                Item.UpdateItemAll(selectedObject);
             }
         }
 
@@ -278,7 +277,7 @@ public class MouseInteraction : MonoBehaviour
             else if (selectedWire != null)
             {
                 //delete item that wire is attached to
-                if (selectedWire.startObject.transform.parent.CompareTag("Item") || selectedWire.endObject.transform.parent.CompareTag("Item"))
+                if (IsAttachedToItem(selectedWire))
                 {
                     //find the item object
                     foreach (Item item in Item._registry)

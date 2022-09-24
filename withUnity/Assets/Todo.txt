@@ -52,7 +52,7 @@ Bugs:
 [x] cant connect an led with a metal
 [x] normal wire is still selected while making a new led
 [ ] cant move component (error with linerenderer)  #? cant reproduce
-[?] when creating a wire the y-position is not correct (CreateLineObject())
+[x] when creating a wire the y-position is not correct (CreateLineObject())
 [x] metals are still highlighted after a wire gets deleted
 
 Optimization:
