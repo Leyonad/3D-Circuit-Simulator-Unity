@@ -11,6 +11,8 @@ public class WireManager : MonoBehaviour
     public static Material selectedWireMetalPreviousMaterialEnd;
 
     private static List<GameObject> parentsLeft = new List<GameObject>();
+    private static List<Item> connectedItems = new List<Item>();
+    private static bool circuitComplete = false;
 
     public static bool canClickThisFrame = true;
 
@@ -22,7 +24,13 @@ public class WireManager : MonoBehaviour
 
     public static void UpdateElectricityParameters()
     {
+        //reset the material of the previously connected LEDs
+        foreach (Item item in connectedItems)
+            item.itemObject.GetComponent<MeshRenderer>().material = ResourcesManager.LED_default;
+
         parentsLeft.Clear();
+        connectedItems.Clear();
+        circuitComplete = false;
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -39,7 +47,7 @@ public class WireManager : MonoBehaviour
                     parentsLeft.Add(wire.startObject.transform.parent.gameObject);
                     found = true;
                 }
-                if (wire.endObject.transform.parent.name == "Metal2")
+                else if (wire.endObject.transform.parent.name == "Metal2")
                 {
                     parentsLeft.Add(wire.endObject.transform.parent.gameObject);
                     found = true;
@@ -58,6 +66,15 @@ public class WireManager : MonoBehaviour
                 }
             }
         }
+        //make LEDs glow
+        if (circuitComplete)
+        {
+            foreach (Item item in connectedItems)
+            {
+                item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
+            }
+        }
+        
     }
 
     private static bool RecursiveUpdateCurrent(GameObject startParent)
@@ -72,10 +89,17 @@ public class WireManager : MonoBehaviour
             }
         }
 
+        //additionally add an item to a seperate list
+        if (IsItem(startParent))
+        {
+            connectedItems.Add(startParent.GetComponent<Properties>().item);
+        }
+
         if (exit == 0) { //---------------no exit-------------------
             if (startParent.name == "Metal1")
             {
                 Debug.Log("CIRCUIT COMPLETE");
+                circuitComplete = true;
             }
             parentsLeft.Remove(startParent);
             return false;
@@ -109,8 +133,8 @@ public class WireManager : MonoBehaviour
 
     public static void SelectWire(Wire wire)
     {
-        if (wire == null)
-            return;
+        if (wire == null) return;
+
         UnselectWire();
         selectedWire = wire;
         SaveCurrentMaterialNotHighlighted();
@@ -119,13 +143,15 @@ public class WireManager : MonoBehaviour
 
     public static void UnselectWire()
     {
-        if (selectedWire == null)
-            return;
+        if (selectedWire == null) return;
+
         ResetMaterialHighlight();
         selectedWire = null;
     }
     public static void SetMaterialHighlight()
     {
+        if (selectedWire == null) return;
+
         selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
         selectedWire.startObject.GetComponent<MeshRenderer>().material = ResourcesManager.highlightWireMaterial;
         selectedWire.endObject.GetComponent<MeshRenderer>().material = ResourcesManager.highlightWireMaterial;
@@ -133,6 +159,8 @@ public class WireManager : MonoBehaviour
 
     public static void SaveCurrentMaterialNotHighlighted()
     {
+        if (selectedWire == null) return;
+
         selectedWirePreviousMaterial = selectedWire.lineRenderer.material;
         selectedWireMetalPreviousMaterialStart = selectedWire.startObject.GetComponent<MeshRenderer>().material;
         selectedWireMetalPreviousMaterialEnd = selectedWire.endObject.GetComponent<MeshRenderer>().material;
@@ -140,6 +168,8 @@ public class WireManager : MonoBehaviour
 
     public static void ResetMaterialHighlight()
     {
+        if (selectedWire == null) return;
+
         selectedWire.lineRenderer.material = selectedWirePreviousMaterial;
         selectedWire.startObject.GetComponent<MeshRenderer>().material = selectedWireMetalPreviousMaterialStart;
         selectedWire.endObject.GetComponent<MeshRenderer>().material = selectedWireMetalPreviousMaterialEnd;

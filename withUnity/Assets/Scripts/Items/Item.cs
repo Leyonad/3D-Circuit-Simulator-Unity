@@ -23,21 +23,28 @@ public class Item
 
     public static Item selectedItem = null;
 
+    public Material ledColor;
+
     public List<Wire> wiresOfItem = new List<Wire>();
 
     public static List<Item> _registry = new List<Item>();
 
-    public Item(GameObject collideObject, string type)
+    public Item(GameObject collideObject, string type, string color="red")
     {
         startObject = collideObject;
         Vector3 spawnPosition = startObject.transform.position;
-        Debug.Log(spawnPosition);
         currentYPosition = defaultYValue;
         spawnPosition.y = defaultYValue;
 
         if (type == "LED")
+        {
             itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
+            ledColor = ResourcesManager.LED_red;
+            if (color == "green") ledColor = ResourcesManager.LED_green;
+            else if (color == "yellow") ledColor = ResourcesManager.LED_yellow;
+        }
 
+        itemObject.GetComponent<Properties>().item = this;
         itemObject.transform.SetParent(ComponentsManager.components.transform);
 
         m1obj = itemObject.transform.Find("m0").gameObject;

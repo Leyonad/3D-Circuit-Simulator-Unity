@@ -18,7 +18,7 @@ Todo:
 [x] change color of led if circuit is complete
 [x] be able to remove the middle point of a wire so that its not a curve anymore
 [?] be able to move one end of wire around if its selected
-[ ] be able to move wires into a certain position
+[?] be able to move wires into a certain position
 [x] can click on a wire and select it
 [ ] different types of batteries
 [ ] calculate mA whenever a resistor is being placed 
@@ -32,6 +32,7 @@ Todo:
 [x] highlight the metals the selected wire is attached to
 [ ] different math formula for led wires ? 
 [ ] when selecting one wire of an led, both get selected ?
+[x] make led glow only if the circuit is complete and its connected to the circuit
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -58,7 +59,6 @@ Bugs:
 Optimization:
 [x] only move component if delta is not zero
 [x] maybe make UpdateWiresPosition() more efficient 
-[ ] maybe make WireAlreadyExists() more efficient
 [ ] find the wire when clicking on a wire to select it more efficiently
 [x] do i need the list verticesOfWire
 [x] Wire class needs its own file
