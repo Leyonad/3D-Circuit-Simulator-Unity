@@ -8,4 +8,5 @@ public class Properties : MonoBehaviour
     public List<Wire> attachedWires = new List<Wire>();
 
     public Item item;
+    public Wire wire;
 }

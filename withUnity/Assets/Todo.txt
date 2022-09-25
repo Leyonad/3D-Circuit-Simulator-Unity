@@ -59,7 +59,7 @@ Bugs:
 Optimization:
 [x] only move component if delta is not zero
 [x] maybe make UpdateWiresPosition() more efficient 
-[ ] find the wire when clicking on a wire to select it more efficiently
+[x] find the wire/item when clicking on a wire/item to select it more efficiently
 [x] do i need the list verticesOfWire
 [x] Wire class needs its own file
 [x] code clear up wireManager and MouseInteraction

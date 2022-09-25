@@ -167,30 +167,17 @@ public class MouseInteraction : MonoBehaviour
                 {
                     selectedObject = null;
                     Vector3 pos = hit.collider.GetComponent<LineRenderer>().GetPosition(0);
-                    foreach (Wire wire in Wire._registry)
-                    {
-                        if (wire.lineRenderer.GetPosition(0) == pos)
-                        {
-                            SelectWire(wire);
-                            changeMiddlePoint = true;
-                            previousPosition = Mouse.current.position.ReadValue();
-                            return;
-                        }
-                    }
+                    SelectWire(hit.collider.gameObject.GetComponent<Properties>().wire);
+                    changeMiddlePoint = true;
+                    previousPosition = Mouse.current.position.ReadValue();
+                    return;
                 }
                 //clicked on an item
                 else if (IsItem(selectedObject))
                 {
-                    foreach (Item item in Item._registry)
-                    {
-                        if (selectedObject == item.itemObject)
-                        {
-                            Item.selectedItem = item;
-                            Item.moveItemUpDown = true;
-                            previousPosition = Mouse.current.position.ReadValue();
-                            break;
-                        }
-                    }
+                    Item.selectedItem = selectedObject.GetComponent<Properties>().item;
+                    Item.moveItemUpDown = true;
+                    previousPosition = Mouse.current.position.ReadValue();
                     selectedObject = null;
                 }
             }

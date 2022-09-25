@@ -62,6 +62,9 @@ public class Wire
             tag = "Wire"
         };
 
+        lineObject.AddComponent<Properties>();
+        lineObject.GetComponent<Properties>().wire = this;
+        
         lineRenderer = lineObject.AddComponent<LineRenderer>();
         lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lineRenderer.material = ResourcesManager.wireMaterial;
