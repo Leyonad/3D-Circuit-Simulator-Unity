@@ -79,6 +79,8 @@ public class WireManager : MonoBehaviour
             }
             foreach (Item item in connectedLeds)
             {
+                Properties p = item.itemObject.GetComponent<Properties>();
+                
                 item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
             }
         }
