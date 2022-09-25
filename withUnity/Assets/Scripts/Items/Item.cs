@@ -42,14 +42,30 @@ public class Item
         {
             itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
             ledColor = ResourcesManager.LED_red;
-            if (color == "green") ledColor = ResourcesManager.LED_green;
-            else if (color == "yellow") ledColor = ResourcesManager.LED_yellow;
+            itemObject.GetComponent<Properties>().voltageDrop = 2f;
+            if (color == "green")
+            {
+                ledColor = ResourcesManager.LED_green;
+                itemObject.GetComponent<Properties>().voltageDrop = 3f;
+            }
+            else if (color == "yellow")
+            {
+                ledColor = ResourcesManager.LED_yellow;
+                itemObject.GetComponent<Properties>().voltageDrop = 2.3f;
+            }
+            else if (color == "blue")
+            {
+                ledColor = ResourcesManager.LED_blue;
+                itemObject.GetComponent<Properties>().voltageDrop = 3.4f;
+            }
             wireColor = ResourcesManager.grey;
             wireThickness = 0.05f;
         }
         else if (type == "Resistor")
         {
             itemObject = Object.Instantiate(ResourcesManager.prefabResistor, spawnPosition, Quaternion.identity);
+            itemObject.GetComponent<Properties>().resistance = 1000f;
+            itemObject.GetComponent<Properties>().tolerance = 0.05f;
             wireColor = ResourcesManager.grey;
             wireThickness = 0.05f;
         }

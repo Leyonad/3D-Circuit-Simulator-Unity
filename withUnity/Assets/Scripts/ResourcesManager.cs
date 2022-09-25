@@ -18,6 +18,7 @@ public class ResourcesManager
     public static Material LED_red;
     public static Material LED_green;
     public static Material LED_yellow;
+    public static Material LED_blue;
 
     public static GameObject prefabBattery9V;
     public static GameObject prefabLED;
@@ -37,10 +38,11 @@ public class ResourcesManager
         metalMaterial = LoadMaterial("Breadboard_Metal_Normal_Material");
         breadboardMaterial = LoadMaterial("Breadboard_Material");
 
-        LED_default = LoadMaterial("LED_default");
-        LED_red = LoadMaterial("LED_red");
-        LED_green = LoadMaterial("LED_green");
-        LED_yellow = LoadMaterial("LED_yellow");
+        LED_default = LoadMaterial("LED/LED_default");
+        LED_red = LoadMaterial("LED/LED_red");
+        LED_green = LoadMaterial("LED/LED_green");
+        LED_yellow = LoadMaterial("LED/LED_yellow");
+        LED_blue = LoadMaterial("LED/LED_blue");
 
         prefabBattery9V = LoadPrefab("Battery9V");
         prefabLED = LoadPrefab("LED");

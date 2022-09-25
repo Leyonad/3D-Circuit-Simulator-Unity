@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class WireManager : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class WireManager : MonoBehaviour
     public static Material selectedWireMetalPreviousMaterialEnd;
 
     private static List<GameObject> parentsLeft = new List<GameObject>();
-    private static List<Item> connectedItems = new List<Item>();
+    private static List<Item> connectedLeds = new List<Item>();
+    private static List<Item> connectedResistors = new List<Item>();
     private static bool circuitComplete = false;
 
     public static bool canClickThisFrame = true;
@@ -25,11 +27,12 @@ public class WireManager : MonoBehaviour
     public static void UpdateElectricityParameters()
     {
         //reset the material of the previously connected LEDs
-        foreach (Item item in connectedItems)
+        foreach (Item item in connectedLeds)
             item.itemObject.GetComponent<MeshRenderer>().material = ResourcesManager.LED_default;
 
         parentsLeft.Clear();
-        connectedItems.Clear();
+        connectedLeds.Clear();
+        connectedResistors.Clear();
         circuitComplete = false;
 
         //find the metal2 object, since that is the start object
@@ -69,12 +72,14 @@ public class WireManager : MonoBehaviour
         //make LEDs glow
         if (circuitComplete)
         {
-            foreach (Item item in connectedItems)
+            float resistanceCount = 0f;
+            foreach (Item item in connectedResistors){
+                Properties p = item.itemObject.GetComponent<Properties>();
+                resistanceCount += p.resistance;
+            }
+            foreach (Item item in connectedLeds)
             {
-                if (item.itemObject.name == "LED")
-                {
-                    item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
-                }
+                item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
             }
         }
         
@@ -95,7 +100,11 @@ public class WireManager : MonoBehaviour
         //additionally add an item to a seperate list
         if (IsItem(startParent))
         {
-            connectedItems.Add(startParent.GetComponent<Properties>().item);
+            Item item = startParent.GetComponent<Properties>().item;
+            if (item.itemObject.name == "LED")
+                connectedLeds.Add(item);
+            else if (item.itemObject.name == "Resistor")
+                connectedResistors.Add(item);
         }
 
         if (exit == 0) { //---------------no exit-------------------

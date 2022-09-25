@@ -21,7 +21,9 @@ Todo:
 [?] be able to move wires into a certain position
 [x] can click on a wire and select it
 [ ] different types of batteries
-[n] calculate mA whenever a resistor is being placed 
+[x] introduce more properties for resistor, led, and battery
+[ ] make the current flow in the right direction, change the algorithm
+[ ] calculate mA whenever a resistor is being placed 
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
 [x] make an led in blender
 [x] can make LEDs instead of wires (switch with tab-key)
