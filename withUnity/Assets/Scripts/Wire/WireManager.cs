@@ -38,7 +38,7 @@ public class WireManager : MonoBehaviour
         {
             //reset the updated-parameter of each wire
             wire.updated = false;
-            wire.lineRenderer.material = ResourcesManager.wireMaterial;
+            wire.lineRenderer.material = wire.wireColor;
 
             if (!found)
             {
@@ -71,7 +71,10 @@ public class WireManager : MonoBehaviour
         {
             foreach (Item item in connectedItems)
             {
-                item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
+                if (item.itemObject.name == "LED")
+                {
+                    item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
+                }
             }
         }
         

@@ -33,6 +33,8 @@ Todo:
 [ ] different math formula for led wires ? 
 [ ] when selecting one wire of an led, both get selected ?
 [x] make led glow only if the circuit is complete and its connected to the circuit
+[x] make a resistor in blender and make it spawnable
+[x] different wire color/thickness for the resistor
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -46,7 +48,6 @@ Bugs:
 [ ] metal can appear highlighted after cancelling making of wire
 [x] plane material and sky are not how they should be
 [x] after unselecting a wire its color should be the same as before
-[ ] color of wire is wrong after its made flat
 [x] cant drag component properly
 [x] LED is on the wrong position when moving the mouse
 [x] rotation of the led doesnt work right

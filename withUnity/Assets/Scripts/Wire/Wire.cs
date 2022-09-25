@@ -19,6 +19,8 @@ public class Wire
     public GameObject lineObject;
     public LineRenderer lineRenderer;
     public static Wire justCreated;
+    public Material wireColor;
+    public float wireThickness;
 
     public Item parentItem = null;
 
@@ -36,10 +38,23 @@ public class Wire
         parentItem = _item;
         startObject = obj1;
         endObject = obj2;
+
         if (_middlePointHeight > 0f)
             middlePointHeight = _middlePointHeight;
         if (obj2 == null)
             justCreated = this;
+
+        if (_item != null)
+        {
+            wireThickness = _item.wireThickness;
+            wireColor = _item.wireColor;
+        }
+        else
+        {
+            wireThickness = 0.08f;
+            wireColor = ResourcesManager.wireMaterial;
+        }
+
         CreateLineObject();
         UpdatePointsOfWire();
         meshCollider = lineObject.AddComponent<MeshCollider>();
@@ -67,8 +82,8 @@ public class Wire
         
         lineRenderer = lineObject.AddComponent<LineRenderer>();
         lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        lineRenderer.material = ResourcesManager.wireMaterial;
-        lineRenderer.widthMultiplier = 0.1f;
+        lineRenderer.material = wireColor;
+        lineRenderer.widthMultiplier = wireThickness;
         lineRenderer.positionCount = verticesAmount;
 
         //set all positions of line renderer

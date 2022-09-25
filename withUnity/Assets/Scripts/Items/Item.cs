@@ -12,6 +12,8 @@ public class Item
     public static float minItemY = 2f;
     public static float maxItemY = 6f;
 
+    public Material wireColor;
+    public float wireThickness;
     public Wire wire1;
     public Wire wire2;
 
@@ -42,8 +44,17 @@ public class Item
             ledColor = ResourcesManager.LED_red;
             if (color == "green") ledColor = ResourcesManager.LED_green;
             else if (color == "yellow") ledColor = ResourcesManager.LED_yellow;
+            wireColor = ResourcesManager.grey;
+            wireThickness = 0.05f;
+        }
+        else if (type == "Resistor")
+        {
+            itemObject = Object.Instantiate(ResourcesManager.prefabResistor, spawnPosition, Quaternion.identity);
+            wireColor = ResourcesManager.grey;
+            wireThickness = 0.05f;
         }
 
+        itemObject.name = type;
         itemObject.GetComponent<Properties>().item = this;
         itemObject.transform.SetParent(ComponentsManager.components.transform);
 
@@ -56,8 +67,8 @@ public class Item
         wiresOfItem.Add(wire1);
         wiresOfItem.Add(wire2);
 
-        wire1.lineRenderer.material = ResourcesManager.grey;
-        wire2.lineRenderer.material = ResourcesManager.grey;
+        wire1.lineRenderer.material = wireColor;
+        wire2.lineRenderer.material = wireColor;
 
         justCreated = this;
 

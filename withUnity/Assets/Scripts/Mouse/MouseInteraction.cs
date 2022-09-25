@@ -17,9 +17,6 @@ public class MouseInteraction : MonoBehaviour
 
     void Update(){
 
-        //if(CameraController.dragginTheCamera && Wire.justCreated == null)
-        //    return;
-
         if (Wire.justCreated != null)
         {
             Wire.justCreated.WireFollowMouse(Wire.justCreated);
@@ -134,7 +131,7 @@ public class MouseInteraction : MonoBehaviour
                             if (GameManager.tabItem == 1)
                                 new Item(selectedObject, "LED");
                             else if (GameManager.tabItem == 2)
-                                new Item(selectedObject, "otheritem");
+                                new Item(selectedObject, "Resistor");
 
                             //create an item
                             selectedObject = null;
@@ -318,8 +315,8 @@ public class MouseInteraction : MonoBehaviour
             if (Wire.justCreated == null)
             {
                 GameManager.tabItem += 1;
-                //reset if too high (for now there are only 2 items -> wire, led)
-                if (GameManager.tabItem > 1)
+                //reset to first item 
+                if (GameManager.tabItem > ItemManager.itemNumber-1)
                     GameManager.tabItem = 0;
             }
         }
