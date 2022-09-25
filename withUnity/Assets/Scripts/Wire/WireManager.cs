@@ -42,12 +42,12 @@ public class WireManager : MonoBehaviour
 
             if (!found)
             {
-                if (wire.startObject.transform.parent.name == "Metal2")
+                if (wire.startObject.transform.parent.name == "Metal1")
                 {
                     parentsLeft.Add(wire.startObject.transform.parent.gameObject);
                     found = true;
                 }
-                else if (wire.endObject.transform.parent.name == "Metal2")
+                else if (wire.endObject.transform.parent.name == "Metal1")
                 {
                     parentsLeft.Add(wire.endObject.transform.parent.gameObject);
                     found = true;
@@ -99,7 +99,7 @@ public class WireManager : MonoBehaviour
         }
 
         if (exit == 0) { //---------------no exit-------------------
-            if (startParent.name == "Metal1")
+            if (startParent.name == "Metal2")
             {
                 Debug.Log("CIRCUIT COMPLETE");
                 circuitComplete = true;

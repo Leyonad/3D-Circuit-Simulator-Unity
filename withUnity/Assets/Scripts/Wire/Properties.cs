@@ -9,4 +9,6 @@ public class Properties : MonoBehaviour
 
     public Item item;
     public Wire wire;
+
+    public float resistance; //in ohm
 }

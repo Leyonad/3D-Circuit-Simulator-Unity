@@ -64,7 +64,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9e256d8ff21247d418965eecc921cb86, type: 2}
-  - {fileID: -1661109697262096512, guid: 2e6a54675d7ea9143967adae924c50be, type: 3}
+  - {fileID: 2100000, guid: a669d057774fe8a42bc1e3479c87b8dd, type: 2}
   - {fileID: 2100000, guid: a4a57979ce3be794f8b78c7a389151bc, type: 2}
   - {fileID: 2100000, guid: e5e782756efd88b4ebac4f93e5ea6ed7, type: 2}
   - {fileID: 2100000, guid: 47afcf1dc0abb7c438202f58ba5e0570, type: 2}
@@ -117,6 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   voltage: 0
   current: 0
+  resistance: 0
 --- !u!1 &4931614867944341942
 GameObject:
   m_ObjectHideFlags: 0

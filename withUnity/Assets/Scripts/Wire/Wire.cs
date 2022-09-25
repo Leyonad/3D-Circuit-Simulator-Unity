@@ -31,7 +31,7 @@ public class Wire
     public bool updated = false;
 
     public bool flat = false;
-    public static float flatHeight = 1.25f;
+    public static float flatHeight = 1.13f;
 
     public Wire(GameObject obj1, GameObject obj2=null, float _middlePointHeight=0f, Item _item=null)
     {
