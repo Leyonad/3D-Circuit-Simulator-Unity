@@ -66,3 +66,4 @@ Optimization:
 [x] transform LED class to item class
 [x] make led glow and other stuff (materials, spawn position, shadows)
 [x] find item when deleting a wire that is attached to an item faster
+[x] connect wires to the top of the metal so its easier to see where the wire is connected
