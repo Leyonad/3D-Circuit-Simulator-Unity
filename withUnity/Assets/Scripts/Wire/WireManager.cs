@@ -102,11 +102,25 @@ public class WireManager : MonoBehaviour
         //additionally add an item to a seperate list
         if (IsItem(startParent))
         {
-            Item item = startParent.GetComponent<Properties>().item;
-            if (item.itemObject.name == "LED")
-                connectedLeds.Add(item);
-            else if (item.itemObject.name == "Resistor")
-                connectedResistors.Add(item);
+            print(startParent.name);
+            //remove all wires that have a negative pole, since the electricity cant flow in that direction
+            bool found = false;
+            for (int i = 0; i < notVisited.Count; i++)
+            {
+                if (notVisited[i].lineObject.GetComponent<Properties>().pole == 1)
+                {
+                    notVisited.Remove(notVisited[i]);
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                Item item = startParent.GetComponent<Properties>().item;
+                if (item.itemObject.name == "LED")
+                    connectedLeds.Add(item);
+                else if (item.itemObject.name == "Resistor")
+                    connectedResistors.Add(item);
+            }
         }
 
         if (exit == 0) { //---------------no exit-------------------
@@ -123,6 +137,7 @@ public class WireManager : MonoBehaviour
         {
             wire.lineRenderer.material = ResourcesManager.yellow;
             wire.updated = true;
+            
             if (exit == 1) //------------one exit------------
             {
                 parentsLeft.Remove(startParent);

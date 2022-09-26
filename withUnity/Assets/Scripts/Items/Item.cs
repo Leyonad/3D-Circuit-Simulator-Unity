@@ -69,7 +69,7 @@ public class Item
             wireColor = ResourcesManager.grey;
             wireThickness = 0.05f;
         }
-
+        
         itemObject.name = type;
         itemObject.GetComponent<Properties>().item = this;
         itemObject.transform.SetParent(ComponentsManager.components.transform);
@@ -79,6 +79,10 @@ public class Item
 
         wire1 = new Wire(startObject, m1obj, 1.5f, this);
         wire2 = new Wire(m2obj, null, 1.5f, this);
+
+        //set poles for wires, where the first wire is negative and the last positive
+        wire1.lineObject.GetComponent<Properties>().pole = 1;
+        wire2.lineObject.GetComponent<Properties>().pole = 0;
 
         wiresOfItem.Add(wire1);
         wiresOfItem.Add(wire2);

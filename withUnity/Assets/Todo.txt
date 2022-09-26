@@ -22,7 +22,7 @@ Todo:
 [x] can click on a wire and select it
 [ ] different types of batteries
 [x] introduce more properties for resistor, led, and battery
-[ ] make the current flow in the right direction, change the algorithm
+[x] make the current flow in the right direction, change the algorithm
 [ ] calculate mA whenever a resistor is being placed 
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
 [x] make an led in blender
@@ -58,6 +58,7 @@ Bugs:
 [ ] cant move component (error with linerenderer)  #? cant reproduce
 [x] when creating a wire the y-position is not correct (CreateLineObject())
 [x] metals are still highlighted after a wire gets deleted
+[ ] start and end object of an item can be the same
 
 Optimization:
 [x] only move component if delta is not zero

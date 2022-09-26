@@ -5,6 +5,7 @@ public class Properties : MonoBehaviour
 {
     //wire
     public float current;
+    public float pole; // + or - / 0 or 1
 
     //battery
     public float voltage;
