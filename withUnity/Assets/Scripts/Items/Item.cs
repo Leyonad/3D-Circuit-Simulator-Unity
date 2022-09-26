@@ -91,8 +91,6 @@ public class Item
         wire2.lineRenderer.material = wireColor;
 
         justCreated = this;
-
-        _registry.Add(this);
     }
 
     public static void UpdateItemAll(GameObject obj)

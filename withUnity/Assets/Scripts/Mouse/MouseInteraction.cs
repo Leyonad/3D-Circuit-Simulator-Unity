@@ -147,6 +147,8 @@ public class MouseInteraction : MonoBehaviour
                             Item.justCreated.wire1.FinishWireCreation();
                             Item.justCreated.wire2.FinishWireCreation();
 
+                            Item._registry.Add(Item.justCreated);
+
                             Item.justCreated.UpdateItem();
 
                             //Update the electricity parameters of all wires
