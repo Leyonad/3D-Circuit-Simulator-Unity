@@ -4,13 +4,13 @@ using UnityEngine;
 public class Item
 {
     public GameObject itemObject;
-    private static readonly float defaultYValue = 3f;
-    private float currentYPosition;
     public static Item justCreated = null;
     public static bool moveItemUpDown = false;
 
-    public static float minItemY = 2f;
-    public static float maxItemY = 6f;
+    private float currentYPosition;
+    private readonly float defaultYValue;
+    public static float minItemY;
+    public static float maxItemY;
 
     public Material wireColor;
     public float wireThickness;
@@ -35,11 +35,13 @@ public class Item
     {
         startObject = collideObject;
         Vector3 spawnPosition = startObject.transform.position;
-        currentYPosition = defaultYValue;
-        spawnPosition.y = defaultYValue;
 
         if (type == "LED")
         {
+            defaultYValue = 3f;
+            minItemY = 1.5f;
+            maxItemY = 5f;
+            spawnPosition.y = defaultYValue;
             itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
             ledColor = ResourcesManager.LED_red;
             itemObject.GetComponent<Properties>().voltageDrop = 2f;
@@ -63,13 +65,19 @@ public class Item
         }
         else if (type == "Resistor")
         {
+            defaultYValue = 1.5f;
+            minItemY = 1.3f;
+            maxItemY = 5f;
+            spawnPosition.y = defaultYValue;
             itemObject = Object.Instantiate(ResourcesManager.prefabResistor, spawnPosition, Quaternion.identity);
             itemObject.GetComponent<Properties>().resistance = 1000f;
             itemObject.GetComponent<Properties>().tolerance = 0.05f;
             wireColor = ResourcesManager.grey;
             wireThickness = 0.05f;
         }
-        
+
+        currentYPosition = defaultYValue;
+
         itemObject.name = type;
         itemObject.GetComponent<Properties>().item = this;
         itemObject.transform.SetParent(ComponentsManager.components.transform);

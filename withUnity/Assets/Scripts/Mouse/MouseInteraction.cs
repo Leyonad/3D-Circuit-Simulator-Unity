@@ -165,9 +165,10 @@ public class MouseInteraction : MonoBehaviour
                 else if (IsWire(hit.collider))
                 {
                     selectedObject = null;
-                    Vector3 pos = hit.collider.GetComponent<LineRenderer>().GetPosition(0);
-                    SelectWire(hit.collider.gameObject.GetComponent<Properties>().wire);
-                    changeMiddlePoint = true;
+                    Wire wire = hit.collider.gameObject.GetComponent<Properties>().wire;
+                    SelectWire(wire);
+                    if (!IsAttachedToItem(wire))
+                        changeMiddlePoint = true;
                     previousPosition = Mouse.current.position.ReadValue();
                     return;
                 }

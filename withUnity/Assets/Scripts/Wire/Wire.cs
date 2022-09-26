@@ -11,8 +11,8 @@ public class Wire
     public readonly float wireMouseY = 1.1f;
 
     public float middlePointHeight = 4f;
-    public static float minMiddlePointHeight = 2f;
-    public static float maxMiddlePointHeight = 12f;
+    public static float minMiddlePointHeight = 1.5f;
+    public static float maxMiddlePointHeight = 5f;
 
     public GameObject startObject;
     public GameObject endObject;
