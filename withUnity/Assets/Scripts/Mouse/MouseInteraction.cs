@@ -137,7 +137,7 @@ public class MouseInteraction : MonoBehaviour
                             selectedObject = null;
                             return;
                         }
-                        else if (hit.collider.gameObject != Item.justCreated.wire2.startObject && hit.collider.gameObject != Item.justCreated.wire1.endObject)
+                        else if (hit.collider.gameObject != Item.justCreated.startObject)
                         {
                             //endobject of LED item
                             Item.justCreated.endObject = hit.collider.gameObject;
