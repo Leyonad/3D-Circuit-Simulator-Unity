@@ -19,6 +19,7 @@ public class Wire
     public GameObject lineObject;
     public LineRenderer lineRenderer;
     public static Wire justCreated;
+
     public Material wireColor;
     public float wireThickness;
 

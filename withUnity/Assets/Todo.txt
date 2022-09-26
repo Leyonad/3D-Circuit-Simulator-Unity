@@ -23,7 +23,7 @@ Todo:
 [ ] different types of batteries
 [x] introduce more properties for resistor, led, and battery
 [x] make the current flow in the right direction, change the algorithm
-[n] calculate mA before making LEDs glow
+[ ] calculate mA before making LEDs glow
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
 [x] make an led in blender
 [x] can make LEDs instead of wires (switch with tab-key)
@@ -37,6 +37,7 @@ Todo:
 [x] make led glow only if the circuit is complete and its connected to the circuit
 [x] make a resistor in blender and make it spawnable
 [x] different wire color/thickness for the resistor
+[x] when clicking the space bar, toggle wire colors to see the electricity path
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

@@ -322,6 +322,19 @@ public class MouseInteraction : MonoBehaviour
                     GameManager.tabItem = 0;
             }
         }
+
+        //space bar to toggle electricity path view
+        else if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            electricityPathView = !electricityPathView;
+            foreach (Wire wire in connectedWires)
+            {
+                if (electricityPathView)
+                    wire.lineRenderer.material = ResourcesManager.yellow;
+                else
+                    wire.lineRenderer.material = wire.wireColor;
+            }
+        }
     }
 
     public bool MoveObjectToPosition(GameObject obj)

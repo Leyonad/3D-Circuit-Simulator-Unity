@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class WireManager : MonoBehaviour
 {
@@ -12,11 +11,12 @@ public class WireManager : MonoBehaviour
     public static Material selectedWireMetalPreviousMaterialEnd;
 
     private static List<GameObject> parentsLeft = new List<GameObject>();
+    public static List<Wire> connectedWires = new List<Wire>();
     private static List<Item> connectedLeds = new List<Item>();
     private static List<Item> connectedResistors = new List<Item>();
     private static bool circuitComplete = false;
 
-    public static bool canClickThisFrame = true;
+    public static bool electricityPathView = false;
 
     public static void ResetWire()
     {
@@ -30,7 +30,8 @@ public class WireManager : MonoBehaviour
         foreach (Item item in connectedLeds)
             item.itemObject.GetComponent<MeshRenderer>().material = ResourcesManager.LED_default;
 
-        parentsLeft.Clear();
+        parentsLeft.Clear(); 
+        connectedWires.Clear();
         connectedLeds.Clear();
         connectedResistors.Clear();
         circuitComplete = false;
@@ -67,7 +68,7 @@ public class WireManager : MonoBehaviour
                 if (!wire.updated)
                 {
                     wire.updated = true;
-                    wire.lineRenderer.material = ResourcesManager.yellow;
+                    connectedWires.Add(wire);
                     RecursiveUpdateCurrent(GetNextObject(parentsLeft[i], wire));
                 }
             }
@@ -83,11 +84,11 @@ public class WireManager : MonoBehaviour
 
             float batteryVoltage = battery.GetComponent<Properties>().voltage;
             float overallCurrent = batteryVoltage / (resistance+0.001f) / 1000f;
-            print(overallCurrent);
+
             foreach (Item item in connectedLeds)
             {
                 Properties p = item.itemObject.GetComponent<Properties>();
-                
+
                 item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
             }
         }
@@ -145,7 +146,7 @@ public class WireManager : MonoBehaviour
 
         foreach (Wire wire in notVisited)
         {
-            wire.lineRenderer.material = ResourcesManager.yellow;
+            connectedWires.Add(wire);
             wire.updated = true;
             
             if (exit == 1) //------------one exit------------

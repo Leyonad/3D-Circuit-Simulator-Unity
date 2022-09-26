@@ -8,6 +8,7 @@ public class ResourcesManager
     public static Material blue;
     public static Material yellow;
     public static Material grey;
+    public static Material black;
 
     public static Material wireMaterial;
     public static Material highlightWireMaterial;
@@ -26,12 +27,13 @@ public class ResourcesManager
 
     public static void LoadResources()
     {
-        white = LoadMaterial("White");
-        lightred = LoadMaterial("Lightred");
-        red = LoadMaterial("Red");
-        blue = LoadMaterial("Blue");
-        yellow = LoadMaterial("Yellow");
-        grey = LoadMaterial("Grey");
+        white = LoadMaterial("PrimaryColors/White");
+        lightred = LoadMaterial("PrimaryColors/Lightred");
+        red = LoadMaterial("PrimaryColors/Red");
+        blue = LoadMaterial("PrimaryColors/Blue");
+        yellow = LoadMaterial("PrimaryColors/Yellow");
+        grey = LoadMaterial("PrimaryColors/Grey");
+        black = LoadMaterial("PrimaryColors/Black");
 
         wireMaterial = LoadMaterial("Wire_Material");
         highlightWireMaterial = LoadMaterial("Highlight_Wire_Material");
