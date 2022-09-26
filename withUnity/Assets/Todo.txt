@@ -17,13 +17,13 @@ Todo:
 [x] get connections from one metal strip to another and to battery working
 [x] change color of led if circuit is complete
 [x] be able to remove the middle point of a wire so that its not a curve anymore
-[?] be able to move one end of wire around if its selected
-[?] be able to move wires into a certain position
+[ ] be able to move one end of wire around if its selected
+[ ] be able to move wires into a certain position
 [x] can click on a wire and select it
 [ ] different types of batteries
 [x] introduce more properties for resistor, led, and battery
 [x] make the current flow in the right direction, change the algorithm
-[ ] calculate mA whenever a resistor is being placed 
+[n] calculate mA before making LEDs glow
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
 [x] make an led in blender
 [x] can make LEDs instead of wires (switch with tab-key)
@@ -73,3 +73,5 @@ Optimization:
 [x] connect wires to the top of the metal so its easier to see where the wire is connected
 [x] make resistor look better
 [x] swap positive and negative of the battery, because the electrons go from negative to positive
+[x] resistors dont have polarity
+[ ] spawn resistors with a lower y value

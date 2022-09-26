@@ -4,8 +4,10 @@ using UnityEngine;
 public class Properties : MonoBehaviour
 {
     //wire
-    public float current;
-    public float pole; // + or - / 0 or 1
+    public float polarity; // + or - / 0 or 1
+
+    //parentobject
+    public float current; //in ampere
 
     //battery
     public float voltage;

@@ -37,6 +37,7 @@ public class WireManager : MonoBehaviour
 
         //find the metal2 object, since that is the start object
         bool found = false;
+        GameObject battery = null;
         foreach (Wire wire in Wire._registry)
         {
             //reset the updated-parameter of each wire
@@ -48,11 +49,13 @@ public class WireManager : MonoBehaviour
                 if (wire.startObject.transform.parent.name == "Metal1")
                 {
                     parentsLeft.Add(wire.startObject.transform.parent.gameObject);
+                    battery = wire.startObject.transform.parent.gameObject;
                     found = true;
                 }
                 else if (wire.endObject.transform.parent.name == "Metal1")
                 {
                     parentsLeft.Add(wire.endObject.transform.parent.gameObject);
+                    battery = wire.endObject.transform.parent.gameObject;
                     found = true;
                 }
             }
@@ -72,11 +75,15 @@ public class WireManager : MonoBehaviour
         //make LEDs glow
         if (circuitComplete)
         {
-            float resistanceCount = 0f;
+            float resistance = 0f;
             foreach (Item item in connectedResistors){
                 Properties p = item.itemObject.GetComponent<Properties>();
-                resistanceCount += p.resistance;
+                resistance += p.resistance;
             }
+
+            float batteryVoltage = battery.GetComponent<Properties>().voltage;
+            float overallCurrent = batteryVoltage / (resistance+0.001f) / 1000f;
+            print(overallCurrent);
             foreach (Item item in connectedLeds)
             {
                 Properties p = item.itemObject.GetComponent<Properties>();
@@ -102,15 +109,18 @@ public class WireManager : MonoBehaviour
         //additionally add an item to a seperate list
         if (IsItem(startParent))
         {
-            print(startParent.name);
-            //remove all wires that have a negative pole, since the electricity cant flow in that direction
+            //remove all wires that have negative polarity, since the electricity cant flow in that direction
             bool found = false;
             for (int i = 0; i < notVisited.Count; i++)
             {
-                if (notVisited[i].lineObject.GetComponent<Properties>().pole == 1)
+                //resistors dont have polarity, so its only possible for LEDs
+                if (notVisited[i].parentItem.itemObject.name == "LED")
                 {
-                    notVisited.Remove(notVisited[i]);
-                    found = true;
+                    if (notVisited[i].lineObject.GetComponent<Properties>().polarity == 1)
+                    {
+                        notVisited.Remove(notVisited[i]);
+                        found = true;
+                    }
                 }
             }
             if (!found)
