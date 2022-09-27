@@ -141,8 +141,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voltage: 9
+  polarity: 0
   current: 0
+  voltage: 9
+  mAh: 0
+  voltageDrop: 0
+  ampere: 0
+  resistance: 0
+  tolerance: 0
 --- !u!1 &3867108248354347899
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,8 +193,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voltage: 0
+  polarity: 0
   current: 0
+  voltage: 0
+  mAh: 0
+  voltageDrop: 0
+  ampere: 0
+  resistance: 0
+  tolerance: 0
 --- !u!1 &4930026491590432351
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +215,7 @@ GameObject:
   - component: {fileID: 4930026491590432348}
   - component: {fileID: 4930026491590432344}
   m_Layer: 0
-  m_Name: MetalPositive
+  m_Name: MetalNegative
   m_TagString: Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -345,7 +357,7 @@ GameObject:
   - component: {fileID: 4930026491849923160}
   - component: {fileID: 4930026491849923156}
   m_Layer: 0
-  m_Name: MetalNegative
+  m_Name: MetalPositive
   m_TagString: Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -484,5 +496,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  polarity: 0
+  current: 0
   voltage: 9
-  current: 1
+  mAh: 0
+  voltageDrop: 0
+  ampere: 0
+  resistance: 0
+  tolerance: 0

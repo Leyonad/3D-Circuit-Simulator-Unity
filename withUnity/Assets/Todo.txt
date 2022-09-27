@@ -40,6 +40,7 @@ Todo:
 [x] when clicking the space bar, toggle wire colors to see the electricity path
 [#] nodal analysis
 [x] 1. find all nodes
+[x] 2. set the ground node and the node connected to the positive side of the battery
 [ ] calculating the voltages of nodes using nodal analysis
 
 Bugs:

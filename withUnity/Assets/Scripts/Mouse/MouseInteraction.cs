@@ -335,12 +335,7 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
-            Debug.Log("START");
-            foreach (GameObject obj in nodes)
-            {
-                Debug.Log(obj.name + " " + obj.transform.position);
-            }
-            Debug.Log("END");
+            Node.PrintNodes();
         }
     }
 

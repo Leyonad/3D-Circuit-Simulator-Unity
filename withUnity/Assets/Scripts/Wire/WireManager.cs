@@ -10,8 +10,6 @@ public class WireManager : MonoBehaviour
     public static Material selectedWireMetalPreviousMaterialStart;
     public static Material selectedWireMetalPreviousMaterialEnd;
 
-    public static List<GameObject> nodes = new List<GameObject>();
-
     private static List<GameObject> parentsLeft = new List<GameObject>();
     public static List<Wire> connectedWires = new List<Wire>();
     private static List<Item> connectedLeds = new List<Item>();
@@ -32,7 +30,9 @@ public class WireManager : MonoBehaviour
         foreach (Item item in connectedLeds)
             item.itemObject.GetComponent<MeshRenderer>().material = ResourcesManager.LED_default;
 
-        nodes.Clear();
+        Node.ClearAllNodes();
+        Node.foundGround = false;
+
         parentsLeft.Clear(); 
         connectedWires.Clear();
         connectedLeds.Clear();
@@ -104,6 +104,12 @@ public class WireManager : MonoBehaviour
             {
                 Debug.Log("CIRCUIT COMPLETE");
                 circuitComplete = true;
+
+                //set voltage of node connected to the positive side of the battery
+                GameObject obj = GetNextObject(startParent, startParent.GetComponent<Properties>().attachedWires[0]);
+                foreach (Node node in Node._registry)
+                    if (node.nodeObject == obj)
+                        node.UpdateVoltageOfNode(startParent.GetComponent<Properties>().voltage);
             }
             parentsLeft.Remove(startParent);
             return false;
@@ -117,11 +123,19 @@ public class WireManager : MonoBehaviour
                 connectedLeds.Add(item);
             else if (item.itemObject.name == "Resistor")
                 connectedResistors.Add(item);
-
         }
-        //add node to unknown nodes if its not an item
-        else 
-            nodes.Add(startParent);
+        //add this startparent to the node list by making a new node
+        else if (Node.foundGround)
+        {
+            new Node(startParent);
+        }
+        //if not found the ground yet, make this object the ground, since its always the
+        //start/endobject of the metal1 wire
+        else
+        {
+            Node.foundGround = true;
+            new Node(startParent, true);
+        }
 
         foreach (Wire wire in notVisited)
         {
@@ -146,6 +160,7 @@ public class WireManager : MonoBehaviour
 
     private static GameObject GetNextObject(GameObject startParent, Wire wire)
     {
+        //find the gameobject to which the other end of the wire is attached to
         if (wire.startObject.transform.parent.gameObject == startParent)
             return wire.endObject.transform.parent.gameObject;
 
