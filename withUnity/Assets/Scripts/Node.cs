@@ -9,6 +9,7 @@ public class Node
     public GameObject nodeObject;
     private float voltage;
     private bool ground;
+    private bool known = false;
 
     public Node(GameObject _obj, bool _ground=false)
     {
@@ -36,5 +37,15 @@ public class Node
     public void UpdateVoltageOfNode(float _voltage)
     {
         voltage = _voltage;
+    }
+
+    public void SetToKnown()
+    {
+        known = true;
+    }
+
+    public void SetToUnknown()
+    {
+        known = false;
     }
 }

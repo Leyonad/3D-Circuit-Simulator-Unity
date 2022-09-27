@@ -109,7 +109,11 @@ public class WireManager : MonoBehaviour
                 GameObject obj = GetNextObject(startParent, startParent.GetComponent<Properties>().attachedWires[0]);
                 foreach (Node node in Node._registry)
                     if (node.nodeObject == obj)
+                    {
                         node.UpdateVoltageOfNode(startParent.GetComponent<Properties>().voltage);
+                        node.SetToKnown();
+                        break;
+                    }
             }
             parentsLeft.Remove(startParent);
             return false;
@@ -134,7 +138,8 @@ public class WireManager : MonoBehaviour
         else
         {
             Node.foundGround = true;
-            new Node(startParent, true);
+            Node ground = new Node(startParent, true);
+            ground.SetToKnown();
         }
 
         foreach (Wire wire in notVisited)
