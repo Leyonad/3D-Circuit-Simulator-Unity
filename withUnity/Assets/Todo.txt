@@ -38,6 +38,9 @@ Todo:
 [x] make a resistor in blender and make it spawnable
 [x] different wire color/thickness for the resistor
 [x] when clicking the space bar, toggle wire colors to see the electricity path
+[#] nodal analysis
+[x] 1. find all nodes
+[ ] calculating the voltages of nodes using nodal analysis
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

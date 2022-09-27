@@ -10,6 +10,8 @@ public class WireManager : MonoBehaviour
     public static Material selectedWireMetalPreviousMaterialStart;
     public static Material selectedWireMetalPreviousMaterialEnd;
 
+    public static List<GameObject> nodes = new List<GameObject>();
+
     private static List<GameObject> parentsLeft = new List<GameObject>();
     public static List<Wire> connectedWires = new List<Wire>();
     private static List<Item> connectedLeds = new List<Item>();
@@ -30,6 +32,7 @@ public class WireManager : MonoBehaviour
         foreach (Item item in connectedLeds)
             item.itemObject.GetComponent<MeshRenderer>().material = ResourcesManager.LED_default;
 
+        nodes.Clear();
         parentsLeft.Clear(); 
         connectedWires.Clear();
         connectedLeds.Clear();
@@ -67,8 +70,10 @@ public class WireManager : MonoBehaviour
             {
                 if (!wire.updated)
                 {
-                    wire.updated = true;
+                    if (electricityPathView)
+                        wire.lineRenderer.material = ResourcesManager.yellow;
                     connectedWires.Add(wire);
+                    wire.updated = true;
                     RecursiveUpdateCurrent(GetNextObject(parentsLeft[i], wire));
                 }
             }
@@ -76,21 +81,7 @@ public class WireManager : MonoBehaviour
         //make LEDs glow
         if (circuitComplete)
         {
-            float resistance = 0f;
-            foreach (Item item in connectedResistors){
-                Properties p = item.itemObject.GetComponent<Properties>();
-                resistance += p.resistance;
-            }
 
-            float batteryVoltage = battery.GetComponent<Properties>().voltage;
-            float overallCurrent = batteryVoltage / (resistance+0.001f) / 1000f;
-
-            foreach (Item item in connectedLeds)
-            {
-                Properties p = item.itemObject.GetComponent<Properties>();
-
-                item.itemObject.GetComponent<MeshRenderer>().material = item.ledColor;
-            }
         }
         
     }
@@ -107,34 +98,8 @@ public class WireManager : MonoBehaviour
             }
         }
 
-        //additionally add an item to a seperate list
-        if (IsItem(startParent))
-        {
-            //remove all wires that have negative polarity, since the electricity cant flow in that direction
-            bool found = false;
-            for (int i = 0; i < notVisited.Count; i++)
-            {
-                //resistors dont have polarity, so its only possible for LEDs
-                if (notVisited[i].parentItem.itemObject.name == "LED")
-                {
-                    if (notVisited[i].lineObject.GetComponent<Properties>().polarity == 1)
-                    {
-                        notVisited.Remove(notVisited[i]);
-                        found = true;
-                    }
-                }
-            }
-            if (!found)
-            {
-                Item item = startParent.GetComponent<Properties>().item;
-                if (item.itemObject.name == "LED")
-                    connectedLeds.Add(item);
-                else if (item.itemObject.name == "Resistor")
-                    connectedResistors.Add(item);
-            }
-        }
-
-        if (exit == 0) { //---------------no exit-------------------
+        if (exit == 0)
+        { //---------------no exit-------------------
             if (startParent.name == "Metal2")
             {
                 Debug.Log("CIRCUIT COMPLETE");
@@ -144,8 +109,24 @@ public class WireManager : MonoBehaviour
             return false;
         }
 
+        //additionally add an item to a seperate list
+        if (IsItem(startParent))
+        {
+            Item item = startParent.GetComponent<Properties>().item;
+            if (item.itemObject.name == "LED")
+                connectedLeds.Add(item);
+            else if (item.itemObject.name == "Resistor")
+                connectedResistors.Add(item);
+
+        }
+        //add node to unknown nodes if its not an item
+        else 
+            nodes.Add(startParent);
+
         foreach (Wire wire in notVisited)
         {
+            if (electricityPathView)
+                wire.lineRenderer.material = ResourcesManager.yellow;
             connectedWires.Add(wire);
             wire.updated = true;
             

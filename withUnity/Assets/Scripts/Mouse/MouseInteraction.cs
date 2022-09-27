@@ -129,7 +129,7 @@ public class MouseInteraction : MonoBehaviour
                         if (Item.justCreated == null)
                         {
                             if (GameManager.tabItem == 1)
-                                new Item(selectedObject, "LED", "red");
+                                new Item(selectedObject, "LED", "blue");
                             else if (GameManager.tabItem == 2)
                                 new Item(selectedObject, "Resistor");
 
@@ -335,6 +335,12 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
+            Debug.Log("START");
+            foreach (GameObject obj in nodes)
+            {
+                Debug.Log(obj.name + " " + obj.transform.position);
+            }
+            Debug.Log("END");
         }
     }
 
