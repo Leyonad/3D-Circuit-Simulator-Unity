@@ -127,7 +127,10 @@ public class WireManager : MonoBehaviour
             if (item.itemObject.name == "LED")
                 connectedLeds.Add(item);
             else if (item.itemObject.name == "Resistor")
+            {
                 connectedResistors.Add(item);
+                new Node(startParent, false, true);
+            }
         }
         //add this startparent to the node list by making a new node
         else if (Node.foundGround && !startParent.CompareTag("mP"))

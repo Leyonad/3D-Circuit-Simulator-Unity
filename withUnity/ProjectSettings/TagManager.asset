@@ -16,6 +16,9 @@ TagManager:
   - MBreadboardP
   - MBreadboardN
   - Item
+  - LED
+  - mP
+  - mN
   layers:
   - Default
   - TransparentFX

@@ -4,22 +4,27 @@ using UnityEngine;
 public class Node
 {
     public static List<Node> _registry = new List<Node>();
+    public static List<Node> _resistorsRegistry = new List<Node>();
     public static bool foundGround = false;
     public static Node groundNode;
     public static Node sourceNode;
 
     public GameObject nodeObject;
     private List<Node> neighborNodes = new List<Node>();
+    private List<Node> neighborResistors = new List<Node>();
     private float voltage;
     private bool ground;
     private bool known = false;
 
-    public Node(GameObject _obj, bool _ground=false)
+    public Node(GameObject _obj, bool _ground=false, bool _isResistor=false)
     {
         nodeObject = _obj;
         ground = _ground;
 
-        _registry.Add(this);
+        if (!_isResistor)
+            _registry.Add(this);
+        else
+            _resistorsRegistry.Add(this);
 
         //for optimization
         _obj.GetComponent<Properties>().node = this;
@@ -49,11 +54,17 @@ public class Node
                     continue;
                 }
 
-                //set the object at the other end of an item as the neighbor
                 if (WireManager.IsItem(nextObject))
                 {
+                    //set the object at the other end of an item as the neighbor
                     GameObject objectAfterItem = WireManager.GetObjectAfterItem(wire, nextObject);
                     node.neighborNodes.Add(objectAfterItem.GetComponent<Properties>().node);
+
+                    //add the resistor to the neighborResistors list
+                    if (nextObject.name == "Resistor")
+                    {
+                        node.neighborResistors.Add(nextObject.GetComponent<Properties>().node);
+                    }
                     continue;
                 }
 
@@ -64,18 +75,6 @@ public class Node
                     node.neighborNodes.Add(neighborNode);
             }
         }
-    }
-
-    public static Node GetGroundNode()
-    //get the node connected to the negative side of the battery
-    {
-        return groundNode;
-    }
-
-    public static Node GetSourceNode()
-    //get the node connected to the positive side of the battery
-    {
-        return sourceNode;
     }
 
     public static void PrintNodes()
@@ -96,10 +95,25 @@ public class Node
             Debug.Log(node.nodeObject.name + "  " + node.nodeObject.transform.position + ":");
             foreach (Node neighborNode in node.neighborNodes)
             {
-                //not set to instance of an object nullreference ??
                 if (neighborNode != null)
                     Debug.Log("   Neighbor: " + neighborNode.nodeObject.name + " " + neighborNode.nodeObject.transform.position);
-                else Debug.Log("NULL");
+                else Debug.Log("   NULL");
+            }
+        }
+        Debug.Log("END");
+    }
+
+    public static void PrintNeighborResistors()
+    {
+        Debug.Log("START");
+        foreach (Node node in Node._registry)
+        {
+            Debug.Log(node.nodeObject.name + "  " + node.nodeObject.transform.position + ":");
+            foreach (Node neighborResistor in node.neighborResistors)
+            {
+                if (neighborResistor != null)
+                    Debug.Log("   RESISTOR: " + neighborResistor.nodeObject.name + " " + neighborResistor.nodeObject.transform.position);
+                else Debug.Log("   NULL");
             }
         }
         Debug.Log("END");
@@ -123,5 +137,17 @@ public class Node
     public void SetToUnknown()
     {
         known = false;
+    }
+
+    public static Node GetGroundNode()
+    //get the node connected to the negative side of the battery
+    {
+        return groundNode;
+    }
+
+    public static Node GetSourceNode()
+    //get the node connected to the positive side of the battery
+    {
+        return sourceNode;
     }
 }

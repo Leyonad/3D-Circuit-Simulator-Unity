@@ -43,6 +43,7 @@ Todo:
 [x] 2. set the ground node and the node connected to the positive side of the battery
 [x] 3. mark the unknown nodes (maybe bool known = false) 
 [x] 4. get the neighbor nodes of each node
+[x] 5. get the resistors which are connected to each node
 [ ] calculating the voltages of nodes using nodal analysis
 
 Bugs:
