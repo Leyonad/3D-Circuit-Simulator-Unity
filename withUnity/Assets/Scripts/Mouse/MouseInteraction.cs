@@ -335,7 +335,9 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
-            Node.PrintNodes();
+            //Node.PrintNodes();
+            Node.SetNeighborNodes();
+            Node.PrintNeighbors();
         }
     }
 

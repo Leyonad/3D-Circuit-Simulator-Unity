@@ -78,11 +78,6 @@ public class WireManager : MonoBehaviour
                 }
             }
         }
-        //make LEDs glow
-        if (circuitComplete)
-        {
-
-        }
         
     }
 
@@ -110,10 +105,16 @@ public class WireManager : MonoBehaviour
                 foreach (Node node in Node._registry)
                     if (node.nodeObject == obj)
                     {
+                        Node.sourceNode = node;
                         node.UpdateVoltageOfNode(startParent.GetComponent<Properties>().voltage);
                         node.SetToKnown();
                         break;
                     }
+            }
+            //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
+            else
+            {
+                new Node(startParent);
             }
             parentsLeft.Remove(startParent);
             return false;
@@ -129,16 +130,16 @@ public class WireManager : MonoBehaviour
                 connectedResistors.Add(item);
         }
         //add this startparent to the node list by making a new node
-        else if (Node.foundGround)
+        else if (Node.foundGround && !startParent.CompareTag("mP"))
         {
             new Node(startParent);
         }
-        //if not found the ground yet, make this object the ground, since its always the
-        //start/endobject of the metal1 wire
+        //make this object the ground, since its always the start/endobject of the metal1 wire
         else
         {
             Node.foundGround = true;
             Node ground = new Node(startParent, true);
+            Node.groundNode = ground;
             ground.SetToKnown();
         }
 
@@ -163,13 +164,26 @@ public class WireManager : MonoBehaviour
         return false;
     }
 
-    private static GameObject GetNextObject(GameObject startParent, Wire wire)
+    public static GameObject GetNextObject(GameObject startParent, Wire wire)
     {
         //find the gameobject to which the other end of the wire is attached to
         if (wire.startObject.transform.parent.gameObject == startParent)
             return wire.endObject.transform.parent.gameObject;
 
         return wire.startObject.transform.parent.gameObject;
+    }
+
+    public static GameObject GetObjectAfterItem(Wire wireToItem, GameObject itemObject)
+    {
+        //find the gameobject which is at the other end of the itemObject
+        foreach (Wire wire in itemObject.GetComponent<Properties>().attachedWires)
+        {
+            if (wire != wireToItem)
+            {
+                return GetNextObject(itemObject, wire);
+            }
+        }
+        return null;
     }
 
     public static void SelectWire(Wire wire)

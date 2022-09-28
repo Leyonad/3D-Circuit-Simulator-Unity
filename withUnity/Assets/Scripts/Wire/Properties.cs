@@ -27,4 +27,5 @@ public class Properties : MonoBehaviour
     //optimization
     public Item item;
     public Wire wire;
+    public Node node;
 }
