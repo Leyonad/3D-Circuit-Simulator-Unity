@@ -1,14 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class WireManager : MonoBehaviour
 {
     public int numCapVertices = 4;
-
-    public static Wire selectedWire;
-    public static Material selectedWirePreviousMaterial;
-    public static Material selectedWireMetalPreviousMaterialStart;
-    public static Material selectedWireMetalPreviousMaterialEnd;
 
     private static List<GameObject> parentsLeft = new List<GameObject>();
     public static List<Wire> connectedWires = new List<Wire>();
@@ -189,51 +185,16 @@ public class WireManager : MonoBehaviour
         return null;
     }
 
-    public static void SelectWire(Wire wire)
+    public static Item GetItemAttachedToWire(Wire wire)
     {
-        if (wire == null) return;
+        if (wire == null) return null;
 
-        UnselectWire();
-        selectedWire = wire;
-        SaveCurrentMaterialNotHighlighted();
-        SetMaterialHighlight();
-    }
+        if (wire.startObject.transform.parent.CompareTag("Item"))
+            return wire.startObject.transform.parent.GetComponent<Properties>().item;
+        else if (wire.endObject.transform.parent.CompareTag("Item"))
+            return wire.endObject.transform.parent.GetComponent<Properties>().item;
 
-    public static void UnselectWire()
-    {
-        if (selectedWire == null) return;
-
-        ResetMaterialHighlight();
-        selectedWire = null;
-    }
-    public static void SetMaterialHighlight()
-    {
-        if (selectedWire == null) return;
-
-        selectedWire.lineRenderer.material = ResourcesManager.highlightWireMaterial;
-        selectedWire.startObject.GetComponent<MeshRenderer>().material = ResourcesManager.highlightWireMaterial;
-        selectedWire.endObject.GetComponent<MeshRenderer>().material = ResourcesManager.highlightWireMaterial;
-    }
-
-    public static void SaveCurrentMaterialNotHighlighted()
-    {
-        if (selectedWire == null) return;
-
-        selectedWirePreviousMaterial = selectedWire.lineRenderer.material;
-        selectedWireMetalPreviousMaterialStart = selectedWire.startObject.GetComponent<MeshRenderer>().material;
-        selectedWireMetalPreviousMaterialEnd = selectedWire.endObject.GetComponent<MeshRenderer>().material;
-    }
-
-    public static void ResetMaterialHighlight()
-    {
-        if (selectedWire == null) return;
-
-        selectedWire.lineRenderer.material = selectedWirePreviousMaterial;
-        selectedWire.startObject.GetComponent<MeshRenderer>().material = selectedWireMetalPreviousMaterialStart;
-        selectedWire.endObject.GetComponent<MeshRenderer>().material = selectedWireMetalPreviousMaterialEnd;
-        selectedWirePreviousMaterial = null;
-        selectedWireMetalPreviousMaterialStart = null;
-        selectedWireMetalPreviousMaterialEnd = null;
+        return null;
     }
 
     public static bool IsMetal(GameObject obj)

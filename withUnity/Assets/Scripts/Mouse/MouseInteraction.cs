@@ -35,7 +35,7 @@ public class MouseInteraction : MonoBehaviour
                 Item.UpdateItemAll(selectedObject);
             }
         }
-        else if (selectedWire != null)
+        else if (Selection.oneWireIsSelected)
         {
             if (changeMiddlePoint)
             {
@@ -44,9 +44,15 @@ public class MouseInteraction : MonoBehaviour
                 {
                     float delta = (mousePos.y - previousPosition.y) * changeMiddlePointSpeed;
                     previousPosition = mousePos;
-                    float targetPositionY = Mathf.Min(Wire.maxMiddlePointHeight, Mathf.Max(Wire.minMiddlePointHeight, WireManager.selectedWire.middlePointHeight + delta));
-                    selectedWire.middlePointHeight = targetPositionY;
-                    selectedWire.UpdatePointsOfWire();
+                    
+                    //update the middle point height of all selected wires
+                    foreach (Selection currentlySelected in Selection.currentlySelectedWires)
+                    {
+                        float targetPositionY = Mathf.Min(Wire.maxMiddlePointHeight, Mathf.Max(Wire.minMiddlePointHeight, currentlySelected.wire.middlePointHeight + delta));
+                        currentlySelected.wire.middlePointHeight = targetPositionY;
+                        currentlySelected.wire.UpdatePointsOfWire();
+                    }
+                    
                 }
             }
         }
@@ -77,7 +83,7 @@ public class MouseInteraction : MonoBehaviour
                 selectedObject = hit.collider.gameObject; 
                 offsetOnScreen = GetOffsetOfObject(selectedObject);
 
-                UnselectWire();
+                Selection.UnselectSelection();
                 Item.Unselect();
 
                 //clicked on plane for example
@@ -92,7 +98,7 @@ public class MouseInteraction : MonoBehaviour
                     //if there is already a wire, select that wire and dont create a new one
                     if (existingWire != null)
                     {
-                        SelectWire(existingWire);
+                        new Selection(existingWire);
                         selectedObject = null;
                     }
 
@@ -166,9 +172,21 @@ public class MouseInteraction : MonoBehaviour
                 {
                     selectedObject = null;
                     Wire wire = hit.collider.gameObject.GetComponent<Properties>().wire;
-                    SelectWire(wire);
+
+                    //select only one wire
                     if (!IsAttachedToItem(wire))
+                    {
                         changeMiddlePoint = true;
+                        new Selection(wire);
+                    }
+
+                    //select all wires attached to the item
+                    else
+                    {
+                        Item item = GetItemAttachedToWire(wire);
+                        foreach (Wire itemWire in item.itemObject.GetComponent<Properties>().attachedWires)
+                            new Selection(itemWire);
+                    }
                     previousPosition = Mouse.current.position.ReadValue();
                     return;
                 }
@@ -200,11 +218,14 @@ public class MouseInteraction : MonoBehaviour
                 Wire.UpdateAllMeshes();
                 return;
             }
-            else if (selectedWire != null)
+            else if (Selection.oneWireIsSelected)
             {
                 if (changeMiddlePoint)
                     changeMiddlePoint = false;
-                selectedWire.UpdateMeshOfWire();
+                
+                //update mesh for all selected wires
+                foreach (Selection currentlySelected in Selection.currentlySelectedWires)
+                    currentlySelected.wire.UpdateMeshOfWire();
             }
         }
 
@@ -248,7 +269,7 @@ public class MouseInteraction : MonoBehaviour
         //delete wire when pressing delete-key
         if (Keyboard.current.deleteKey.wasPressedThisFrame)
         {
-            WireManager.ResetMaterialHighlight();
+            Selection.UnselectSelection();
             List<Wire> wiresToDelete = new List<Wire>();
             bool deleteWires = false;
 
@@ -261,18 +282,22 @@ public class MouseInteraction : MonoBehaviour
                 Item.Unselect();
                 deleteWires = true;
             }
-            else if (selectedWire != null)
+            else if (Selection.oneWireIsSelected)
             {
-                //delete item that wire is attached to
-                if (IsAttachedToItem(selectedWire))
+                //delete all selected wires
+                foreach (Selection currentlySelected in Selection.currentlySelectedWires)
                 {
-                    wiresToDelete = selectedWire.parentItem.wiresOfItem;
-                    Item._registry.Remove(selectedWire.parentItem);
-                    Destroy(selectedWire.parentItem.itemObject);
+                    //delete item that wire is attached to
+                    if (IsAttachedToItem(currentlySelected.wire))
+                    {
+                        wiresToDelete = currentlySelected.wire.parentItem.wiresOfItem;
+                        Item._registry.Remove(currentlySelected.wire.parentItem);
+                        Destroy(currentlySelected.wire.parentItem.itemObject);
+                    }
+                    //else just delete the selected wire
+                    else
+                        wiresToDelete.Add(currentlySelected.wire);
                 }
-                //else just delete the selected wire
-                else 
-                    wiresToDelete.Add(selectedWire);
                 deleteWires = true;
             }
             foreach (Wire wire in wiresToDelete)
@@ -286,7 +311,7 @@ public class MouseInteraction : MonoBehaviour
 
             if (deleteWires)
             {
-                selectedWire = null;
+                Selection.UnselectSelection();
                 //Update the electricity parameters of all wires
                 UpdateElectricityParameters();
             }
@@ -295,19 +320,23 @@ public class MouseInteraction : MonoBehaviour
         //make the wire flat if the F-key pressed
         else if (Keyboard.current.fKey.wasPressedThisFrame)
         {
-            if (selectedWire != null)
+            if (Selection.oneWireIsSelected)
             {
-                if (!selectedWire.flat)
+                //toggle between flat and curve for all selected wires
+                foreach (Selection currentlySelected in Selection.currentlySelectedWires)
                 {
-                    //make wire flat
-                    selectedWire.flat = true;
-                    selectedWire.MakeWireFlat();
-                }
-                else
-                {
-                    //back to curve
-                    selectedWire.flat = false;
-                    selectedWire.MakeWireCurve();
+                    if (!currentlySelected.wire.flat)
+                    {
+                        //make wire flat
+                        currentlySelected.wire.flat = true;
+                        currentlySelected.wire.MakeWireFlat();
+                    }
+                    else
+                    {
+                        //back to curve
+                        currentlySelected.wire.flat = false;
+                        currentlySelected.wire.MakeWireCurve();
+                    }
                 }
             }
         }
@@ -336,9 +365,9 @@ public class MouseInteraction : MonoBehaviour
                     wire.lineRenderer.material = wire.wireColor;
             }
             //Node.PrintNodes();
-            Node.SetNeighborNodes();
+            //Node.SetNeighborNodes();
             //Node.PrintNeighbors();
-            Node.PrintNeighborResistors();
+            //Node.PrintNeighborResistors();
         }
     }
 
