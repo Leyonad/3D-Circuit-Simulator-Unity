@@ -23,9 +23,7 @@ public class Item
     public GameObject startObject;
     public GameObject endObject;
 
-    public static Item selectedItem = null;
-
-    public Material ledColor;
+    public Material itemMaterial;
 
     public List<Wire> wiresOfItem = new List<Wire>();
 
@@ -43,21 +41,21 @@ public class Item
             maxItemY = 5f;
             spawnPosition.y = defaultYValue;
             itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
-            ledColor = ResourcesManager.LED_red;
+            itemMaterial = ResourcesManager.LED_red;
             itemObject.GetComponent<Properties>().voltageDrop = 2f;
             if (color == "green")
             {
-                ledColor = ResourcesManager.LED_green;
+                itemMaterial = ResourcesManager.LED_green;
                 itemObject.GetComponent<Properties>().voltageDrop = 3f;
             }
             else if (color == "yellow")
             {
-                ledColor = ResourcesManager.LED_yellow;
+                itemMaterial = ResourcesManager.LED_yellow;
                 itemObject.GetComponent<Properties>().voltageDrop = 2.3f;
             }
             else if (color == "blue")
             {
-                ledColor = ResourcesManager.LED_blue;
+                itemMaterial = ResourcesManager.LED_blue;
                 itemObject.GetComponent<Properties>().voltageDrop = 3.4f;
             }
             wireColor = ResourcesManager.grey;
@@ -133,16 +131,10 @@ public class Item
     public void UpdateYPosition(Vector3 targetPosition)
     {
         currentYPosition = targetPosition.y;
-        Item.selectedItem.itemObject.transform.position = targetPosition;
+        itemObject.transform.position = targetPosition;
         wire1.lineRenderer.SetPosition(wire1.verticesAmount - 1, m1obj.transform.position);
         wire2.lineRenderer.SetPosition(0, m2obj.transform.position);
         wire1.UpdatePointsOfWire();
         wire2.UpdatePointsOfWire();
-    }
-
-    public static void Unselect()
-    {
-        Item.selectedItem = null;
-        Item.moveItemUpDown = false;
     }
 }

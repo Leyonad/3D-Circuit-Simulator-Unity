@@ -12,6 +12,7 @@ public class ResourcesManager
 
     public static Material wireMaterial;
     public static Material highlightWireMaterial;
+    public static Material highlightItemMaterial;
     public static Material metalMaterial;
     public static Material breadboardMaterial;
 
@@ -37,6 +38,7 @@ public class ResourcesManager
 
         wireMaterial = LoadMaterial("Wire_Material");
         highlightWireMaterial = LoadMaterial("Highlight_Wire_Material");
+        highlightItemMaterial = LoadMaterial("Highlight_Item_Material");
         metalMaterial = LoadMaterial("Breadboard_Metal_Normal_Material");
         breadboardMaterial = LoadMaterial("Breadboard_Material");
 

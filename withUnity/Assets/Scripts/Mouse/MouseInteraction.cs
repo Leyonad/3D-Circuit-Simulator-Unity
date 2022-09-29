@@ -56,7 +56,7 @@ public class MouseInteraction : MonoBehaviour
                 }
             }
         }
-        else if (Item.selectedItem != null)
+        else if (Selection.oneItemIsSelected)
         {
             if (Item.moveItemUpDown)
             {
@@ -66,10 +66,13 @@ public class MouseInteraction : MonoBehaviour
                     float delta = (mousePos.y - previousPosition.y) * changeItemYSpeed;
                     previousPosition = mousePos;
 
-                    //ITEM
-                    float targetPositionY = Mathf.Min(Item.maxItemY, Mathf.Max(Item.minItemY, Item.selectedItem.itemObject.transform.position.y + delta));
-                    Vector3 pos = Item.selectedItem.itemObject.transform.position;
-                    Item.selectedItem.UpdateYPosition(new Vector3(pos.x, targetPositionY, pos.z));
+                    //update the y position of all selected items
+                    foreach (Selection currentlySelected in Selection.currentlySelectedItems)
+                    {
+                        float targetPositionY = Mathf.Min(Item.maxItemY, Mathf.Max(Item.minItemY, currentlySelected.item.itemObject.transform.position.y + delta));
+                        Vector3 pos = currentlySelected.item.itemObject.transform.position;
+                        currentlySelected.item.UpdateYPosition(new Vector3(pos.x, targetPositionY, pos.z));
+                    }
                 }
             }
         }
@@ -88,7 +91,6 @@ public class MouseInteraction : MonoBehaviour
                 {
                     Selection.UnselectSelection();
                 }
-                Item.Unselect();
 
                 //clicked on plane for example
                 if (selectedObject.CompareTag("Untagged"))
@@ -197,7 +199,7 @@ public class MouseInteraction : MonoBehaviour
                 //clicked on an item
                 else if (IsItem(selectedObject))
                 {
-                    Item.selectedItem = selectedObject.GetComponent<Properties>().item;
+                    new Selection(null, selectedObject.GetComponent<Properties>().item);
                     Item.moveItemUpDown = true;
                     previousPosition = Mouse.current.position.ReadValue();
                     selectedObject = null;
@@ -208,10 +210,13 @@ public class MouseInteraction : MonoBehaviour
         //-----------LEFT BUTTON RELEASED-------------
         else if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
-            if (Item.selectedItem != null)
+            if (Selection.oneItemIsSelected)
             {
-                Item.selectedItem.wire1.UpdateMeshOfWire();
-                Item.selectedItem.wire2.UpdateMeshOfWire();
+                foreach (Selection current in Selection.currentlySelectedItems)
+                {
+                    current.item.wire1.UpdateMeshOfWire();
+                    current.item.wire2.UpdateMeshOfWire();
+                }
                 Item.moveItemUpDown = false;
             }
 
@@ -273,50 +278,16 @@ public class MouseInteraction : MonoBehaviour
         //delete wire when pressing delete-key
         if (Keyboard.current.deleteKey.wasPressedThisFrame)
         {
-            Selection.UnselectSelection();
-            List<Wire> wiresToDelete = new List<Wire>();
             bool deleteWires = false;
+            if (Selection.oneItemIsSelected || Selection.oneWireIsSelected) 
+                deleteWires = true;
 
-            //delete a selected item
-            if (Item.selectedItem != null)
-            {
-                wiresToDelete = Item.selectedItem.wiresOfItem;
-                Item._registry.Remove(Item.selectedItem);
-                Destroy(Item.selectedItem.itemObject);
-                Item.Unselect();
-                deleteWires = true;
-            }
-            else if (Selection.oneWireIsSelected)
-            {
-                //delete all selected wires
-                foreach (Selection currentlySelected in Selection.currentlySelectedWires)
-                {
-                    //delete item that wire is attached to
-                    if (IsAttachedToItem(currentlySelected.wire))
-                    {
-                        wiresToDelete = currentlySelected.wire.parentItem.wiresOfItem;
-                        Item._registry.Remove(currentlySelected.wire.parentItem);
-                        Destroy(currentlySelected.wire.parentItem.itemObject);
-                    }
-                    //else just delete the selected wire
-                    else
-                        wiresToDelete.Add(currentlySelected.wire);
-                }
-                deleteWires = true;
-            }
-            foreach (Wire wire in wiresToDelete)
-            {
-                //remove wire from attachedWires List of start/end object
-                wire.startObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(wire);
-                wire.endObject.transform.parent.gameObject.GetComponent<Properties>().attachedWires.Remove(wire);
-                Wire._registry.Remove(wire);
-                Destroy(wire.lineObject);
-            }
+            //??
 
             if (deleteWires)
             {
-                //Update the electricity parameters of all wires
                 UpdateElectricityParameters();
+                Selection.UnselectSelection();
             }
         }
 
