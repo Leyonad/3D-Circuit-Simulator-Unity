@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Progress;
 using static WireManager;
 
 public class MouseInteraction : MonoBehaviour
@@ -179,17 +180,18 @@ public class MouseInteraction : MonoBehaviour
                     selectedObject = null;
                     Wire wire = hit.collider.gameObject.GetComponent<Properties>().wire;
 
-                    //select only one wire
+                    //select only one wire if its only a wire (no item)
                     if (!IsAttachedToItem(wire))
                     {
                         changeMiddlePoint = true;
                         new Selection(wire);
                     }
 
-                    //select all wires attached to the item
+                    //select the item and all wires attached to the item
                     else
                     {
                         Item item = GetItemAttachedToWire(wire);
+                        new Selection(null, item);
                         foreach (Wire itemWire in item.itemObject.GetComponent<Properties>().attachedWires)
                             new Selection(itemWire);
                     }
@@ -199,7 +201,12 @@ public class MouseInteraction : MonoBehaviour
                 //clicked on an item
                 else if (IsItem(selectedObject))
                 {
-                    new Selection(null, selectedObject.GetComponent<Properties>().item);
+                    //select the wire and all wires attached to the item
+                    Item item = selectedObject.GetComponent<Properties>().item;
+                    new Selection(null, item);
+                    foreach (Wire itemWire in item.itemObject.GetComponent<Properties>().attachedWires)
+                        new Selection(itemWire);
+
                     Item.moveItemUpDown = true;
                     previousPosition = Mouse.current.position.ReadValue();
                     selectedObject = null;
@@ -275,19 +282,14 @@ public class MouseInteraction : MonoBehaviour
         }
 
         //----------KEYBOARD BUTTONS PRESSED------------
-        //delete wire when pressing delete-key
+        //delete all selected things when pressing delete-key
         if (Keyboard.current.deleteKey.wasPressedThisFrame)
         {
-            bool deleteWires = false;
-            if (Selection.oneItemIsSelected || Selection.oneWireIsSelected) 
-                deleteWires = true;
-
-            //??
-
-            if (deleteWires)
+            if (Selection.oneItemIsSelected || Selection.oneWireIsSelected)
             {
-                UpdateElectricityParameters();
+                Selection.DeleteSelection();
                 Selection.UnselectSelection();
+                UpdateElectricityParameters();
             }
         }
 

@@ -34,6 +34,7 @@ Todo:
 [x] when selecting one wire of an item, all wires of the item get selected
 [x] multi wire selection with ctrl-key
 [x] multi selection with ctrl-key (wires + items)
+[x] delete all selected things when pressing the delete-key (multi selection)
 [x] make led glow only if the circuit is complete and its connected to the circuit
 [x] make a resistor in blender and make it spawnable
 [x] different wire color/thickness for the resistor
@@ -71,7 +72,7 @@ Bugs:
 [ ] when making wire flat, both ends have a different thickness
 [ ] when pressing the delete-key, no wire gets deleted
 [x] the items have the wrong color after unselecting
-[n] the LED doesnt glow anymore
+[ ] the metals are still highlighted after deleting a wire
 
 Optimization:
 [x] only move component if delta is not zero

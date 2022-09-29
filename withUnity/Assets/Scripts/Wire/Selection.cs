@@ -20,9 +20,11 @@ public class Selection
 
     public Selection(Wire _wire=null, Item _item=null)
     {
+        wire = _wire;
+        item = _item;
+
         if (_wire != null)
         {
-            wire = _wire;
             SaveCurrentWireMaterials();
             SetNewWireMaterial();
             currentlySelectedWires.Add(this);
@@ -30,13 +32,70 @@ public class Selection
         }
         else if (_item != null)
         {
-            item = _item;
             SaveCurrentItemMaterial();
             SetNewItemMaterial();
             currentlySelectedItems.Add(this);
             oneItemIsSelected = true;
         }
 
+    }
+
+    public static void UnselectSelection()
+    {
+        if (oneWireIsSelected) UnselectAllWires();
+        if (oneItemIsSelected) UnselectAllItems();
+    }
+
+    public static void DeleteSelection()
+    {
+        if (oneWireIsSelected) DeleteSelectedWires();
+        if (oneItemIsSelected) DeleteSelectedItems();
+    }
+
+    public static void DeleteSelectedWires()
+    {
+        foreach (Selection current in currentlySelectedWires)
+        {
+            current.wire.startObject.transform.parent.GetComponent<Properties>().attachedWires.Remove(current.wire);
+            current.wire.endObject.transform.parent.GetComponent<Properties>().attachedWires.Remove(current.wire);
+            Wire._registry.Remove(current.wire);
+            Object.Destroy(current.wire.lineObject);
+        }
+        currentlySelectedWires.Clear();
+        oneWireIsSelected = false;
+    }
+
+    public static void DeleteSelectedItems()
+    {
+        foreach (Selection current in currentlySelectedItems)
+        {
+            Item._registry.Remove(current.item);
+            Object.Destroy(current.item.itemObject);
+        }
+        currentlySelectedItems.Clear();
+        oneItemIsSelected = false;
+    }
+
+    private static void UnselectAllWires()
+    {
+        foreach (Selection current in currentlySelectedWires)
+        {
+            current.wire.lineRenderer.material = current.previousMaterial;
+            current.wire.startObject.GetComponent<MeshRenderer>().material = current.previousStartMetalMaterial;
+            current.wire.endObject.GetComponent<MeshRenderer>().material = current.previousEndMetalMaterial;
+        }
+        currentlySelectedWires.Clear();
+        oneWireIsSelected = false;
+    }
+
+    private static void UnselectAllItems()
+    {
+        foreach (Selection current in currentlySelectedItems)
+        {
+            current.item.itemObject.GetComponent<MeshRenderer>().material = current.previousMaterial;
+        }
+        currentlySelectedItems.Clear();
+        oneItemIsSelected = false;
     }
 
     private void SetNewItemMaterial()
@@ -61,33 +120,5 @@ public class Selection
         previousMaterial = wire.lineRenderer.material;
         previousStartMetalMaterial = wire.startObject.GetComponent<MeshRenderer>().material;
         previousEndMetalMaterial = wire.endObject.GetComponent<MeshRenderer>().material;
-    }
-
-    public static void UnselectSelection()
-    {
-        if (oneWireIsSelected) UnselectAllWires();
-        if (oneItemIsSelected) UnselectAllItems();
-
-    }
-    private static void UnselectAllWires()
-    {
-        foreach (Selection current in currentlySelectedWires)
-        {
-            current.wire.lineRenderer.material = current.previousMaterial;
-            current.wire.startObject.GetComponent<MeshRenderer>().material = current.previousStartMetalMaterial;
-            current.wire.endObject.GetComponent<MeshRenderer>().material = current.previousEndMetalMaterial;
-        }
-        currentlySelectedWires.Clear();
-        oneWireIsSelected = false;
-    }
-
-    private static void UnselectAllItems()
-    {
-        foreach (Selection current in currentlySelectedItems)
-        {
-            current.item.itemObject.GetComponent<MeshRenderer>().material = current.previousMaterial;
-        }
-        currentlySelectedItems.Clear();
-        oneItemIsSelected = false;
     }
 }
