@@ -46,7 +46,7 @@ public class Selection
 
     private void SaveCurrentItemMaterial()
     {
-        previousMaterial = item.itemMaterial;
+        previousMaterial = item.itemObject.GetComponent<MeshRenderer>().material;
     }
 
     private void SetNewWireMaterial()

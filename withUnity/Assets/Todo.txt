@@ -70,7 +70,8 @@ Bugs:
 [x] start and end object of an item can be the same
 [ ] when making wire flat, both ends have a different thickness
 [ ] when pressing the delete-key, no wire gets deleted
-[ ] the items have the wrong color after unselecting
+[x] the items have the wrong color after unselecting
+[n] the LED doesnt glow anymore
 
 Optimization:
 [x] only move component if delta is not zero
