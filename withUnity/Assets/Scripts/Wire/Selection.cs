@@ -56,6 +56,7 @@ public class Selection
     {
         foreach (Selection current in currentlySelectedWires)
         {
+            ResetMetalsMaterial(current);
             current.wire.startObject.transform.parent.GetComponent<Properties>().attachedWires.Remove(current.wire);
             current.wire.endObject.transform.parent.GetComponent<Properties>().attachedWires.Remove(current.wire);
             Wire._registry.Remove(current.wire);
@@ -80,9 +81,8 @@ public class Selection
     {
         foreach (Selection current in currentlySelectedWires)
         {
-            current.wire.lineRenderer.material = current.previousMaterial;
-            current.wire.startObject.GetComponent<MeshRenderer>().material = current.previousStartMetalMaterial;
-            current.wire.endObject.GetComponent<MeshRenderer>().material = current.previousEndMetalMaterial;
+            ResetWireMaterial(current);
+            ResetMetalsMaterial(current);
         }
         currentlySelectedWires.Clear();
         oneWireIsSelected = false;
@@ -92,10 +92,26 @@ public class Selection
     {
         foreach (Selection current in currentlySelectedItems)
         {
-            current.item.itemObject.GetComponent<MeshRenderer>().material = current.previousMaterial;
+            ResetItemMaterial(current);
         }
         currentlySelectedItems.Clear();
         oneItemIsSelected = false;
+    }
+
+    private static void ResetItemMaterial(Selection current)
+    {
+        current.item.itemObject.GetComponent<MeshRenderer>().material = current.previousMaterial;
+    }
+
+    private static void ResetWireMaterial(Selection current)
+    {
+        current.wire.lineRenderer.material = current.previousMaterial;
+    }
+
+    private static void ResetMetalsMaterial(Selection current)
+    {
+        current.wire.startObject.GetComponent<MeshRenderer>().material = current.previousStartMetalMaterial;
+        current.wire.endObject.GetComponent<MeshRenderer>().material = current.previousEndMetalMaterial;
     }
 
     private void SetNewItemMaterial()

@@ -72,7 +72,7 @@ Bugs:
 [ ] when making wire flat, both ends have a different thickness
 [ ] when pressing the delete-key, no wire gets deleted
 [x] the items have the wrong color after unselecting
-[ ] the metals are still highlighted after deleting a wire
+[x] the metals are still highlighted after deleting a wire
 
 Optimization:
 [x] only move component if delta is not zero
