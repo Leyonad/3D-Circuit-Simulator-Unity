@@ -83,7 +83,11 @@ public class MouseInteraction : MonoBehaviour
                 selectedObject = hit.collider.gameObject; 
                 offsetOnScreen = GetOffsetOfObject(selectedObject);
 
-                Selection.UnselectSelection();
+                //unselect wires only if multi selection is disabled
+                if (!Selection.multiSelectionEnabled)
+                {
+                    Selection.UnselectSelection();
+                }
                 Item.Unselect();
 
                 //clicked on plane for example
@@ -311,7 +315,6 @@ public class MouseInteraction : MonoBehaviour
 
             if (deleteWires)
             {
-                Selection.UnselectSelection();
                 //Update the electricity parameters of all wires
                 UpdateElectricityParameters();
             }
@@ -368,6 +371,16 @@ public class MouseInteraction : MonoBehaviour
             //Node.SetNeighborNodes();
             //Node.PrintNeighbors();
             //Node.PrintNeighborResistors();
+        }
+
+        //ctrl-key for enabling multiselection
+        else if (Keyboard.current.ctrlKey.wasPressedThisFrame)
+        {
+            Selection.multiSelectionEnabled = true;
+        }
+        else if (Keyboard.current.ctrlKey.wasReleasedThisFrame)
+        {
+            Selection.multiSelectionEnabled = false;
         }
     }
 

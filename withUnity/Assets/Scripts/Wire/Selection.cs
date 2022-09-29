@@ -5,6 +5,7 @@ public class Selection
 {
     public static List<Selection> currentlySelectedWires = new List<Selection>();
     public static bool oneWireIsSelected = false;
+    public static bool multiSelectionEnabled = false;
 
     public Wire wire;
     public Material previousWireMaterial;
