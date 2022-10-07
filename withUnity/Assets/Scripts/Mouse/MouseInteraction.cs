@@ -346,7 +346,7 @@ public class MouseInteraction : MonoBehaviour
             }
             Node.SetNeighborNodes();
             Node.CalculateNodes();
-            Node.PrintNodes();
+            //Node.PrintNodes();
             //Node.PrintNeighbors();
             //Node.PrintNeighborResistors();
         }

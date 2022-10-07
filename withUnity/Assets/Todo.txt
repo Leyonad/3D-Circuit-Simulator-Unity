@@ -48,6 +48,7 @@ Todo:
 [x] 5. get the resistors which are connected to each node
 [x] create the Y-matrix
 [x] create the I-Matrix
+[x] print the matrices
 [x] make the battery more item-like
 
 Bugs:

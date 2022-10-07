@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class Node
@@ -80,26 +82,41 @@ public class Node
 
     public static void CalculateNodes()
     {
-        CreateYMatrix();
-        CreateIMatrix();
+        CreateMatrices();
+        PrintMatrices();
         CalculateVoltages();
     }
 
-    public static void CreateYMatrix()
+    public static void CreateMatrices()
     {
         int n = _registry.Count + _voltageSourcesRegistry.Count;
         yMatrix = new double[n, n];
-    }
-
-    public static void CreateIMatrix()
-    {
-        int n = _registry.Count + _voltageSourcesRegistry.Count;
         iMatrix = new double[n];
     }
 
     public static void CalculateVoltages()
     {
 
+    }
+
+    public static void PrintMatrices()
+    {
+        //print y matrix and i matrix
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < yMatrix.GetLength(1); i++)
+        {
+            for (int j = 0; j < yMatrix.GetLength(0); j++)
+            {
+                sb.Append(yMatrix[i, j]);
+                sb.Append(' ');
+            }
+            sb.Append(' ');
+            sb.Append(' ');
+            sb.Append(' ');
+            sb.Append(iMatrix[i]);
+            sb.AppendLine();
+        }
+        Debug.Log("\n" + sb.ToString());
     }
 
     public static void PrintNodes()
