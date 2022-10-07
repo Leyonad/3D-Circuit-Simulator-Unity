@@ -5,6 +5,7 @@ public class Node
 {
     public static List<Node> _registry = new List<Node>();
     public static List<Node> _resistorsRegistry = new List<Node>();
+    public static List<Node> _voltageSourcesRegistry = new List<Node>();
     public static bool foundGround = false;
     public static Node groundNode;
     public static Node sourceNode;
@@ -17,15 +18,25 @@ public class Node
     private bool ground;
     private bool known = false;
 
-    public Node(GameObject _obj, bool _ground=false, bool _isResistor=false)
+    //matrix stuff
+    private static double[,] yMatrix;
+
+    public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false)
     {
+        //dont make duplicates
+        foreach (Node node in Node._registry)
+            if (node.nodeObject == _obj)
+                return;
+
         nodeObject = _obj;
         ground = _ground;
 
-        if (!_isResistor)
-            _registry.Add(this);
-        else
+        if (_isResistor)
             _resistorsRegistry.Add(this);
+        else if (_isVoltageSource)
+            _voltageSourcesRegistry.Add(this);
+        else
+            _registry.Add(this);
 
         //for optimization
         _obj.GetComponent<Properties>().node = this;
@@ -66,12 +77,30 @@ public class Node
         }
     }
 
+    public static void CalculateNodes()
+    {
+        CreateYMatrix();
+        CalculateVoltages();
+    }
+
+    public static void CreateYMatrix()
+    {
+        int n = _registry.Count + _voltageSourcesRegistry.Count;
+        yMatrix = new double[n, n];
+        Debug.Log(n);
+    }
+
+    public static void CalculateVoltages()
+    {
+
+    }
+
     public static void PrintNodes()
     {
         Debug.Log("START");
         foreach (Node node in Node._registry)
         {
-            Debug.Log(node.nodeObject.name + " " + node.nodeObject.transform.position + " ground= " + node.ground + " voltage= " + node.voltage);
+            Debug.Log(node.nodeObject.name + " " + node.nodeObject.transform.position + " ground = " + node.ground + " voltage= " + node.voltage);
         }
         Debug.Log("END");
     }
@@ -111,6 +140,8 @@ public class Node
     public static void ClearAllNodes()
     {
         _registry.Clear();
+        _resistorsRegistry.Clear();
+        _voltageSourcesRegistry.Clear();
     }
 
     public void UpdateVoltageOfNode(float _voltage)

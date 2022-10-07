@@ -104,6 +104,9 @@ public class WireManager : MonoBehaviour
             {
                 Debug.Log("CIRCUIT COMPLETE");
                 circuitComplete = true;
+
+                //make a voltage source node for the battery
+                new Node(startParent, false, false, true);
             }
             //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
             else
