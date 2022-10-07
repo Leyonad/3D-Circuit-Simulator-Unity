@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Functions
+public class ImportantFunctions
 {
     public static float GetYRotationBetween2Points(Vector3 p1, Vector3 p2)
     {

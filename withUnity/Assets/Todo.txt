@@ -50,6 +50,7 @@ Todo:
 [x] create the I-Matrix
 [x] print the matrices
 [x] assign values to matrices (resistors and battery)
+[x] calculate the inverse matrix
 [x] make the battery more item-like
 
 Bugs:

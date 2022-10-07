@@ -100,14 +100,37 @@ public class Node
         CreateMatrices();
         AssignValuesToMatrices();
         PrintMatrices();
-        CalculateVoltages();
+        CalculateInverseMatrix();
+        PrintMatrices();
     }
 
     public static void CreateMatrices()
     {
         int n = matrixDimension;
-        yMatrix = new double[n, n];
+        yMatrix = new double[n,n];
         iMatrix = new double[n];
+    }
+
+    public static void CalculateInverseMatrix()
+    {
+        //make a copy of the matrix as a jagged array
+        double[][] jaggedMatrix = new double[matrixDimension][];
+        for (int i = 0; i < matrixDimension; i++)
+        {
+            jaggedMatrix[i] = new double[matrixDimension];
+            for (int j = 0; j < matrixDimension; j++)
+            {
+                jaggedMatrix[i][j] = yMatrix[i, j];
+            }
+        }
+
+        //calculate the inverse matrix of the jagged array
+        double[][] invertedJaggedMatrix = Matrix.MatrixInverse(jaggedMatrix);
+        
+        //convert the inverse matrix back to a multidimensional array
+        for (int i = 0; i < matrixDimension; i++)
+            for (int j = 0; j < matrixDimension; j++)
+                yMatrix[i, j] = invertedJaggedMatrix[i][j];
     }
 
     public static void AssignValuesToMatrices()
@@ -174,11 +197,6 @@ public class Node
             }
         }
         return -1;
-    }
-
-    public static void CalculateVoltages()
-    {
-
     }
 
     public static void PrintMatrices()
