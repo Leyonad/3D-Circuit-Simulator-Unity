@@ -47,6 +47,7 @@ Todo:
 [x] 4. get the neighbor nodes of each node
 [x] 5. get the resistors which are connected to each node
 [x] create the Y-matrix
+[x] create the I-Matrix
 [x] make the battery more item-like
 
 Bugs:

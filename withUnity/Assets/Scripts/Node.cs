@@ -20,6 +20,7 @@ public class Node
 
     //matrix stuff
     private static double[,] yMatrix;
+    private static double[] iMatrix;
 
     public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false)
     {
@@ -80,6 +81,7 @@ public class Node
     public static void CalculateNodes()
     {
         CreateYMatrix();
+        CreateIMatrix();
         CalculateVoltages();
     }
 
@@ -87,7 +89,12 @@ public class Node
     {
         int n = _registry.Count + _voltageSourcesRegistry.Count;
         yMatrix = new double[n, n];
-        Debug.Log(n);
+    }
+
+    public static void CreateIMatrix()
+    {
+        int n = _registry.Count + _voltageSourcesRegistry.Count;
+        iMatrix = new double[n];
     }
 
     public static void CalculateVoltages()
