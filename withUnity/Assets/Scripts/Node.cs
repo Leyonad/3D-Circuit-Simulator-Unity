@@ -12,6 +12,7 @@ public class Node
     public GameObject nodeObject;
     private List<Node> neighborNodes = new List<Node>();
     private List<Node> neighborResistors = new List<Node>();
+    private List<Node> neighborVoltageSources = new List<Node>();
     private float voltage;
     private bool ground;
     private bool known = false;
@@ -33,27 +34,11 @@ public class Node
     public static void SetNeighborNodes()
     {
         //set the neighbor nodes of each node
-        foreach (Node node in _registry)
+        foreach (Node node in Node._registry)
         {
             foreach (Wire wire in node.nodeObject.GetComponent<Properties>().attachedWires)
             {
                 GameObject nextObject = WireManager.GetNextObject(node.nodeObject, wire);
-
-                //set the ground and source node as neighbors (if not already connected)
-                if (nextObject.CompareTag("mP"))
-                {
-                    if (!node.neighborNodes.Contains(GetGroundNode()))
-                        node.neighborNodes.Add(GetGroundNode());
-                    continue;
-                }
-
-                if (nextObject.CompareTag("mN"))
-                {
-                    if (!node.neighborNodes.Contains(GetSourceNode()))
-                        node.neighborNodes.Add(GetSourceNode());
-                    continue;
-                }
-
                 if (WireManager.IsItem(nextObject))
                 {
                     //set the object at the other end of an item as the neighbor
@@ -64,6 +49,10 @@ public class Node
                     if (nextObject.name == "Resistor")
                     {
                         node.neighborResistors.Add(nextObject.GetComponent<Properties>().node);
+                    }
+                    else if (nextObject.GetComponent<Properties>().battery != null)
+                    {
+                        node.neighborVoltageSources.Add(nextObject.GetComponent<Properties>().node);
                     }
                     continue;
                 }

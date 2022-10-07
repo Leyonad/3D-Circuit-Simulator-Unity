@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -1214697889059687200}
   m_Layer: 0
   m_Name: Battery9V
-  m_TagString: Battery
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33,8 +33,8 @@ Transform:
   m_LocalPosition: {x: 4.85, y: 0.75, z: -4.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 9031453277432656563}
-  - {fileID: 2494673150648979515}
+  - {fileID: 4930026491590432347}
+  - {fileID: 4930026491849923159}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -150,58 +150,6 @@ MonoBehaviour:
   ampere: 0
   resistance: 0
   tolerance: 0
---- !u!1 &3867108248354347899
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9031453277432656563}
-  - component: {fileID: 3285664321539916332}
-  m_Layer: 0
-  m_Name: Metal1
-  m_TagString: mN
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9031453277432656563
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3867108248354347899}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4930026491590432347}
-  m_Father: {fileID: 7846799020000109294}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3285664321539916332
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3867108248354347899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  polarity: 0
-  current: 0
-  voltage: 0
-  mAh: 0
-  voltageDrop: 0
-  ampere: 0
-  resistance: 0
-  tolerance: 0
 --- !u!1 &4930026491590432351
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,7 +164,7 @@ GameObject:
   - component: {fileID: 4930026491590432348}
   - component: {fileID: 4930026491590432344}
   m_Layer: 0
-  m_Name: MetalNegative
+  m_Name: mn
   m_TagString: Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -233,7 +181,7 @@ Transform:
   m_LocalPosition: {x: -1.6500001, y: 0, z: 0.5}
   m_LocalScale: {x: 0.5, y: 0.15, z: 0.5}
   m_Children: []
-  m_Father: {fileID: 9031453277432656563}
+  m_Father: {fileID: 7846799020000109294}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!33 &4930026491590432346
@@ -326,7 +274,7 @@ GameObject:
   - component: {fileID: 4930026491849923160}
   - component: {fileID: 4930026491849923156}
   m_Layer: 0
-  m_Name: MetalPositive
+  m_Name: mp
   m_TagString: Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -343,8 +291,8 @@ Transform:
   m_LocalPosition: {x: -1.6500001, y: 0, z: -0.5}
   m_LocalScale: {x: 0.29, y: 0.5, z: 0.5}
   m_Children: []
-  m_Father: {fileID: 2494673150648979515}
-  m_RootOrder: 0
+  m_Father: {fileID: 7846799020000109294}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4930026491849923158
 MeshFilter:
@@ -421,55 +369,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoveringColor: {r: 0.8509804, g: 0.8509804, b: 0.8509804, a: 1}
---- !u!1 &7382285127825295557
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2494673150648979515}
-  - component: {fileID: 6750987359155655331}
-  m_Layer: 0
-  m_Name: Metal2
-  m_TagString: mP
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2494673150648979515
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7382285127825295557}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4930026491849923159}
-  m_Father: {fileID: 7846799020000109294}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6750987359155655331
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7382285127825295557}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  polarity: 0
-  current: 0
-  voltage: 9
-  mAh: 0
-  voltageDrop: 0
-  ampere: 0
-  resistance: 0
-  tolerance: 0

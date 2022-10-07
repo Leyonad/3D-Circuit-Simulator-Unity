@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class WireManager : MonoBehaviour
 {
@@ -37,7 +36,7 @@ public class WireManager : MonoBehaviour
 
         //find the metal2 object, since that is the start object
         bool found = false;
-        GameObject battery = null;
+        GameObject groundNodeGameObject = null;
         foreach (Wire wire in Wire._registry)
         {
             //reset the updated-parameter of each wire
@@ -46,20 +45,30 @@ public class WireManager : MonoBehaviour
 
             if (!found)
             {
-                if (wire.startObject.transform.parent.name == "Metal1")
+                if (wire.startObject.name == "mn")
                 {
                     parentsLeft.Add(wire.startObject.transform.parent.gameObject);
-                    battery = wire.startObject.transform.parent.gameObject;
+                    groundNodeGameObject = GetNextObject(parentsLeft[0], wire);
                     found = true;
                 }
-                else if (wire.endObject.transform.parent.name == "Metal1")
+                else if (wire.endObject.name == "mn")
                 {
                     parentsLeft.Add(wire.endObject.transform.parent.gameObject);
-                    battery = wire.endObject.transform.parent.gameObject;
+                    groundNodeGameObject = GetNextObject(parentsLeft[0], wire);
                     found = true;
                 }
             }
         }
+
+        //set the ground node
+        if (found)
+        {
+            Node.foundGround = true;
+            Node ground = new Node(groundNodeGameObject, true);
+            Node.groundNode = ground;
+            ground.SetToKnown();
+        }
+
         for (int i = 0; i < parentsLeft.Count; i++)
         {
             foreach (Wire wire in parentsLeft[i].GetComponent<Properties>().attachedWires)
@@ -91,21 +100,10 @@ public class WireManager : MonoBehaviour
 
         if (exit == 0)
         { //---------------no exit-------------------
-            if (startParent.name == "Metal2")
+            if (startParent.name == "Battery9V(Clone)")
             {
                 Debug.Log("CIRCUIT COMPLETE");
                 circuitComplete = true;
-
-                //set voltage of node connected to the positive side of the battery
-                GameObject obj = GetNextObject(startParent, startParent.GetComponent<Properties>().attachedWires[0]);
-                foreach (Node node in Node._registry)
-                    if (node.nodeObject == obj)
-                    {
-                        Node.sourceNode = node;
-                        node.UpdateVoltageOfNode(startParent.GetComponent<Properties>().voltage);
-                        node.SetToKnown();
-                        break;
-                    }
             }
             //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
             else
@@ -129,17 +127,9 @@ public class WireManager : MonoBehaviour
             }
         }
         //add this startparent to the node list by making a new node
-        else if (Node.foundGround && !startParent.CompareTag("mP"))
+        else if (startParent != Node.groundNode.nodeObject)
         {
             new Node(startParent);
-        }
-        //make this object the ground, since its always the start/endobject of the metal1 wire
-        else
-        {
-            Node.foundGround = true;
-            Node ground = new Node(startParent, true);
-            Node.groundNode = ground;
-            ground.SetToKnown();
         }
 
         foreach (Wire wire in notVisited)

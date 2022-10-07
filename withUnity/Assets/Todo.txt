@@ -47,6 +47,7 @@ Todo:
 [x] 4. get the neighbor nodes of each node
 [x] 5. get the resistors which are connected to each node
 [ ] 6. count LEDs as voltage sources ??
+[x] make the battery more item-like
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

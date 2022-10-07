@@ -181,7 +181,11 @@ public class MouseInteraction : MonoBehaviour
                     Wire wire = hit.collider.gameObject.GetComponent<Properties>().wire;
 
                     //select only one wire if its only a wire (no item)
-                    if (!IsAttachedToItem(wire))
+                    if (!IsAttachedToItem(wire) 
+                        || wire.startObject.name == "mn" 
+                        || wire.startObject.name == "mp"
+                        || wire.endObject.name == "mn"
+                        || wire.endObject.name == "mp")
                     {
                         changeMiddlePoint = true;
                         new Selection(wire);
@@ -198,8 +202,8 @@ public class MouseInteraction : MonoBehaviour
                     previousPosition = Mouse.current.position.ReadValue();
                     return;
                 }
-                //clicked on an item
-                else if (IsItem(selectedObject))
+                //clicked on an item (and not on battery)
+                else if (IsItem(selectedObject) && selectedObject.GetComponent<Properties>().battery == null)
                 {
                     //select the wire and all wires attached to the item
                     Item item = selectedObject.GetComponent<Properties>().item;
@@ -340,9 +344,9 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
+            Node.SetNeighborNodes();
             //Node.PrintNodes();
-            //Node.SetNeighborNodes();
-            //Node.PrintNeighbors();
+            Node.PrintNeighbors();
             //Node.PrintNeighborResistors();
         }
 

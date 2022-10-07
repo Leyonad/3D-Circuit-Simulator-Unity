@@ -28,4 +28,5 @@ public class Properties : MonoBehaviour
     public Item item;
     public Wire wire;
     public Node node;
+    public Battery battery;
 }
