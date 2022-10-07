@@ -18,9 +18,10 @@ public class Node
     private List<Node> neighborVoltageSources = new List<Node>();
     private float voltage;
     private bool ground;
-    private bool known = false;
 
     //matrix stuff
+    private static List<Node> unknownNodes = new List<Node>();
+    private static int matrixDimension;
     private static double[,] yMatrix;
     private static double[] iMatrix;
 
@@ -78,20 +79,101 @@ public class Node
                     node.neighborNodes.Add(neighborNode);
             }
         }
+
+        //set the neighbor nodes of each voltage source
+        foreach (Node voltageSourceNode in Node._voltageSourcesRegistry)
+        {
+            foreach (Wire wire in voltageSourceNode.nodeObject.GetComponent<Properties>().attachedWires)
+            {
+                GameObject nextObject = WireManager.GetNextObject(voltageSourceNode.nodeObject, wire);
+                voltageSourceNode.neighborNodes.Add(nextObject.GetComponent<Properties>().node);
+            }
+        }
     }
 
     public static void CalculateNodes()
     {
+        unknownNodes = _registry;
+        unknownNodes.Remove(GetGroundNode());
+        matrixDimension = unknownNodes.Count + _voltageSourcesRegistry.Count;
+
         CreateMatrices();
+        AssignValuesToMatrices();
         PrintMatrices();
         CalculateVoltages();
     }
 
     public static void CreateMatrices()
     {
-        int n = _registry.Count + _voltageSourcesRegistry.Count;
+        int n = matrixDimension;
         yMatrix = new double[n, n];
         iMatrix = new double[n];
+    }
+
+    public static void AssignValuesToMatrices()
+    {
+        //assign values to the matrices
+        for (int i = 0; i < unknownNodes.Count; i++)
+        {
+            //assign neighbor resistor values
+            foreach (Node neighborResistorNode in unknownNodes[i].neighborResistors)
+            {
+                double resistance = neighborResistorNode.nodeObject.GetComponent<Properties>().resistance;
+                int indexNeighborNode = GetIndexOfNodeAfterResistor(unknownNodes[i], neighborResistorNode);
+
+                //plus neighbor resistor at [i, i]
+                yMatrix[i, i] += 1 / resistance;
+
+                //minus neighbor resistor at [i, index of neighbor node]
+                //only if the resistor is between two normal nodes (not ground)
+                if (indexNeighborNode > -1)
+                {
+                    yMatrix[i, indexNeighborNode] -= 1 / resistance;
+                }
+            }
+        }
+
+        //handle voltage sources
+        for (int i = 0; i < _voltageSourcesRegistry.Count; i++)
+        {
+            double voltage = _voltageSourcesRegistry[i].nodeObject.GetComponent<Properties>().voltage;
+            
+            foreach (Node neighborNode in _voltageSourcesRegistry[i].neighborNodes)
+            {
+                if (!neighborNode.ground)
+                {
+                    //get the index of the node which the voltage source is connected to
+                    int index = unknownNodes.IndexOf(neighborNode);
+
+                    yMatrix[index, matrixDimension - (i + 1)] = 1;
+                    yMatrix[matrixDimension - (i + 1), index] = 1;
+
+                    iMatrix[matrixDimension - (i + 1)] = voltage;
+                }
+            }
+        }
+    }
+
+    public static int GetIndexOfNodeAfterResistor(Node startNode, Node resistorNode)
+    {
+        //get the index of the node after the resistor, -1 if not found
+        foreach (Node neighborNode in startNode.neighborNodes)
+        {
+            foreach (Node neighborResistorNode in neighborNode.neighborResistors)
+            {
+                if (neighborResistorNode == resistorNode)
+                {
+                    //if the node after the resistor is the ground node: return -1
+                    if (neighborNode.ground == true)
+                    {
+                        return -1;
+                    }
+
+                    return unknownNodes.IndexOf(neighborNode);
+                }
+            }
+        }
+        return -1;
     }
 
     public static void CalculateVoltages()
@@ -109,7 +191,9 @@ public class Node
             {
                 sb.Append(yMatrix[i, j]);
                 sb.Append(' ');
+                sb.Append(' ');
             }
+            sb.Append(' ');
             sb.Append(' ');
             sb.Append(' ');
             sb.Append(' ');
@@ -173,25 +257,9 @@ public class Node
         voltage = _voltage;
     }
 
-    public void SetToKnown()
-    {
-        known = true;
-    }
-
-    public void SetToUnknown()
-    {
-        known = false;
-    }
-
     public static Node GetGroundNode()
     //get the node connected to the negative side of the battery
     {
         return groundNode;
-    }
-
-    public static Node GetSourceNode()
-    //get the node connected to the positive side of the battery
-    {
-        return sourceNode;
     }
 }

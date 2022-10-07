@@ -49,6 +49,7 @@ Todo:
 [x] create the Y-matrix
 [x] create the I-Matrix
 [x] print the matrices
+[x] assign values to matrices (resistors and battery)
 [x] make the battery more item-like
 
 Bugs:

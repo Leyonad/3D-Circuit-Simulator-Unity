@@ -211,12 +211,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  polarity: 0
   current: 0
   voltage: 0
   mAh: 0
   voltageDrop: 0
   ampere: 0
-  resistance: 0
+  resistance: 2
   tolerance: 0
 --- !u!1 &8847868040312045008
 GameObject:

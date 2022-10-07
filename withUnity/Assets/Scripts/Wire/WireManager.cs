@@ -9,7 +9,6 @@ public class WireManager : MonoBehaviour
     public static List<Wire> connectedWires = new List<Wire>();
     private static List<Item> connectedLeds = new List<Item>();
     private static List<Item> connectedResistors = new List<Item>();
-    private static bool circuitComplete = false;
 
     public static bool electricityPathView = false;
 
@@ -32,7 +31,6 @@ public class WireManager : MonoBehaviour
         connectedWires.Clear();
         connectedLeds.Clear();
         connectedResistors.Clear();
-        circuitComplete = false;
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -66,7 +64,6 @@ public class WireManager : MonoBehaviour
             Node.foundGround = true;
             Node ground = new Node(groundNodeGameObject, true);
             Node.groundNode = ground;
-            ground.SetToKnown();
         }
 
         for (int i = 0; i < parentsLeft.Count; i++)
@@ -103,7 +100,6 @@ public class WireManager : MonoBehaviour
             if (startParent.name == "Battery9V(Clone)")
             {
                 Debug.Log("CIRCUIT COMPLETE");
-                circuitComplete = true;
 
                 //make a voltage source node for the battery
                 new Node(startParent, false, false, true);
