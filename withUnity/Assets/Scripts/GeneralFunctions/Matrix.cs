@@ -20,7 +20,7 @@ public class Matrix
         return result;
     }
 
-    static double[][] MatrixProduct(double[][] matrixA, double[][] matrixB)
+    public static double[][] MatrixProduct(double[][] matrixA, double[][] matrixB)
     {
         int aRows = matrixA.Length; int aCols = matrixA[0].Length;
         int bRows = matrixB.Length; int bCols = matrixB[0].Length;

@@ -22,8 +22,9 @@ public class Node
     //matrix stuff
     private static List<Node> unknownNodes = new List<Node>();
     private static int matrixDimension;
-    private static double[,] yMatrix;
-    private static double[] iMatrix;
+    private static double[][] yMatrix;
+    private static double[][] iMatrix;
+    private static double[][] resultMatrix;
 
     public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false)
     {
@@ -102,35 +103,35 @@ public class Node
         PrintMatrices();
         CalculateInverseMatrix();
         PrintMatrices();
+        CalculateResultMatrix();
+        PrintMatrices();
     }
 
     public static void CreateMatrices()
     {
         int n = matrixDimension;
-        yMatrix = new double[n,n];
-        iMatrix = new double[n];
+        
+        //make the y and i matrix
+        yMatrix = new double[n][];
+        iMatrix = new double[n][];
+        for (int i = 0; i < n; i++)
+        {
+            yMatrix[i] = new double[matrixDimension];
+            iMatrix[i] = new double[1];
+        }
+            
+            
+    }
+
+    public static void CalculateResultMatrix()
+    {
+        iMatrix = Matrix.MatrixProduct(yMatrix, iMatrix);
     }
 
     public static void CalculateInverseMatrix()
     {
-        //make a copy of the matrix as a jagged array
-        double[][] jaggedMatrix = new double[matrixDimension][];
-        for (int i = 0; i < matrixDimension; i++)
-        {
-            jaggedMatrix[i] = new double[matrixDimension];
-            for (int j = 0; j < matrixDimension; j++)
-            {
-                jaggedMatrix[i][j] = yMatrix[i, j];
-            }
-        }
-
-        //calculate the inverse matrix of the jagged array
-        double[][] invertedJaggedMatrix = Matrix.MatrixInverse(jaggedMatrix);
-        
-        //convert the inverse matrix back to a multidimensional array
-        for (int i = 0; i < matrixDimension; i++)
-            for (int j = 0; j < matrixDimension; j++)
-                yMatrix[i, j] = invertedJaggedMatrix[i][j];
+        //calculate the inverse matrix
+        yMatrix = Matrix.MatrixInverse(yMatrix);
     }
 
     public static void AssignValuesToMatrices()
@@ -145,13 +146,13 @@ public class Node
                 int indexNeighborNode = GetIndexOfNodeAfterResistor(unknownNodes[i], neighborResistorNode);
 
                 //plus neighbor resistor at [i, i]
-                yMatrix[i, i] += 1 / resistance;
+                yMatrix[i][i] += 1 / resistance;
 
                 //minus neighbor resistor at [i, index of neighbor node]
                 //only if the resistor is between two normal nodes (not ground)
                 if (indexNeighborNode > -1)
                 {
-                    yMatrix[i, indexNeighborNode] -= 1 / resistance;
+                    yMatrix[i][indexNeighborNode] -= 1 / resistance;
                 }
             }
         }
@@ -168,10 +169,10 @@ public class Node
                     //get the index of the node which the voltage source is connected to
                     int index = unknownNodes.IndexOf(neighborNode);
 
-                    yMatrix[index, matrixDimension - (i + 1)] = 1;
-                    yMatrix[matrixDimension - (i + 1), index] = 1;
+                    yMatrix[index][matrixDimension - (i + 1)] = 1;
+                    yMatrix[matrixDimension - (i + 1)][index] = 1;
 
-                    iMatrix[matrixDimension - (i + 1)] = voltage;
+                    iMatrix[matrixDimension - (i + 1)][0] = voltage;
                 }
             }
         }
@@ -203,19 +204,13 @@ public class Node
     {
         //print y matrix and i matrix
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < yMatrix.GetLength(1); i++)
+        for (int i = 0; i < yMatrix.GetLength(0); i++)
         {
             for (int j = 0; j < yMatrix.GetLength(0); j++)
             {
-                sb.Append(yMatrix[i, j]);
-                sb.Append(' ');
-                sb.Append(' ');
+                sb.Append(yMatrix[i][j] + "  ");
             }
-            sb.Append(' ');
-            sb.Append(' ');
-            sb.Append(' ');
-            sb.Append(' ');
-            sb.Append(iMatrix[i]);
+            sb.Append("     ["+iMatrix[i][0]+"]");
             sb.AppendLine();
         }
         Debug.Log("\n" + sb.ToString());
