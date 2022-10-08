@@ -53,6 +53,7 @@ Todo:
 [x] calculate the inverse matrix
 [x] calculate the result matrix
 [x] make matrix print method better
+[x] assign the voltages to the nodes
 [x] make the battery more item-like
 
 Bugs:

@@ -101,10 +101,23 @@ public class Node
         CreateMatrices();
         AssignValuesToMatrices();
         PrintMatrix("yMatrix", yMatrix);
+
         CalculateInverseMatrix();
         PrintMatrix("iMatrix", iMatrix);
+
         CalculateResultMatrix();
         PrintMatrix("resultMatrix", resultMatrix);
+
+        AssignResultVoltagesToNodes();
+    }
+
+    public static void AssignResultVoltagesToNodes()
+    {
+        for (int i = 0; i < unknownNodes.Count; i++)
+        {
+            unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
+            Debug.Log("NODE: " + unknownNodes[i].nodeObject.name + " voltage: " + resultMatrix[i][0]);
+        }
     }
 
     public static void CreateMatrices()

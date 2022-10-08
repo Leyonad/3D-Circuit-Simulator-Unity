@@ -10,7 +10,7 @@ public class Properties : MonoBehaviour
     public float current; //in ampere
 
     //battery
-    public float voltage;
+    public double voltage;
     public float mAh;
     
     //wires attached to metal strip or item
