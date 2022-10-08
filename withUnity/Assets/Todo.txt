@@ -52,6 +52,7 @@ Todo:
 [x] assign values to matrices (resistors and battery)
 [x] calculate the inverse matrix
 [x] calculate the result matrix
+[x] make matrix print method better
 [x] make the battery more item-like
 
 Bugs:

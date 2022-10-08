@@ -100,11 +100,11 @@ public class Node
 
         CreateMatrices();
         AssignValuesToMatrices();
-        PrintMatrices();
+        PrintMatrix("yMatrix", yMatrix);
         CalculateInverseMatrix();
-        PrintMatrices();
+        PrintMatrix("iMatrix", iMatrix);
         CalculateResultMatrix();
-        PrintMatrices();
+        PrintMatrix("resultMatrix", resultMatrix);
     }
 
     public static void CreateMatrices()
@@ -118,14 +118,12 @@ public class Node
         {
             yMatrix[i] = new double[matrixDimension];
             iMatrix[i] = new double[1];
-        }
-            
-            
+        } 
     }
 
     public static void CalculateResultMatrix()
     {
-        iMatrix = Matrix.MatrixProduct(yMatrix, iMatrix);
+        resultMatrix = Matrix.MatrixProduct(yMatrix, iMatrix);
     }
 
     public static void CalculateInverseMatrix()
@@ -200,20 +198,19 @@ public class Node
         return -1;
     }
 
-    public static void PrintMatrices()
+    public static void PrintMatrix(string title, double[][] matrix)
     {
-        //print y matrix and i matrix
+        //print the given matrix
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < yMatrix.GetLength(0); i++)
+        for (int i = 0; i < matrix.Length; i++)
         {
-            for (int j = 0; j < yMatrix.GetLength(0); j++)
+            for (int j = 0; j < matrix[0].Length; j++)
             {
-                sb.Append(yMatrix[i][j] + "  ");
+                sb.Append(matrix[i][j] + "  ");
             }
-            sb.Append("     ["+iMatrix[i][0]+"]");
             sb.AppendLine();
         }
-        Debug.Log("\n" + sb.ToString());
+        Debug.Log("\n" + title + "\n" + sb.ToString());
     }
 
     public static void PrintNodes()
