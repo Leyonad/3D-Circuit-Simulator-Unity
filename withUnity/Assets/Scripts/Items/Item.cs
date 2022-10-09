@@ -42,7 +42,7 @@ public class Item
             spawnPosition.y = defaultYValue;
             itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
             itemMaterial = ResourcesManager.LED_red;
-            itemObject.GetComponent<Properties>().voltageDrop = 2;
+            itemObject.GetComponent<Properties>().voltageDrop = 1.86;
             if (color == "green")
             {
                 itemMaterial = ResourcesManager.LED_green;

@@ -226,7 +226,7 @@ public class Wire
         lineRenderer.SetPosition(verticesAmount - 1, temp);
     }
 
-    public float HasCurrent()
+    public double HasCurrent()
     {
         if (this.startObject.transform.parent.GetComponent<Properties>().current != 0f)
             return this.startObject.transform.parent.GetComponent<Properties>().current;

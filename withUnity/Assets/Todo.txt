@@ -56,6 +56,7 @@ Todo:
 [x] assign the voltages to the nodes
 [x] handle simple wire connections
 [x] handle led connections
+[x] calculate the current of each resistor
 [x] make the battery more item-like
 
 Bugs:

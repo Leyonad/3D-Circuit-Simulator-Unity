@@ -139,7 +139,26 @@ public class Node
         PrintMatrix("resultMatrix", resultMatrix);
 
         AssignResultVoltagesToNodes();
-        //PrintNodes();
+
+        CalculateCurrents();
+    }
+
+    public static void CalculateCurrents()
+    {
+        //calculate the current of resistors
+        foreach (Node resistorNode in _resistorsRegistry)
+        {
+            //get resistance of the resistor
+            double resistance = resistorNode.nodeObject.GetComponent<Properties>().resistance;
+
+            //get voltage of connected nodes
+            double startNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.startObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
+            double endNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.endObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
+
+            double current = Math.Abs(startNodeVoltage - endNodeVoltage) / resistance;
+            //Debug.Log($"current {current} = ({startNodeVoltage} - {endNodeVoltage}) / {resistance}");
+            resistorNode.nodeObject.GetComponent<Properties>().current = current;
+        }
     }
 
     public static void AssignResultVoltagesToNodes()

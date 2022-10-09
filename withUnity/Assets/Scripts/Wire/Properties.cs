@@ -4,25 +4,25 @@ using UnityEngine;
 public class Properties : MonoBehaviour
 {
     //wire
-    public float polarity; // + or - / 0 or 1
+    public double polarity; // + or - / 0 or 1
 
     //parentobject
-    public float current; //in ampere
+    public double current; //in ampere
 
     //battery
     public double voltage;
-    public float mAh;
+    public double mAh;
     
     //wires attached to metal strip or item
     public List<Wire> attachedWires = new List<Wire>();
 
     //led
     public double voltageDrop; //in volts
-    public float ampere; // 1 mA = 1/1000 ampere
+    public double ampere; // 1 mA = 1/1000 ampere
 
     //resistor
-    public float resistance; //in ohm
-    public float tolerance; //percentage
+    public double resistance; //in ohm
+    public double tolerance; //percentage
 
     //optimization
     public Item item;
