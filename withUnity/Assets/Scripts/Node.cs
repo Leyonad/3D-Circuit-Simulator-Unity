@@ -30,7 +30,7 @@ public class Node
 
     public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false)
     {
-        //dont make duplicates
+        //dont make duplicate nodes
         foreach (Node node in Node._registry)
             if (node.nodeObject == _obj)
                 return;
@@ -77,6 +77,11 @@ public class Node
 
                 //set normal neighbor nodes
                 Node neighborNode = nextObject.GetComponent<Properties>().node;
+
+                //continue if a wire has both ends on the same node
+                if (neighborNode == node) 
+                    continue;
+
                 if (neighborNode != null && !node.neighborNodes.Contains(neighborNode))
                 {
                     //.Contains(): not efficient since this can only be the case at the wires nearby the battery

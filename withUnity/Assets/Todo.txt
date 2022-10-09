@@ -82,6 +82,7 @@ Bugs:
 [ ] when pressing the delete-key, no wire gets deleted
 [x] the items have the wrong color after unselecting
 [x] the metals are still highlighted after deleting a wire
+[x] calculations are wrong when both ends of a wire are on the same node
 
 Optimization:
 [x] only move component if delta is not zero
