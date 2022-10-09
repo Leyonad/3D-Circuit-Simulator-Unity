@@ -42,21 +42,21 @@ public class Item
             spawnPosition.y = defaultYValue;
             itemObject = Object.Instantiate(ResourcesManager.prefabLED, spawnPosition, Quaternion.identity);
             itemMaterial = ResourcesManager.LED_red;
-            itemObject.GetComponent<Properties>().voltageDrop = 2f;
+            itemObject.GetComponent<Properties>().voltageDrop = 2;
             if (color == "green")
             {
                 itemMaterial = ResourcesManager.LED_green;
-                itemObject.GetComponent<Properties>().voltageDrop = 3f;
+                itemObject.GetComponent<Properties>().voltageDrop = 3;
             }
             else if (color == "yellow")
             {
                 itemMaterial = ResourcesManager.LED_yellow;
-                itemObject.GetComponent<Properties>().voltageDrop = 2.3f;
+                itemObject.GetComponent<Properties>().voltageDrop = 2.3;
             }
             else if (color == "blue")
             {
                 itemMaterial = ResourcesManager.LED_blue;
-                itemObject.GetComponent<Properties>().voltageDrop = 3.4f;
+                itemObject.GetComponent<Properties>().voltageDrop = 3.4;
             }
             wireColor = ResourcesManager.grey;
             wireThickness = 0.05f;

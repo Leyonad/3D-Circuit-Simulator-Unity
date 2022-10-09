@@ -7,8 +7,9 @@ public class Node
 {
     public static List<Node> _registry = new List<Node>();
     public static List<Node> _resistorsRegistry = new List<Node>();
+    public static List<Node> _ledRegistry = new List<Node>();
     public static List<Node> _voltageSourcesRegistry = new List<Node>();
-    public static List<Node[]> _neighborSimpleConnectionRegistry = new List<Node[]>();
+    public static List<Node[]> _neighborShortcircuitRegistry = new List<Node[]>();
 
     public static bool foundGround = false;
     public static Node groundNode;
@@ -17,6 +18,7 @@ public class Node
     public GameObject nodeObject;
     private readonly List<Node> neighborNodes = new List<Node>();
     private readonly List<Node> neighborResistors = new List<Node>();
+    private readonly List<Node> neighborLeds = new List<Node>();
     private readonly List<Node> neighborVoltageSources = new List<Node>();
     private readonly List<Node> neighborShortCircuits = new List<Node>();
     private bool ground;
@@ -28,7 +30,7 @@ public class Node
     private static double[][] iMatrix;
     private static double[][] resultMatrix;
 
-    public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false)
+    public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false, bool _isLED=false)
     {
         //dont make duplicate nodes
         foreach (Node node in Node._registry)
@@ -42,6 +44,8 @@ public class Node
             _resistorsRegistry.Add(this);
         else if (_isVoltageSource)
             _voltageSourcesRegistry.Add(this);
+        else if (_isLED)
+            _ledRegistry.Add(this);
         else
             _registry.Add(this);
 
@@ -63,15 +67,18 @@ public class Node
                     GameObject objectAfterItem = WireManager.GetObjectAfterItem(wire, nextObject);
                     node.neighborNodes.Add(objectAfterItem.GetComponent<Properties>().node);
 
-                    //add the resistor to the neighborResistors list
+                    //resistor
                     if (nextObject.name == "Resistor")
-                    {
                         node.neighborResistors.Add(nextObject.GetComponent<Properties>().node);
-                    }
+
+                    //led
+                    else if (nextObject.name == "LED")
+                        node.neighborLeds.Add(nextObject.GetComponent<Properties>().node);
+
+                    //voltage source
                     else if (nextObject.GetComponent<Properties>().battery != null)
-                    {
                         node.neighborVoltageSources.Add(nextObject.GetComponent<Properties>().node);
-                    }
+
                     continue;
                 }
 
@@ -90,7 +97,7 @@ public class Node
                     //add the start and the end node of the short circuit
                     Node[] tempShortcircuit = new Node[2] { node, neighborNode };
                     bool connectionAlreadyInRegistry = false;
-                    foreach (Node[] checkArray in _neighborSimpleConnectionRegistry)
+                    foreach (Node[] checkArray in _neighborShortcircuitRegistry)
                     {
                         if (checkArray[0] == tempShortcircuit[1] && checkArray[1] == tempShortcircuit[0])
                         {
@@ -99,7 +106,7 @@ public class Node
                         }
                     }
                     if (!connectionAlreadyInRegistry)
-                        _neighborSimpleConnectionRegistry.Add(tempShortcircuit);
+                        _neighborShortcircuitRegistry.Add(tempShortcircuit);
                 }
 
             }
@@ -120,15 +127,14 @@ public class Node
     {
         unknownNodes = _registry;
         unknownNodes.Remove(GetGroundNode());
-        matrixDimension = unknownNodes.Count + _neighborSimpleConnectionRegistry.Count + _voltageSourcesRegistry.Count;
-
+        matrixDimension = unknownNodes.Count + _neighborShortcircuitRegistry.Count + _voltageSourcesRegistry.Count + _ledRegistry.Count;
+        
         CreateMatrices();
         AssignValuesToMatrices();
         PrintMatrix("yMatrix", yMatrix);
-
-        CalculateInverseMatrix();
         PrintMatrix("iMatrix", iMatrix);
 
+        CalculateInverseMatrix();
         CalculateResultMatrix();
         PrintMatrix("resultMatrix", resultMatrix);
 
@@ -171,12 +177,20 @@ public class Node
 
     public static void AssignValuesToMatrices()
     {
+        //count of different registry lists
         int unknownNodesCount = unknownNodes.Count;
+        int shortcircuitsCount = _neighborShortcircuitRegistry.Count;
+        int ledCount = _ledRegistry.Count;
+        int voltageSourcesCount = _voltageSourcesRegistry.Count;
 
-        //assign values to the matrices
+        //start row in matrix of different components
+        int startRowShortcircuit  = unknownNodesCount;
+        int startRowLed           = unknownNodesCount + shortcircuitsCount;
+        int startRowVoltageSource = unknownNodesCount + shortcircuitsCount + ledCount;
+
+        //handle resistors
         for (int i = 0; i < unknownNodesCount; i++)
         {
-            //assign neighbor resistor values
             foreach (Node neighborResistorNode in unknownNodes[i].neighborResistors)
             {
                 double resistance = neighborResistorNode.nodeObject.GetComponent<Properties>().resistance;
@@ -194,36 +208,71 @@ public class Node
             }
         }
 
-        //handle simple wire connections
-        for (int i = 0; i < _neighborSimpleConnectionRegistry.Count; i++)
+        //handle shortcircuit connections
+        for (int i = 0; i < shortcircuitsCount; i++)
         {
-            Node[] shortCircuit = _neighborSimpleConnectionRegistry[i];
+            Node[] shortCircuit = _neighborShortcircuitRegistry[i];
             int startIndex = unknownNodes.IndexOf(shortCircuit[0]);
             int endIndex = unknownNodes.IndexOf(shortCircuit[1]);
 
             if (!shortCircuit[0].ground && !shortCircuit[1].ground)
             {
-                yMatrix[startIndex][unknownNodesCount + i] = 1;
-                yMatrix[unknownNodesCount + i][startIndex] = 1;
-                yMatrix[endIndex][unknownNodesCount + i] = -1;
-                yMatrix[unknownNodesCount + i][endIndex] = -1;
+                yMatrix[startIndex][startRowShortcircuit + i] = 1;
+                yMatrix[startRowShortcircuit + i][startIndex] = 1;
+                yMatrix[endIndex][startRowShortcircuit + i] = -1;
+                yMatrix[startRowShortcircuit + i][endIndex] = -1;
             }
 
             //if one end is connected to ground
             else if (shortCircuit[0].ground)
             {
-                yMatrix[endIndex][unknownNodesCount + i] = 1;
-                yMatrix[unknownNodesCount + i][endIndex] = 1;
+                yMatrix[endIndex][startRowShortcircuit + i] = 1;
+                yMatrix[startRowShortcircuit + i][endIndex] = 1;
             }
             else if (shortCircuit[1].ground)
             {
-                yMatrix[startIndex][unknownNodesCount + i] = 1;
-                yMatrix[unknownNodesCount + i][startIndex] = 1;
+                yMatrix[startIndex][startRowShortcircuit + i] = 1;
+                yMatrix[startRowShortcircuit + i][startIndex] = 1;
             }
         }
 
+        //handle leds
+        for (int i = 0; i < ledCount; i++)
+        {
+            double voltage = _ledRegistry[i].nodeObject.GetComponent<Properties>().voltageDrop;
+            
+            //get the start/end node of the led
+            Node startNode = _ledRegistry[i].nodeObject.GetComponent<Properties>().item.startObject.transform.parent.gameObject.GetComponent<Properties>().node;
+            Node endNode = _ledRegistry[i].nodeObject.GetComponent<Properties>().item.endObject.transform.parent.gameObject.GetComponent<Properties>().node;
+
+            int startIndex = unknownNodes.IndexOf(startNode);
+            int endIndex = unknownNodes.IndexOf(endNode);
+
+            if (!startNode.ground && !endNode.ground)
+            {
+                yMatrix[startIndex][startRowLed + i] = 1;
+                yMatrix[startRowLed + i][startIndex] = 1;
+                yMatrix[endIndex][startRowLed + i] = -1;
+                yMatrix[startRowLed + i][endIndex] = -1;
+            }
+
+            //if one end is connected to ground
+            else if (startNode.ground)
+            {
+                yMatrix[endIndex][startRowLed + i] = 1;
+                yMatrix[startRowLed + i][endIndex] = 1;
+            }
+            else if (endNode.ground)
+            {
+                yMatrix[startIndex][startRowLed + i] = 1;
+                yMatrix[startRowLed + i][startIndex] = 1;
+            }
+
+            iMatrix[startRowLed + i][0] = voltage;
+        }
+
         //handle voltage sources
-        for (int i = 0; i < _voltageSourcesRegistry.Count; i++)
+        for (int i = 0; i < voltageSourcesCount; i++)
         {
             double voltage = _voltageSourcesRegistry[i].nodeObject.GetComponent<Properties>().voltage;
 
@@ -234,10 +283,10 @@ public class Node
                     //get the index of the node which the voltage source is connected to
                     int index = unknownNodes.IndexOf(neighborNode);
 
-                    yMatrix[index][matrixDimension - (i + 1)] = 1;
-                    yMatrix[matrixDimension - (i + 1)][index] = 1;
+                    yMatrix[index][startRowVoltageSource + i] = 1;
+                    yMatrix[startRowVoltageSource + i][index] = 1;
 
-                    iMatrix[matrixDimension - (i + 1)][0] = voltage;
+                    iMatrix[startRowVoltageSource + i][0] = voltage;
                 }
             }
         }
@@ -326,8 +375,9 @@ public class Node
     {
         _registry.Clear();
         _resistorsRegistry.Clear();
+        _ledRegistry.Clear();
         _voltageSourcesRegistry.Clear();
-        _neighborSimpleConnectionRegistry.Clear();
+        _neighborShortcircuitRegistry.Clear();
     }
 
     public static Node GetGroundNode()

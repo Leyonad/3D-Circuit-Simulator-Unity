@@ -55,6 +55,7 @@ Todo:
 [x] make matrix print method better
 [x] assign the voltages to the nodes
 [x] handle simple wire connections
+[x] handle led connections
 [x] make the battery more item-like
 
 Bugs:
@@ -99,6 +100,7 @@ Optimization:
 [x] swap positive and negative of the battery, because the electrons go from negative to positive
 [x] resistors dont have polarity
 [x] spawn resistors with a lower y value
+[ ] maybe make leds voltage sources and handle them in only one loop when assigning values to the matrix
 
 https://electronics.stackexchange.com/questions/636636/nodal-analysis-with-leds
 https://www.gutefrage.net/frage/knotenpotentialverfahren-mit-leuchtdioden

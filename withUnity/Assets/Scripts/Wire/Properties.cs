@@ -17,7 +17,7 @@ public class Properties : MonoBehaviour
     public List<Wire> attachedWires = new List<Wire>();
 
     //led
-    public float voltageDrop; //in volts
+    public double voltageDrop; //in volts
     public float ampere; // 1 mA = 1/1000 ampere
 
     //resistor
