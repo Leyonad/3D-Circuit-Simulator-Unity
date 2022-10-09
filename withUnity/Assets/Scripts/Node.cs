@@ -8,15 +8,17 @@ public class Node
     public static List<Node> _registry = new List<Node>();
     public static List<Node> _resistorsRegistry = new List<Node>();
     public static List<Node> _voltageSourcesRegistry = new List<Node>();
+    public static List<Node[]> _neighborSimpleConnectionRegistry = new List<Node[]>();
+
     public static bool foundGround = false;
     public static Node groundNode;
     public static Node sourceNode;
 
     public GameObject nodeObject;
-    private List<Node> neighborNodes = new List<Node>();
-    private List<Node> neighborResistors = new List<Node>();
-    private List<Node> neighborVoltageSources = new List<Node>();
-    private float voltage;
+    private readonly List<Node> neighborNodes = new List<Node>();
+    private readonly List<Node> neighborResistors = new List<Node>();
+    private readonly List<Node> neighborVoltageSources = new List<Node>();
+    private readonly List<Node> neighborShortCircuits = new List<Node>();
     private bool ground;
 
     //matrix stuff
@@ -75,9 +77,26 @@ public class Node
 
                 //set normal neighbor nodes
                 Node neighborNode = nextObject.GetComponent<Properties>().node;
-                if (neighborNode != null && !node.neighborNodes.Contains(neighborNode)) 
+                if (neighborNode != null && !node.neighborNodes.Contains(neighborNode))
+                {
                     //.Contains(): not efficient since this can only be the case at the wires nearby the battery
-                    node.neighborNodes.Add(neighborNode);
+                    node.neighborShortCircuits.Add(neighborNode);
+
+                    //add the start and the end node of the short circuit
+                    Node[] tempShortcircuit = new Node[2] { node, neighborNode };
+                    bool connectionAlreadyInRegistry = false;
+                    foreach (Node[] checkArray in _neighborSimpleConnectionRegistry)
+                    {
+                        if (checkArray[0] == tempShortcircuit[1] && checkArray[1] == tempShortcircuit[0])
+                        {
+                            connectionAlreadyInRegistry = true;
+                            break;
+                        }
+                    }
+                    if (!connectionAlreadyInRegistry)
+                        _neighborSimpleConnectionRegistry.Add(tempShortcircuit);
+                }
+
             }
         }
 
@@ -96,7 +115,7 @@ public class Node
     {
         unknownNodes = _registry;
         unknownNodes.Remove(GetGroundNode());
-        matrixDimension = unknownNodes.Count + _voltageSourcesRegistry.Count;
+        matrixDimension = unknownNodes.Count + _neighborSimpleConnectionRegistry.Count + _voltageSourcesRegistry.Count;
 
         CreateMatrices();
         AssignValuesToMatrices();
@@ -109,6 +128,7 @@ public class Node
         PrintMatrix("resultMatrix", resultMatrix);
 
         AssignResultVoltagesToNodes();
+        //PrintNodes();
     }
 
     public static void AssignResultVoltagesToNodes()
@@ -116,7 +136,6 @@ public class Node
         for (int i = 0; i < unknownNodes.Count; i++)
         {
             unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
-            Debug.Log("NODE: " + unknownNodes[i].nodeObject.name + " voltage: " + resultMatrix[i][0]);
         }
     }
 
@@ -147,8 +166,10 @@ public class Node
 
     public static void AssignValuesToMatrices()
     {
+        int unknownNodesCount = unknownNodes.Count;
+
         //assign values to the matrices
-        for (int i = 0; i < unknownNodes.Count; i++)
+        for (int i = 0; i < unknownNodesCount; i++)
         {
             //assign neighbor resistor values
             foreach (Node neighborResistorNode in unknownNodes[i].neighborResistors)
@@ -168,11 +189,39 @@ public class Node
             }
         }
 
+        //handle simple wire connections
+        for (int i = 0; i < _neighborSimpleConnectionRegistry.Count; i++)
+        {
+            Node[] shortCircuit = _neighborSimpleConnectionRegistry[i];
+            int startIndex = unknownNodes.IndexOf(shortCircuit[0]);
+            int endIndex = unknownNodes.IndexOf(shortCircuit[1]);
+
+            if (!shortCircuit[0].ground && !shortCircuit[1].ground)
+            {
+                yMatrix[startIndex][unknownNodesCount + i] = 1;
+                yMatrix[unknownNodesCount + i][startIndex] = 1;
+                yMatrix[endIndex][unknownNodesCount + i] = -1;
+                yMatrix[unknownNodesCount + i][endIndex] = -1;
+            }
+
+            //if one end is connected to ground
+            else if (shortCircuit[0].ground)
+            {
+                yMatrix[endIndex][unknownNodesCount + i] = 1;
+                yMatrix[unknownNodesCount + i][endIndex] = 1;
+            }
+            else if (shortCircuit[1].ground)
+            {
+                yMatrix[startIndex][unknownNodesCount + i] = 1;
+                yMatrix[unknownNodesCount + i][startIndex] = 1;
+            }
+        }
+
         //handle voltage sources
         for (int i = 0; i < _voltageSourcesRegistry.Count; i++)
         {
             double voltage = _voltageSourcesRegistry[i].nodeObject.GetComponent<Properties>().voltage;
-            
+
             foreach (Node neighborNode in _voltageSourcesRegistry[i].neighborNodes)
             {
                 if (!neighborNode.ground)
@@ -231,7 +280,7 @@ public class Node
         Debug.Log("START");
         foreach (Node node in Node._registry)
         {
-            Debug.Log(node.nodeObject.name + " " + node.nodeObject.transform.position + " ground = " + node.ground + " voltage= " + node.voltage);
+            Debug.Log(node.nodeObject.name + " " + node.nodeObject.transform.position + " ground = " + node.ground + " voltage= " + node.nodeObject.GetComponent<Properties>().voltage);
         }
         Debug.Log("END");
     }
@@ -273,11 +322,7 @@ public class Node
         _registry.Clear();
         _resistorsRegistry.Clear();
         _voltageSourcesRegistry.Clear();
-    }
-
-    public void UpdateVoltageOfNode(float _voltage)
-    {
-        voltage = _voltage;
+        _neighborSimpleConnectionRegistry.Clear();
     }
 
     public static Node GetGroundNode()
