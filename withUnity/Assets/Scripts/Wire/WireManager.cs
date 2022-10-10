@@ -26,6 +26,7 @@ public class WireManager : MonoBehaviour
 
         Node.ClearAllNodes();
         Node.foundGround = false;
+        Node.groundNode = null;
 
         parentsLeft.Clear(); 
         connectedWires.Clear();

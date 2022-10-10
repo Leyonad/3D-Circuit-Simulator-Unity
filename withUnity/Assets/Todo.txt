@@ -57,6 +57,7 @@ Todo:
 [x] handle simple wire connections
 [x] handle led connections
 [x] calculate the current of each resistor
+[ ] calculate the current of each led
 [x] make the battery more item-like
 
 Bugs:
@@ -102,6 +103,7 @@ Optimization:
 [x] resistors dont have polarity
 [x] spawn resistors with a lower y value
 [ ] maybe make leds voltage sources and handle them in only one loop when assigning values to the matrix
+[x] current doesnt have to be positive, so the Math.Abs() method shouldnt be used when calculating current
 
 https://electronics.stackexchange.com/questions/636636/nodal-analysis-with-leds
 https://www.gutefrage.net/frage/knotenpotentialverfahren-mit-leuchtdioden

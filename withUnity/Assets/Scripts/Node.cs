@@ -13,7 +13,6 @@ public class Node
 
     public static bool foundGround = false;
     public static Node groundNode;
-    public static Node sourceNode;
 
     public GameObject nodeObject;
     private readonly List<Node> neighborNodes = new List<Node>();
@@ -155,7 +154,7 @@ public class Node
             double startNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.startObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
             double endNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.endObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
 
-            double current = Math.Abs(startNodeVoltage - endNodeVoltage) / resistance;
+            double current = (startNodeVoltage - endNodeVoltage) / resistance;
             //Debug.Log($"current {current} = ({startNodeVoltage} - {endNodeVoltage}) / {resistance}");
             resistorNode.nodeObject.GetComponent<Properties>().current = current;
         }
