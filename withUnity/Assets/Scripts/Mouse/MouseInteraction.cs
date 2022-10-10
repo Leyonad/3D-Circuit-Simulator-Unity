@@ -347,8 +347,6 @@ public class MouseInteraction : MonoBehaviour
             Node.SetNeighborNodes();
             Node.PrintNodes();
             Node.CalculateNodes();
-            //Node.PrintNeighbors();
-            //Node.PrintNeighborResistors();
         }
 
         //ctrl-key for enabling multiselection

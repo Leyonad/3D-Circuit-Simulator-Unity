@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -31,6 +30,11 @@ public class Node
 
     public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false, bool _isLED=false)
     {
+        //if an item has both ends on the same node, return
+        if (_isResistor || _isLED)
+            if (_obj.GetComponent<Properties>().item.startObject.transform.parent == _obj.GetComponent<Properties>().item.endObject.transform.parent)
+                return;
+            
         //dont make duplicate nodes
         foreach (Node node in Node._registry)
             if (node.nodeObject == _obj)
@@ -60,41 +64,46 @@ public class Node
             foreach (Wire wire in node.nodeObject.GetComponent<Properties>().attachedWires)
             {
                 GameObject nextObject = WireManager.GetNextObject(node.nodeObject, wire);
+                Node nodeOfNextObject = nextObject.GetComponent<Properties>().node;
+
+                //continue if a wire has both ends on the same node
+                if (nodeOfNextObject == node)
+                    continue;
+
                 if (WireManager.IsItem(nextObject))
                 {
                     //set the object at the other end of an item as the neighbor
                     GameObject objectAfterItem = WireManager.GetObjectAfterItem(wire, nextObject);
-                    node.neighborNodes.Add(objectAfterItem.GetComponent<Properties>().node);
+                    Node nodeAfterItem = objectAfterItem.GetComponent<Properties>().node;
+
+                    if (nodeAfterItem == node)
+                        continue;
+
+                    node.neighborNodes.Add(nodeAfterItem);
 
                     //resistor
                     if (nextObject.name == "Resistor")
-                        node.neighborResistors.Add(nextObject.GetComponent<Properties>().node);
+                        node.neighborResistors.Add(nodeOfNextObject);
 
                     //led
                     else if (nextObject.name == "LED")
-                        node.neighborLeds.Add(nextObject.GetComponent<Properties>().node);
+                        node.neighborLeds.Add(nodeOfNextObject);
 
                     //voltage source
                     else if (nextObject.GetComponent<Properties>().battery != null)
-                        node.neighborVoltageSources.Add(nextObject.GetComponent<Properties>().node);
+                        node.neighborVoltageSources.Add(nodeOfNextObject);
 
                     continue;
                 }
 
                 //set normal neighbor nodes
-                Node neighborNode = nextObject.GetComponent<Properties>().node;
-
-                //continue if a wire has both ends on the same node
-                if (neighborNode == node) 
-                    continue;
-
-                if (neighborNode != null && !node.neighborNodes.Contains(neighborNode))
+                if (nodeOfNextObject != null && !node.neighborNodes.Contains(nodeOfNextObject))
                 {
                     //.Contains(): not efficient since this can only be the case at the wires nearby the battery
-                    node.neighborShortCircuits.Add(neighborNode);
+                    node.neighborShortCircuits.Add(nodeOfNextObject);
 
                     //add the start and the end node of the short circuit
-                    Node[] tempShortcircuit = new Node[2] { node, neighborNode };
+                    Node[] tempShortcircuit = new Node[2] { node, nodeOfNextObject };
                     bool connectionAlreadyInRegistry = false;
                     foreach (Node[] checkArray in _neighborShortcircuitRegistry)
                     {
@@ -162,11 +171,10 @@ public class Node
             double resistance = resistorNode.nodeObject.GetComponent<Properties>().resistance;
 
             //get voltage of connected nodes
-            double startNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.startObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
-            double endNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.endObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
+            double startNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.startObject.transform.parent.GetComponent<Properties>().voltage;
+            double endNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.endObject.transform.parent.GetComponent<Properties>().voltage;
 
             double current = (endNodeVoltage - startNodeVoltage) / resistance;
-            //Debug.Log($"current {current} = ({startNodeVoltage} - {endNodeVoltage}) / {resistance}");
             resistorNode.nodeObject.GetComponent<Properties>().current = current;
         }
     }
@@ -407,6 +415,7 @@ public class Node
         _ledRegistry.Clear();
         _voltageSourcesRegistry.Clear();
         _neighborShortcircuitRegistry.Clear();
+        unknownNodes.Clear();
     }
 
     public static Node GetGroundNode()

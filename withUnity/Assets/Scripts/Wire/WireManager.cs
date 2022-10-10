@@ -8,7 +8,6 @@ public class WireManager : MonoBehaviour
     private static List<GameObject> parentsLeft = new List<GameObject>();
     public static List<Wire> connectedWires = new List<Wire>();
     private static List<Item> connectedLeds = new List<Item>();
-    private static List<Item> connectedResistors = new List<Item>();
 
     public static bool electricityPathView = false;
 
@@ -31,7 +30,6 @@ public class WireManager : MonoBehaviour
         parentsLeft.Clear(); 
         connectedWires.Clear();
         connectedLeds.Clear();
-        connectedResistors.Clear();
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -125,7 +123,6 @@ public class WireManager : MonoBehaviour
             }
             else if (item.itemObject.name == "Resistor")
             {
-                connectedResistors.Add(item);
                 new Node(startParent, false, true);
             }
         }

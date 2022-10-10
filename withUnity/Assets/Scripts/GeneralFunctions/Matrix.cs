@@ -31,8 +31,10 @@ public class Matrix
 
         for (int i = 0; i < aRows; ++i) // each row of A
             for (int j = 0; j < bCols; ++j) // each col of B
-                for (int k = 0; k < aCols; ++k) // could use k less-than bRows
+                for (int k = 0; k < aCols; ++k) { // could use k less-than bRows
                     result[i][j] += matrixA[i][k] * matrixB[k][j];
+                    result[i][j] = Math.Round(result[i][j], 3);
+                }
 
         return result;
     }
