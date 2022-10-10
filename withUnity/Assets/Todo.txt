@@ -86,9 +86,10 @@ Bugs:
 [x] the items have the wrong color after unselecting
 [x] the metals are still highlighted after deleting a wire
 [x] calculations are wrong when both ends of a wire are on the same node
-[ ] wrong calculations if leds are placed before start/end nodes exist
+[x] battery doesnt get reached in algorithm when going through all connections to get to the battery
 [ ] when clicking on a metal where an item is placed, only one side of the item gets selected
 [x] items with both ends on the same node should be ignored
+[ ] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
 
 Optimization:
 [x] only move component if delta is not zero

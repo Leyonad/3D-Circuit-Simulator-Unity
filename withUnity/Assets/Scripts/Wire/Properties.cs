@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Properties : MonoBehaviour
 {
+    //ground
+    public bool ground = false;
+
     //wire
     public double polarity; // + or - / 0 or 1
 

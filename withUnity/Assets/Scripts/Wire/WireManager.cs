@@ -33,6 +33,7 @@ public class WireManager : MonoBehaviour
 
         //find the metal2 object, since that is the start object
         bool found = false;
+        Wire startWireNegative = null;
         GameObject groundNodeGameObject = null;
         foreach (Wire wire in Wire._registry)
         {
@@ -42,44 +43,40 @@ public class WireManager : MonoBehaviour
 
             if (!found)
             {
+                //add the battery to parentsLeft and set the ground node
                 if (wire.startObject.name == "mn")
                 {
                     parentsLeft.Add(wire.startObject.transform.parent.gameObject);
                     groundNodeGameObject = GetNextObject(parentsLeft[0], wire);
+                    startWireNegative = wire;
                     found = true;
                 }
                 else if (wire.endObject.name == "mn")
                 {
                     parentsLeft.Add(wire.endObject.transform.parent.gameObject);
                     groundNodeGameObject = GetNextObject(parentsLeft[0], wire);
+                    startWireNegative = wire;
                     found = true;
                 }
             }
         }
 
-        //set the ground node
+        //set the ground node and update the start wire
         if (found)
         {
             Node.foundGround = true;
             Node ground = new Node(groundNodeGameObject, true);
             Node.groundNode = ground;
-        }
+            groundNodeGameObject.GetComponent<Properties>().ground = true;
 
-        for (int i = 0; i < parentsLeft.Count; i++)
-        {
-            foreach (Wire wire in parentsLeft[i].GetComponent<Properties>().attachedWires)
-            {
-                if (!wire.updated)
-                {
-                    if (electricityPathView)
-                        wire.lineRenderer.material = ResourcesManager.yellow;
-                    connectedWires.Add(wire);
-                    wire.updated = true;
-                    RecursiveUpdateCurrent(GetNextObject(parentsLeft[i], wire));
-                }
-            }
+            startWireNegative.updated = true;
+            if (electricityPathView)
+                startWireNegative.lineRenderer.material = ResourcesManager.yellow;
+            connectedWires.Add(startWireNegative);
+
+            //start with the battery as the first startParent
+            RecursiveUpdateCurrent(GetNextObject(parentsLeft[0], startWireNegative));
         }
-        
     }
 
     private static bool RecursiveUpdateCurrent(GameObject startParent)
@@ -92,8 +89,9 @@ public class WireManager : MonoBehaviour
                 exit++;
                 notVisited.Add(wire);
             }
+            //else Debug.Log($"WIRE ALREDY UPDATED: {wire.lineObject.name}");
         }
-
+        //Debug.Log($"startparent = {startParent.name} {startParent.transform.position} exits: {exit}");
         if (exit == 0)
         { //---------------no exit-------------------
             if (startParent.name == "Battery9V(Clone)")
@@ -104,16 +102,32 @@ public class WireManager : MonoBehaviour
                 new Node(startParent, false, false, true);
             }
             //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
-            else
+            /*else if (startParent.GetComponent<Properties>().attachedWires.Count == 0)
             {
                 new Node(startParent);
-            }
+            }*/
             parentsLeft.Remove(startParent);
-            return false;
+
+            //stop if there are no parent objects left
+            if (parentsLeft.Count == 0) 
+                return false;
+
+            //find the next startParent
+            foreach (Wire wire in parentsLeft[parentsLeft.Count-1].GetComponent<Properties>().attachedWires)
+            {
+                if (!wire.updated)
+                {
+                    if (electricityPathView)
+                        wire.lineRenderer.material = ResourcesManager.yellow;
+                    connectedWires.Add(wire);
+                    wire.updated = true;
+                    //Debug.Log($"UPDATE WIRE NOW {wire.lineObject.name} startParent = {startParent.name} {startParent.transform.position}");
+                    return RecursiveUpdateCurrent(GetNextObject(parentsLeft[0], wire));
+                }
+            }  
         }
 
-        //additionally add an item to a seperate list
-        if (IsItem(startParent))
+        if (IsItem(startParent) && startParent.GetComponent<Properties>().battery == null)
         {
             Item item = startParent.GetComponent<Properties>().item;
             if (item.itemObject.name == "LED")
@@ -126,11 +140,9 @@ public class WireManager : MonoBehaviour
                 new Node(startParent, false, true);
             }
         }
-        //add this startparent to the node list by making a new node
+        //make a new node if the metal is not ground
         else if (startParent != Node.groundNode.nodeObject)
-        {
             new Node(startParent);
-        }
 
         foreach (Wire wire in notVisited)
         {

@@ -129,7 +129,7 @@ public class MouseInteraction : MonoBehaviour
                             Wire.justCreated.FinishWireCreation();
 
                             //Update the electricity parameters of all wires
-                            UpdateElectricityParameters();
+                            //UpdateElectricityParameters();
                             Wire.justCreated = null;
                             selectedObject = null;
                             return;
@@ -165,7 +165,7 @@ public class MouseInteraction : MonoBehaviour
                             Item.justCreated.UpdateItem();
 
                             //Update the electricity parameters of all wires
-                            UpdateElectricityParameters();
+                            //UpdateElectricityParameters();
 
                             Item.justCreated = null;
                             Wire.justCreated = null;
@@ -293,7 +293,7 @@ public class MouseInteraction : MonoBehaviour
             {
                 Selection.DeleteSelection();
                 Selection.UnselectSelection();
-                UpdateElectricityParameters();
+                //UpdateElectricityParameters();
             }
         }
 
@@ -344,8 +344,8 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
+            UpdateElectricityParameters();
             Node.SetNeighborNodes();
-            Node.PrintNodes();
             Node.CalculateNodes();
         }
 

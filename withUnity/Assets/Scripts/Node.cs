@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
 public class Node
 {
+    public static List<Node> _generalRegistry = new List<Node>();
     public static List<Node> _registry = new List<Node>();
     public static List<Node> _resistorsRegistry = new List<Node>();
     public static List<Node> _ledRegistry = new List<Node>();
@@ -36,7 +38,7 @@ public class Node
                 return;
             
         //dont make duplicate nodes
-        foreach (Node node in Node._registry)
+        foreach (Node node in Node._generalRegistry)
             if (node.nodeObject == _obj)
                 return;
 
@@ -52,8 +54,31 @@ public class Node
         else
             _registry.Add(this);
 
+        _generalRegistry.Add(this);
+
         //for optimization
         _obj.GetComponent<Properties>().node = this;
+    }
+
+    public static void CalculateNodes()
+    {
+        unknownNodes = _registry;
+        unknownNodes.Remove(GetGroundNode());
+        matrixDimension = unknownNodes.Count + _neighborShortcircuitRegistry.Count + _voltageSourcesRegistry.Count + _ledRegistry.Count;
+        
+        CreateMatrices();
+        AssignValuesToMatrices();
+        PrintMatrix("yMatrix", yMatrix);
+        PrintMatrix("iMatrix", iMatrix);
+
+        CalculateInverseMatrix();
+        CalculateResultMatrix();
+        PrintMatrix("resultMatrix", resultMatrix);
+
+        AssignResultVoltagesToNodes();
+
+        CalculateResistorCurrents();
+        AssignCurrentsToLeds(); //they were already calculated in the result matrix
     }
 
     public static void SetNeighborNodes()
@@ -107,7 +132,8 @@ public class Node
                     bool connectionAlreadyInRegistry = false;
                     foreach (Node[] checkArray in _neighborShortcircuitRegistry)
                     {
-                        if (checkArray[0] == tempShortcircuit[1] && checkArray[1] == tempShortcircuit[0])
+                        if ((checkArray[0] == tempShortcircuit[1] && checkArray[1] == tempShortcircuit[0])
+                            || (checkArray[0] == tempShortcircuit[0] && checkArray[1] == tempShortcircuit[1]))
                         {
                             connectionAlreadyInRegistry = true;
                             break;
@@ -129,27 +155,6 @@ public class Node
                 voltageSourceNode.neighborNodes.Add(nextObject.GetComponent<Properties>().node);
             }
         }
-    }
-
-    public static void CalculateNodes()
-    {
-        unknownNodes = _registry;
-        unknownNodes.Remove(GetGroundNode());
-        matrixDimension = unknownNodes.Count + _neighborShortcircuitRegistry.Count + _voltageSourcesRegistry.Count + _ledRegistry.Count;
-        
-        CreateMatrices();
-        AssignValuesToMatrices();
-        PrintMatrix("yMatrix", yMatrix);
-        PrintMatrix("iMatrix", iMatrix);
-
-        CalculateInverseMatrix();
-        CalculateResultMatrix();
-        PrintMatrix("resultMatrix", resultMatrix);
-
-        AssignResultVoltagesToNodes();
-
-        CalculateResistorCurrents();
-        AssignCurrentsToLeds(); //they were already calculated in the result matrix
     }
 
     public static void AssignCurrentsToLeds()
@@ -190,7 +195,7 @@ public class Node
     public static void CreateMatrices()
     {
         int n = matrixDimension;
-        
+
         //make the y and i matrix
         yMatrix = new double[n][];
         iMatrix = new double[n][];
@@ -198,7 +203,7 @@ public class Node
         {
             yMatrix[i] = new double[matrixDimension];
             iMatrix[i] = new double[1];
-        } 
+        }
     }
 
     public static void CalculateResultMatrix()
@@ -219,6 +224,8 @@ public class Node
         int shortcircuitsCount = _neighborShortcircuitRegistry.Count;
         int ledCount = _ledRegistry.Count;
         int voltageSourcesCount = _voltageSourcesRegistry.Count;
+
+        Debug.Log($"unknownNodesCount = {unknownNodesCount}, shortcircuitsCount = {shortcircuitsCount}, ledCount = {ledCount}, voltageSourcesCount = {voltageSourcesCount}");
 
         //start row in matrix of different components
         int startRowShortcircuit  = unknownNodesCount;
@@ -392,30 +399,15 @@ public class Node
         Debug.Log("END");
     }
 
-    public static void PrintNeighborResistors()
-    {
-        Debug.Log("START");
-        foreach (Node node in Node._registry)
-        {
-            Debug.Log(node.nodeObject.name + "  " + node.nodeObject.transform.position + ":");
-            foreach (Node neighborResistor in node.neighborResistors)
-            {
-                if (neighborResistor != null)
-                    Debug.Log("   RESISTOR: " + neighborResistor.nodeObject.name + " " + neighborResistor.nodeObject.transform.position);
-                else Debug.Log("   NULL");
-            }
-        }
-        Debug.Log("END");
-    }
-
     public static void ClearAllNodes()
     {
+        _generalRegistry.Clear();
+        unknownNodes.Clear();
         _registry.Clear();
         _resistorsRegistry.Clear();
         _ledRegistry.Clear();
         _voltageSourcesRegistry.Clear();
         _neighborShortcircuitRegistry.Clear();
-        unknownNodes.Clear();
     }
 
     public static Node GetGroundNode()
