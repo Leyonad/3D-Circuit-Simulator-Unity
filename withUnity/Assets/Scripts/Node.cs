@@ -139,10 +139,21 @@ public class Node
 
         AssignResultVoltagesToNodes();
 
-        CalculateCurrents();
+        CalculateResistorCurrents();
+        AssignCurrentsToLeds(); //they were already calculated in the result matrix
     }
 
-    public static void CalculateCurrents()
+    public static void AssignCurrentsToLeds()
+    {
+        //assign the currents in the result matrix to the leds
+        int startRowLed = unknownNodes.Count + _neighborShortcircuitRegistry.Count;
+        for (int i = startRowLed; i < startRowLed + _ledRegistry.Count; i++)
+        {
+            _ledRegistry[i - startRowLed].nodeObject.GetComponent<Properties>().current = resultMatrix[i][0];
+        }
+    }
+
+    public static void CalculateResistorCurrents()
     {
         //calculate the current of resistors
         foreach (Node resistorNode in _resistorsRegistry)
@@ -154,7 +165,7 @@ public class Node
             double startNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.startObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
             double endNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.endObject.transform.parent.gameObject.GetComponent<Properties>().voltage;
 
-            double current = (startNodeVoltage - endNodeVoltage) / resistance;
+            double current = (endNodeVoltage - startNodeVoltage) / resistance;
             //Debug.Log($"current {current} = ({startNodeVoltage} - {endNodeVoltage}) / {resistance}");
             resistorNode.nodeObject.GetComponent<Properties>().current = current;
         }
