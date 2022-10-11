@@ -7,7 +7,6 @@ public class WireManager : MonoBehaviour
 
     private static List<GameObject> parentsLeft = new List<GameObject>();
     public static List<Wire> connectedWires = new List<Wire>();
-    private static List<Item> connectedLeds = new List<Item>();
 
     public static bool electricityPathView = false;
 
@@ -19,17 +18,12 @@ public class WireManager : MonoBehaviour
 
     public static void UpdateElectricityParameters()
     {
-        //reset the material of the previously connected LEDs
-        foreach (Item item in connectedLeds)
-            item.itemObject.GetComponent<MeshRenderer>().material = ResourcesManager.LED_default;
-
         Node.ClearAllNodes();
         Node.foundGround = false;
         Node.groundNode = null;
 
         parentsLeft.Clear(); 
         connectedWires.Clear();
-        connectedLeds.Clear();
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -132,7 +126,6 @@ public class WireManager : MonoBehaviour
             Item item = startParent.GetComponent<Properties>().item;
             if (item.itemObject.name == "LED")
             {
-                connectedLeds.Add(item);
                 new Node(startParent, false, false, false, true);
             }
             else if (item.itemObject.name == "Resistor")

@@ -59,6 +59,7 @@ public class Selection
             ResetMetalsMaterial(current);
             current.wire.startObject.transform.parent.GetComponent<Properties>().attachedWires.Remove(current.wire);
             current.wire.endObject.transform.parent.GetComponent<Properties>().attachedWires.Remove(current.wire);
+            WireManager.connectedWires.Remove(current.wire);
             Wire._registry.Remove(current.wire);
             Object.Destroy(current.wire.lineObject);
         }

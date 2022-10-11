@@ -89,7 +89,8 @@ Bugs:
 [x] battery doesnt get reached in algorithm when going through all connections to get to the battery
 [ ] when clicking on a metal where an item is placed, only one side of the item gets selected
 [x] items with both ends on the same node should be ignored
-[ ] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
+[x] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
+[ ] the algorithm that goes through metals/items and creates nodes has problems in certain circuits
 
 Optimization:
 [x] only move component if delta is not zero
@@ -108,6 +109,7 @@ Optimization:
 [x] spawn resistors with a lower y value
 [ ] maybe make leds voltage sources and handle them in only one loop when assigning values to the matrix
 [x] current doesnt have to be positive, so the Math.Abs() method shouldnt be used when calculating current
+[ ] calculate nodes should only be possible if a circuit is complete
 
 https://electronics.stackexchange.com/questions/636636/nodal-analysis-with-leds
 https://www.gutefrage.net/frage/knotenpotentialverfahren-mit-leuchtdioden
