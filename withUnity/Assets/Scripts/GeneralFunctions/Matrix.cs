@@ -33,7 +33,10 @@ public class Matrix
             for (int j = 0; j < bCols; ++j) // each col of B
                 for (int k = 0; k < aCols; ++k) { // could use k less-than bRows
                     result[i][j] += matrixA[i][k] * matrixB[k][j];
-                    result[i][j] = Math.Round(result[i][j], 3);
+                    if (result[i][j].Equals(double.NaN))
+                        result[i][j] = 0;
+                    else 
+                        result[i][j] = Math.Round(result[i][j], 3);
                 }
 
         return result;

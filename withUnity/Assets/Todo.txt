@@ -59,6 +59,7 @@ Todo:
 [x] calculate the current of each resistor
 [x] calculate the current of each led
 [x] make the battery more item-like
+[ ] calculate the direction of the current (abs() might be right)
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -82,7 +83,6 @@ Bugs:
 [x] metals are still highlighted after a wire gets deleted
 [x] start and end object of an item can be the same
 [ ] when making wire flat, both ends have a different thickness
-[ ] when pressing the delete-key, no wire gets deleted
 [x] the items have the wrong color after unselecting
 [x] the metals are still highlighted after deleting a wire
 [x] calculations are wrong when both ends of a wire are on the same node
@@ -91,6 +91,7 @@ Bugs:
 [x] items with both ends on the same node should be ignored
 [x] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
 [ ] the algorithm that goes through metals/items and creates nodes has problems in certain circuits
+[?] singular matrix (determinant = 0) which cant be calculated, this happens if there are no resistors
 
 Optimization:
 [x] only move component if delta is not zero
