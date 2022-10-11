@@ -179,7 +179,7 @@ public class Node
             double startNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.startObject.transform.parent.GetComponent<Properties>().voltage;
             double endNodeVoltage = resistorNode.nodeObject.GetComponent<Properties>().item.endObject.transform.parent.GetComponent<Properties>().voltage;
 
-            double current = (endNodeVoltage - startNodeVoltage) / resistance;
+            double current = Math.Abs(endNodeVoltage - startNodeVoltage) / resistance;
             resistorNode.nodeObject.GetComponent<Properties>().current = current;
         }
     }

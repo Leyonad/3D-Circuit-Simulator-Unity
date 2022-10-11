@@ -59,7 +59,7 @@ Todo:
 [x] calculate the current of each resistor
 [x] calculate the current of each led
 [x] make the battery more item-like
-[ ] calculate the direction of the current (abs() might be right)
+[x] calculate the direction of the current (abs() might be right)
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
