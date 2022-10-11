@@ -87,7 +87,7 @@ Bugs:
 [x] the metals are still highlighted after deleting a wire
 [x] calculations are wrong when both ends of a wire are on the same node
 [x] battery doesnt get reached in algorithm when going through all connections to get to the battery
-[ ] when clicking on a metal where an item is placed, only one side of the item gets selected
+[x] when clicking on a metal where an item is placed, only one side of the item gets selected
 [x] items with both ends on the same node should be ignored
 [x] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
 [ ] the algorithm that goes through metals/items and creates nodes has problems in certain circuits

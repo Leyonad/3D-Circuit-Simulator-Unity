@@ -105,7 +105,32 @@ public class MouseInteraction : MonoBehaviour
                     //if there is already a wire, select that wire and dont create a new one
                     if (existingWire != null)
                     {
-                        new Selection(existingWire);
+                        //check if the wire is connected to an item
+                        if (IsAttachedToItem(existingWire))
+                        {
+                            Item item = null;
+                            //if clicked on a battery metal
+                            if (existingWire.startObject.name == "mn" || existingWire.startObject.name == "mp")
+                            {
+                                GameObject p = GetNextObject(existingWire.startObject.transform.parent.gameObject, existingWire);
+                                item = p.GetComponent<Properties>().item;
+                            }
+                            else if (existingWire.endObject.name == "mn" || existingWire.endObject.name == "mp")
+                            {
+                                GameObject p = GetNextObject(existingWire.endObject.transform.parent.gameObject, existingWire);
+                                item = p.GetComponent<Properties>().item;
+                            }
+                            else
+                            {
+                                item = GetItemAttachedToWire(existingWire);
+                            }
+                            new Selection(null, item);
+                            foreach (Wire itemWire in item.itemObject.GetComponent<Properties>().attachedWires)
+                                new Selection(itemWire);
+                        }
+                        //if not connected to an item, only select the wire
+                        else 
+                            new Selection(existingWire);
                         selectedObject = null;
                     }
 
