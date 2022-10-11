@@ -9,6 +9,7 @@ public class WireManager : MonoBehaviour
     public static List<Wire> connectedWires = new List<Wire>();
 
     public static bool electricityPathView = false;
+    public static bool circuitComplete = false;
 
     public static void ResetWire()
     {
@@ -24,6 +25,7 @@ public class WireManager : MonoBehaviour
 
         parentsLeft.Clear(); 
         connectedWires.Clear();
+        circuitComplete = false;
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -90,10 +92,10 @@ public class WireManager : MonoBehaviour
         { //---------------no exit-------------------
             if (startParent.name == "Battery9V(Clone)")
             {
-                Debug.Log("CIRCUIT COMPLETE");
-
                 //make a voltage source node for the battery
                 new Node(startParent, false, false, true);
+                circuitComplete = true;
+                Debug.Log("CIRCUIT COMPLETE");
             }
             //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
             /*else if (startParent.GetComponent<Properties>().attachedWires.Count == 0)

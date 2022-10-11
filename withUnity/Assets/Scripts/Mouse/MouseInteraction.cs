@@ -345,8 +345,11 @@ public class MouseInteraction : MonoBehaviour
                     wire.lineRenderer.material = wire.wireColor;
             }
             UpdateElectricityParameters();
-            Node.SetNeighborNodes();
-            Node.CalculateNodes();
+            if (circuitComplete)
+            {
+                Node.SetNeighborNodes();
+                Node.CalculateNodes();
+            }
         }
 
         //ctrl-key for enabling multiselection

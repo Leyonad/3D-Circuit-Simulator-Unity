@@ -109,7 +109,7 @@ Optimization:
 [x] spawn resistors with a lower y value
 [ ] maybe make leds voltage sources and handle them in only one loop when assigning values to the matrix
 [x] current doesnt have to be positive, so the Math.Abs() method shouldnt be used when calculating current
-[ ] calculate nodes should only be possible if a circuit is complete
+[x] calculate nodes should only be possible if a circuit is complete
 
 https://electronics.stackexchange.com/questions/636636/nodal-analysis-with-leds
 https://www.gutefrage.net/frage/knotenpotentialverfahren-mit-leuchtdioden
