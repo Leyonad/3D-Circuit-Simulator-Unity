@@ -60,6 +60,10 @@ public class Item
             }
             wireColor = ResourcesManager.grey;
             wireThickness = 0.05f;
+            itemObject.GetComponent<MeshRenderer>().material = itemMaterial;
+            itemObject.GetComponent<Properties>().requiredCurrent = 20;
+            itemObject.GetComponent<Properties>().minCurrent = 3;
+            itemObject.GetComponent<Properties>().maxCurrent = 30;
         }
         else if (type == "Resistor")
         {
@@ -68,10 +72,9 @@ public class Item
             maxItemY = 5f;
             spawnPosition.y = defaultYValue;
             itemObject = Object.Instantiate(ResourcesManager.prefabResistor, spawnPosition, Quaternion.identity);
-            //itemObject.GetComponent<Properties>().resistance = 1000f;
-            //itemObject.GetComponent<Properties>().tolerance = 0.05f;
             wireColor = ResourcesManager.grey;
             wireThickness = 0.05f;
+            itemObject.GetComponent<Properties>().resistance = 0.5;
         }
 
         currentYPosition = defaultYValue;

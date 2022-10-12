@@ -10,7 +10,7 @@ public class Properties : MonoBehaviour
     public double polarity; // + or - / 0 or 1
 
     //parentobject
-    public double current; //in ampere
+    public double current; //in milliampere
 
     //battery
     public double voltage;
@@ -21,7 +21,9 @@ public class Properties : MonoBehaviour
 
     //led
     public double voltageDrop; //in volts
-    public double ampere; // 1 mA = 1/1000 ampere
+    public double requiredCurrent; // in milliampere
+    public double minCurrent; // in milliampere
+    public double maxCurrent; // in milliampere
 
     //resistor
     public double resistance; //in ohm

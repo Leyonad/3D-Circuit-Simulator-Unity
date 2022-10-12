@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using static UnityEditor.Rendering.CameraUI;
+using UnityEngine.Windows;
+using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.UIElements;
 
 public class Node
 {
@@ -68,8 +72,8 @@ public class Node
         
         CreateMatrices();
         AssignValuesToMatrices();
-        PrintMatrix("yMatrix", yMatrix);
-        PrintMatrix("iMatrix", iMatrix);
+        //PrintMatrix("yMatrix", yMatrix);
+        //PrintMatrix("iMatrix", iMatrix);
 
         CalculateInverseMatrix();
         CalculateResultMatrix();
@@ -79,6 +83,8 @@ public class Node
 
         CalculateResistorCurrents();
         AssignCurrentsToLeds(); //they were already calculated in the result matrix
+
+        MakeLedsGlow();
     }
 
     public static void SetNeighborNodes()
@@ -154,6 +160,41 @@ public class Node
                 GameObject nextObject = WireManager.GetNextObject(voltageSourceNode.nodeObject, wire);
                 voltageSourceNode.neighborNodes.Add(nextObject.GetComponent<Properties>().node);
             }
+        }
+    }
+
+    public static void MakeLedsGlow()
+    {
+        //make the LEDs glow if not too less and not too much current flows through them
+        foreach (Node ledNode in _ledRegistry)
+        {
+            float current = (float) ledNode.nodeObject.GetComponent<Properties>().current;
+            float minCurrent = (float) ledNode.nodeObject.GetComponent<Properties>().minCurrent;
+            float maxCurrent = (float) ledNode.nodeObject.GetComponent<Properties>().maxCurrent;
+
+            float minGlowIntensity = 1f;
+            float maxGlowIntensity = 5f;
+
+            float glowIntensity = Functions.MapToRange(current, minCurrent, maxCurrent, minGlowIntensity, maxGlowIntensity);
+            
+            //get the current emissionColor
+            Vector4 currentEmissionColor = ledNode.nodeObject.GetComponent<Properties>().item.
+                        itemObject.GetComponent<MeshRenderer>().material.GetColor("_EmissionColor");
+
+            float newIntensity;
+            //if there is too less or too much current the led doesnt glow
+            if (current < minCurrent || current > maxCurrent)
+                newIntensity = 0f;
+            else 
+                newIntensity = glowIntensity;
+
+            //get the new emissionColor
+            Color emissionColor = Functions.ChangeHDRColorIntensity(currentEmissionColor, newIntensity);
+
+            //set the new emissionColor
+            ledNode.nodeObject.GetComponent<Properties>().item.
+                        itemObject.GetComponent<MeshRenderer>().material.
+                        SetColor("_EmissionColor", emissionColor);
         }
     }
 

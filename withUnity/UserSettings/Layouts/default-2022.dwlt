@@ -446,22 +446,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/Mouse
+    - Assets/Resources
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/Scripts/Mouse
+  - Assets/Resources
   m_LastFoldersGridSize: 96
   m_LastProjectPath: C:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 46}
-    m_SelectedIDs: 34720000
-    m_LastClickedID: 29236
-    m_ExpandedIDs: 0000000056700000587000005a70000000ca9a3b
+    m_SelectedIDs: 56700000
+    m_LastClickedID: 28758
+    m_ExpandedIDs: 000000005470000056700000587000002472000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -489,7 +489,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000056700000587000005a700000
+    m_ExpandedIDs: 00000000547000005670000058700000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -617,9 +617,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 60100000
+      m_SelectedIDs: 1cd4f7ff
       m_LastClickedID: 0
-      m_ExpandedIDs: 0ecffcff40d1fcff4ed1fcfff8faffff306e0000
+      m_ExpandedIDs: f8faffff2e6e0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -986,9 +986,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: -0.24487908, y: -0.48024333, z: 0.14164373, w: -0.8302636}
   m_Size:
-    m_Target: 39.434395
+    m_Target: 16.07887
     speed: 2
-    m_Value: 39.434395
+    m_Value: 16.07887
   m_Ortho:
     m_Target: 0
     speed: 2
