@@ -290,6 +290,7 @@ public class MouseInteraction : MonoBehaviour
                 //cancel creation of a new wire
                 ResetWire();
                 Wire.justCreated = null;
+                Selection.UnselectSelection();
                 return;
             }
             else if (selectedObject != null){

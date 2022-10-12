@@ -70,7 +70,7 @@ Bugs:
 [x] points are buggy when creating a wire 
 [x] wire can be attached to its own gameobject
 [x] somehow its always kind of a double click
-[ ] metal can appear highlighted after cancelling making of wire
+[x] metal can appear highlighted after cancelling making of wire
 [x] plane material and sky are not how they should be
 [x] after unselecting a wire its color should be the same as before
 [x] cant drag component properly
