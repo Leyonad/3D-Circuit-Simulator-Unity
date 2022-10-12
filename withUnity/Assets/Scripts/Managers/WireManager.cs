@@ -29,8 +29,8 @@ public class WireManager : MonoBehaviour
 
         //find the metal2 object, since that is the start object
         bool found = false;
+        GameObject startObject = null;
         Wire startWireNegative = null;
-        GameObject groundNodeGameObject = null;
         foreach (Wire wire in Wire._registry)
         {
             //reset the updated-parameter of each wire
@@ -42,15 +42,13 @@ public class WireManager : MonoBehaviour
                 //add the battery to parentsLeft and set the ground node
                 if (wire.startObject.name == "mn")
                 {
-                    parentsLeft.Add(wire.startObject.transform.parent.gameObject);
-                    groundNodeGameObject = GetNextObject(parentsLeft[0], wire);
+                    startObject = wire.startObject.transform.parent.gameObject;
                     startWireNegative = wire;
                     found = true;
                 }
                 else if (wire.endObject.name == "mn")
                 {
-                    parentsLeft.Add(wire.endObject.transform.parent.gameObject);
-                    groundNodeGameObject = GetNextObject(parentsLeft[0], wire);
+                    startObject = wire.startObject.transform.parent.gameObject;
                     startWireNegative = wire;
                     found = true;
                 }
@@ -60,6 +58,7 @@ public class WireManager : MonoBehaviour
         //set the ground node and update the start wire
         if (found)
         {
+            GameObject groundNodeGameObject = GetNextObject(startObject, startWireNegative);
             Node.foundGround = true;
             Node ground = new Node(groundNodeGameObject, true);
             Node.groundNode = ground;
@@ -71,7 +70,7 @@ public class WireManager : MonoBehaviour
             connectedWires.Add(startWireNegative);
 
             //start with the battery as the first startParent
-            RecursiveUpdateCurrent(GetNextObject(parentsLeft[0], startWireNegative));
+            RecursiveUpdateCurrent(GetNextObject(startObject, startWireNegative));
         }
     }
 
@@ -98,29 +97,43 @@ public class WireManager : MonoBehaviour
                 Debug.Log("CIRCUIT COMPLETE");
             }
             //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
-            /*else if (startParent.GetComponent<Properties>().attachedWires.Count == 0)
+            else
             {
+                //Debug.Log("ELSE NEW NODE " + startParent.transform.position);
                 new Node(startParent);
-            }*/
+            }
             parentsLeft.Remove(startParent);
-
+            //Debug.Log("REMOVED FROM PARENTSLEFT " + startParent.transform.position + " COUNT AFTER REMOVE = " + parentsLeft.Count);
+            
             //stop if there are no parent objects left
-            if (parentsLeft.Count == 0) 
-                return false;
-
-            //find the next startParent
-            foreach (Wire wire in parentsLeft[parentsLeft.Count-1].GetComponent<Properties>().attachedWires)
+            if (parentsLeft.Count == 0)
             {
+                //Debug.Log("PARENTSLEFT COUNT = 0");
+                return false;
+            }
+            GameObject nextStartParent = parentsLeft[0];
+            //Debug.Log("FIND NEXT STARTPARENT " + nextStartParent.transform.position);
+            //find the next startParent
+            for (int i = 0; i < nextStartParent.GetComponent<Properties>().attachedWires.Count; i++)
+            {
+                Wire wire = nextStartParent.GetComponent<Properties>().attachedWires[i];
                 if (!wire.updated)
                 {
                     if (electricityPathView)
                         wire.lineRenderer.material = ResourcesManager.yellow;
                     connectedWires.Add(wire);
                     wire.updated = true;
-                    //Debug.Log($"UPDATE WIRE NOW {wire.lineObject.name} startParent = {startParent.name} {startParent.transform.position}");
-                    return RecursiveUpdateCurrent(GetNextObject(parentsLeft[0], wire));
+                    Debug.Log($"GetNextObject({nextStartParent.transform.position}, {wire.lineObject.name})");
+                    int count = 0;
+                    foreach (Wire p in nextStartParent.GetComponent<Properties>().attachedWires)
+                        if (!p.updated)
+                            count += 1;
+                    if (count == 0) 
+                        parentsLeft.Remove(nextStartParent);
+                    return RecursiveUpdateCurrent(GetNextObject(nextStartParent, wire));
                 }
-            }  
+            }
+            //Debug.Log("NEXT STARTPARENT NOT FOUND");
         }
 
         if (IsItem(startParent) && startParent.GetComponent<Properties>().battery == null)
@@ -149,11 +162,17 @@ public class WireManager : MonoBehaviour
             if (exit == 1) //------------one exit------------
             {
                 parentsLeft.Remove(startParent);
+                //Debug.Log("REMOVED FROM PARENTSLEFT " + startParent.transform.position + " COUNT AFTER REMOVE = " + parentsLeft.Count);
                 return RecursiveUpdateCurrent(GetNextObject(startParent, wire));
             }
 
             //---------------multiple exits---------------
-            parentsLeft.Add(startParent);
+            if (!parentsLeft.Contains(startParent))
+            {
+                parentsLeft.Add(startParent);
+                //Debug.Log("ADDED TO PARENTSLEFT " + startParent.transform.position + " COUNT AFTER ADD = " + parentsLeft.Count);
+
+            }
             return RecursiveUpdateCurrent(GetNextObject(startParent, wire));
             
         }

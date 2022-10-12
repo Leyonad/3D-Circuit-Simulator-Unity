@@ -90,8 +90,9 @@ Bugs:
 [x] when clicking on a metal where an item is placed, only one side of the item gets selected
 [x] items with both ends on the same node should be ignored
 [x] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
-[ ] the algorithm that goes through metals/items and creates nodes has problems in certain circuits
+[x] the algorithm that goes through metals/items and creates nodes has problems in certain circuits
 [?] singular matrix (determinant = 0) which cant be calculated, this happens if there are no resistors
+[ ] selected objects remain selected after moving component (cant reproduce)
 
 Optimization:
 [x] only move component if delta is not zero

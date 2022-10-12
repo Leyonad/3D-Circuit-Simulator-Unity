@@ -370,12 +370,14 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
+            //Debug.Log("SPACE PRESSED");
             UpdateElectricityParameters();
             if (circuitComplete)
             {
                 Node.SetNeighborNodes();
                 Node.CalculateNodes();
             }
+            else Debug.Log("CIRCUIT IS NOT COMPLETE");
         }
 
         //ctrl-key for enabling multiselection

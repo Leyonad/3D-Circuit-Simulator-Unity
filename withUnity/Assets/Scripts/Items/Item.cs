@@ -62,7 +62,7 @@ public class Item
             wireThickness = 0.05f;
             itemObject.GetComponent<MeshRenderer>().material = itemMaterial;
             itemObject.GetComponent<Properties>().requiredCurrent = 20;
-            itemObject.GetComponent<Properties>().minCurrent = 3;
+            itemObject.GetComponent<Properties>().minCurrent = 2;
             itemObject.GetComponent<Properties>().maxCurrent = 30;
         }
         else if (type == "Resistor")
@@ -89,9 +89,12 @@ public class Item
         wire1 = new Wire(startObject, m1obj, 1.5f, this);
         wire2 = new Wire(m2obj, null, 1.5f, this);
 
-        //set poles for wires, where the first wire is negative and the last positive
-        wire1.lineObject.GetComponent<Properties>().polarity = 1;
-        wire2.lineObject.GetComponent<Properties>().polarity = 0;
+        if (type == "LED")
+        {
+            //set poles for wires, where the first wire is negative and the last positive
+            wire1.lineObject.GetComponent<Properties>().polarity = 1;
+            wire2.lineObject.GetComponent<Properties>().polarity = 0;
+        }
 
         wiresOfItem.Add(wire1);
         wiresOfItem.Add(wire2);

@@ -46,17 +46,30 @@ public class Node
             if (node.nodeObject == _obj)
                 return;
 
+
         nodeObject = _obj;
         ground = _ground;
 
         if (_isResistor)
+        {
+            //Debug.Log("NEW RESISTOR " + _obj.transform.position);
             _resistorsRegistry.Add(this);
+        }
         else if (_isVoltageSource)
+        {
+            //Debug.Log("NEW VOLTAGE SOURCE " + _obj.transform.position);
             _voltageSourcesRegistry.Add(this);
+        }
         else if (_isLED)
+        {
+            //Debug.Log("NEW LED " + _obj.transform.position);
             _ledRegistry.Add(this);
+        }
         else
+        {
+            //Debug.Log("NEW NODE " + _obj.transform.position);
             _registry.Add(this);
+        }
 
         _generalRegistry.Add(this);
 
@@ -66,6 +79,7 @@ public class Node
 
     public static void CalculateNodes()
     {
+        Debug.Log("CALCULATE NODES");
         unknownNodes = _registry;
         unknownNodes.Remove(GetGroundNode());
         matrixDimension = unknownNodes.Count + _neighborShortcircuitRegistry.Count + _voltageSourcesRegistry.Count + _ledRegistry.Count;
@@ -443,12 +457,12 @@ public class Node
     public static void ClearAllNodes()
     {
         _generalRegistry.Clear();
-        unknownNodes.Clear();
         _registry.Clear();
         _resistorsRegistry.Clear();
         _ledRegistry.Clear();
         _voltageSourcesRegistry.Clear();
         _neighborShortcircuitRegistry.Clear();
+        unknownNodes.Clear();
     }
 
     public static Node GetGroundNode()
