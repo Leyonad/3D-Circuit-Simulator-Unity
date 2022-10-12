@@ -84,13 +84,14 @@ public class CameraController : MonoBehaviour
         if (components.selectedObject != null)
             return;
 
-        GetKeyboardMovement();
-        if(useScreenEdge)
-            CheckMouseAtScreenEdge();
+        //if(useScreenEdge)
+        //    CheckMouseAtScreenEdge();
         
-        DragCamera();
-        UpdateVelocity();
-        UpdateBasePosition();
+        if (DragCamera() || MoveWithKeyboard())
+        {
+            UpdateVelocity();
+            UpdateBasePosition();
+        }
     }
 
     private void UpdateVelocity()
@@ -100,17 +101,19 @@ public class CameraController : MonoBehaviour
         lastPosition = transform.position;
     }
 
-    private void GetKeyboardMovement()
+    private bool MoveWithKeyboard()
     {
         Vector3 inputValue = movement.ReadValue<Vector2>().x * GetCameraRight()
                                + movement.ReadValue<Vector2>().y * GetCameraForward();
 
-        inputValue = inputValue.normalized;
+        if (inputValue == Vector3.zero)
+            return false;
 
+        inputValue = inputValue.normalized;
         if(inputValue.sqrMagnitude > 0.1f)
-        {
             targetPosition += inputValue;
-        }
+
+        return true;
     }
 
     private Vector3 GetCameraRight()
@@ -129,18 +132,8 @@ public class CameraController : MonoBehaviour
 
     private void UpdateBasePosition()
     {
-        if(targetPosition.sqrMagnitude > 0.1f)
-        {
-            speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
-            transform.position += targetPosition * speed * Time.deltaTime;
-            //transform.position = Vector3.Lerp(transform.position, transform.position + targetPosition, speed * Time.deltaTime);
-        }
-        else
-        {
-            horizontalVelocity = Vector3.Lerp(horizontalVelocity, Vector3.zero, Time.deltaTime * damping);
-            transform.position += horizontalVelocity * Time.deltaTime;
-            //transform.position = Vector3.Lerp(transform.position, transform.position + horizontalVelocity, Time.deltaTime);
-        }
+        speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
+        transform.position += speed * Time.deltaTime * targetPosition; 
 
         targetPosition = Vector3.zero;
     }
@@ -180,16 +173,16 @@ public class CameraController : MonoBehaviour
         targetPosition += moveDirection;
     }
 
-    private void DragCamera()
+    private bool DragCamera()
     {
         if (!Mouse.current.rightButton.isPressed){
             dragginTheCamera = false;
-            return;
+            return false;
         }
 
         dragginTheCamera = true;
 
-        Plane plane = new Plane(Vector3.up, Vector3.zero);
+        Plane plane = new(Vector3.up, Vector3.zero);
         Ray ray = GameManager.cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         if(plane.Raycast(ray, out float distance))
@@ -199,6 +192,7 @@ public class CameraController : MonoBehaviour
             else
                 targetPosition += startDrag - ray.GetPoint(distance);
         }
+        return true;
     }
 
 }

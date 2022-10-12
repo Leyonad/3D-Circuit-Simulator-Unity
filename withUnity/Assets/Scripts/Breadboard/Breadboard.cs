@@ -14,7 +14,7 @@ public class Breadboard
         breadboardObject.transform.position = positionBreadboard;
 
         breadboardObject.GetComponent<MeshRenderer>().material = ResourcesManager.breadboardMaterial;
-        breadboardObject.AddComponent<BoxCollider>();
+        //breadboardObject.AddComponent<BoxCollider>();
 
         breadboardObject.AddComponent<MouseHovering>();
         ColorUtility.TryParseHtmlString("#7E7E7E", out breadboardObject.GetComponent<MouseHovering>().hoveringColor);
