@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
 
 public class CameraController : MonoBehaviour
 {
@@ -16,8 +17,6 @@ public class CameraController : MonoBehaviour
     private float speed;
     [SerializeField]
     private float acceleration = 10f;
-    [SerializeField]
-    private float damping = 15f;
 
     //vertical motion - zooming
     [SerializeField]
@@ -30,13 +29,6 @@ public class CameraController : MonoBehaviour
     //rotation
     [SerializeField]
     private float maxRotationSpeed = 1f;
-
-    //screen edge motion
-    [SerializeField]
-    [Range(0f, 0.1f)]
-    private float edgeTolerance = 0.05f;
-    [SerializeField]
-    private bool useScreenEdge = false;
 
     //value set in various functions
     //used to update the position of the camera base object
@@ -83,9 +75,6 @@ public class CameraController : MonoBehaviour
     {
         if (components.selectedObject != null)
             return;
-
-        //if(useScreenEdge)
-        //    CheckMouseAtScreenEdge();
         
         if (DragCamera() || MoveWithKeyboard())
         {
@@ -141,9 +130,23 @@ public class CameraController : MonoBehaviour
     private void ZoomCamera(InputAction.CallbackContext inputValue)
     {
         float value = inputValue.ReadValue<Vector2>().y;
-        GameManager.cam.orthographicSize = Mathf.Clamp(GameManager.cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
-    }
 
+        Camera cam = GameManager.cam;
+        Vector2 pos = Mouse.current.position.ReadValue();
+        //Vector3 mousePosition = cam.ScreenToWorldPoint(new Vector3(pos.x, cam.transform.position.y, pos.y));
+
+        // Get Position before and after zooming
+        Vector3 mouseOnWorld = cam.ScreenToWorldPoint(pos);
+        cam.orthographicSize = Mathf.Clamp(GameManager.cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
+
+        // Calculate Difference between Positions before and after Zooming
+        Vector3 posDiff = mouseOnWorld - cam.ScreenToWorldPoint(pos);
+
+        // Apply Target-Position to Camera
+        cam.transform.position += posDiff;
+
+        //cam.orthographicSize = Mathf.Clamp(GameManager.cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
+    }
 
     private void RotateCamera(InputAction.CallbackContext inputValue)
     {
@@ -152,25 +155,6 @@ public class CameraController : MonoBehaviour
 
         float value = inputValue.ReadValue<Vector2>().x;
         transform.rotation = Quaternion.Euler(0f, value * maxRotationSpeed + transform.rotation.eulerAngles.y, 0f);
-    }
-
-
-    private void CheckMouseAtScreenEdge()
-    {
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-        Vector3 moveDirection = Vector3.zero;
-
-        if (mousePosition.x < edgeTolerance * Screen.width)
-            moveDirection -= GetCameraRight();
-        else if (mousePosition.x > (1f - edgeTolerance) * Screen.width)
-            moveDirection += GetCameraRight();
-
-        if (mousePosition.y < edgeTolerance * Screen.height)
-            moveDirection -= GetCameraForward();
-        else if (mousePosition.y > (1f - edgeTolerance) * Screen.height)
-            moveDirection += GetCameraForward();
-
-        targetPosition += moveDirection;
     }
 
     private bool DragCamera()
@@ -194,5 +178,4 @@ public class CameraController : MonoBehaviour
         }
         return true;
     }
-
 }

@@ -39,7 +39,6 @@ Todo:
 [x] make a resistor in blender and make it spawnable
 [x] different wire color/thickness for the resistor
 [x] when clicking the space bar, toggle wire colors to see the electricity path
-[ ] calculate mA before making LEDs glow
 [#] nodal analysis: calculating the voltages of nodes using nodal analysis
 [x] 1. find all nodes
 [x] 2. set the ground node and the node connected to the positive side of the battery
@@ -60,6 +59,7 @@ Todo:
 [x] calculate the current of each led
 [x] make the battery more item-like
 [x] calculate the direction of the current (abs() might be right)
+[ ] make LEDs glow
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -113,3 +113,4 @@ Optimization:
 [x] calculate nodes should only be possible if a circuit is complete
 [?] make component-highlighting better
 [x] make camera drag smooth
+[x] zoom into the mouse position and not into the center of the screen

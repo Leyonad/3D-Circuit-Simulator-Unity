@@ -415,7 +415,7 @@ public class MouseInteraction : MonoBehaviour
         Vector3 screenPoint = GameManager.cam.WorldToScreenPoint(toUpdatePosition);
 
         //calculate the target world position based on the mouse input
-        Vector3 screenPosition = new Vector3(mousePosition.x- offset.x, mousePosition.y-offset.y, screenPoint.z);
+        Vector3 screenPosition = new Vector3(mousePosition.x-offset.x, mousePosition.y-offset.y, screenPoint.z);
         Vector3 worldPosition = GameManager.cam.ScreenToWorldPoint(screenPosition);
         
         Vector3 targetPosition = new Vector3(worldPosition.x, toUpdatePosition.y, worldPosition.z);
