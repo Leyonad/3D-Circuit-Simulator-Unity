@@ -82,7 +82,7 @@ Bugs:
 [x] when creating a wire the y-position is not correct (CreateLineObject())
 [x] metals are still highlighted after a wire gets deleted
 [x] start and end object of an item can be the same
-[ ] when making wire flat, both ends have a different thickness
+[x] when making wire flat, both ends have a different thickness
 [x] the items have the wrong color after unselecting
 [x] the metals are still highlighted after deleting a wire
 [x] calculations are wrong when both ends of a wire are on the same node
