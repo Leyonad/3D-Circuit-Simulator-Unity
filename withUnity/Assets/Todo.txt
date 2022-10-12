@@ -114,3 +114,4 @@ Optimization:
 [?] make component-highlighting better
 [x] make camera drag smooth
 [x] zoom into the mouse position and not into the center of the screen
+[x] camera shoudn't move when rotating

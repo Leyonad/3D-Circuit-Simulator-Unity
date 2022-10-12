@@ -29,6 +29,7 @@ public class CameraController : MonoBehaviour
     //rotation
     [SerializeField]
     private float maxRotationSpeed = 1f;
+    private static bool rotatingTheCamera = false;
 
     //value set in various functions
     //used to update the position of the camera base object
@@ -76,7 +77,7 @@ public class CameraController : MonoBehaviour
         if (components.selectedObject != null)
             return;
         
-        if (DragCamera() || MoveWithKeyboard())
+        if (!rotatingTheCamera && (DragCamera() || MoveWithKeyboard()))
         {
             UpdateVelocity();
             UpdateBasePosition();
@@ -150,9 +151,13 @@ public class CameraController : MonoBehaviour
 
     private void RotateCamera(InputAction.CallbackContext inputValue)
     {
-        if (!Mouse.current.middleButton.isPressed)
+        if (!Mouse.current.middleButton.isPressed || dragginTheCamera)
+        {
+            rotatingTheCamera = false;
             return;
+        }
 
+        rotatingTheCamera = true;
         float value = inputValue.ReadValue<Vector2>().x;
         transform.rotation = Quaternion.Euler(0f, value * maxRotationSpeed + transform.rotation.eulerAngles.y, 0f);
     }
