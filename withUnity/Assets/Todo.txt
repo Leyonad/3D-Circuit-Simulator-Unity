@@ -116,3 +116,4 @@ Optimization:
 [x] make camera drag smooth
 [x] zoom into the mouse position and not into the center of the screen
 [x] camera shoudn't move when rotating
+[x] shouldnt be able to drag the camera while changing a selected wires y value

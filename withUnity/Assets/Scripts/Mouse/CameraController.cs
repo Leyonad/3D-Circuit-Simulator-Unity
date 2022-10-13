@@ -169,6 +169,10 @@ public class CameraController : MonoBehaviour
             return false;
         }
 
+        //cant drag the camera while changing the y value of a wire
+        if (MouseInteraction.changeMiddlePoint)
+            return false;
+
         dragginTheCamera = true;
 
         Plane plane = new(Vector3.up, Vector3.zero);

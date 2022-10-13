@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Progress;
 using static WireManager;
 
 public class MouseInteraction : MonoBehaviour
@@ -12,7 +10,7 @@ public class MouseInteraction : MonoBehaviour
 
     private Vector2 previousPosition = Vector2.zero;
 
-    public bool changeMiddlePoint = false;
+    public static bool changeMiddlePoint = false;
     public readonly static float changeMiddlePointSpeed = 0.05f;
     public readonly static float changeItemYSpeed = 0.01f;
 
