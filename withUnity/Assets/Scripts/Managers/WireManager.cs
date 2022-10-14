@@ -20,8 +20,6 @@ public class WireManager : MonoBehaviour
     public static void UpdateElectricityParameters()
     {
         Node.ClearAllNodes();
-        Node.foundGround = false;
-        Node.groundNode = null;
 
         parentsLeft.Clear(); 
         connectedWires.Clear();
@@ -48,7 +46,7 @@ public class WireManager : MonoBehaviour
                 }
                 else if (wire.endObject.name == "mn")
                 {
-                    startObject = wire.startObject.transform.parent.gameObject;
+                    startObject = wire.endObject.transform.parent.gameObject;
                     startWireNegative = wire;
                     found = true;
                 }
@@ -58,11 +56,9 @@ public class WireManager : MonoBehaviour
         //set the ground node and update the start wire
         if (found)
         {
-            GameObject groundNodeGameObject = GetNextObject(startObject, startWireNegative);
-            Node.foundGround = true;
-            Node ground = new Node(groundNodeGameObject, true);
+            Node ground = new Node(startObject, true, false, true);
             Node.groundNode = ground;
-            groundNodeGameObject.GetComponent<Properties>().ground = true;
+            Debug.Log("CREATED BATTERY NODE");
 
             startWireNegative.updated = true;
             if (electricityPathView)
@@ -86,10 +82,10 @@ public class WireManager : MonoBehaviour
             }
             //else Debug.Log($"WIRE ALREDY UPDATED: {wire.lineObject.name}");
         }
-        //Debug.Log($"startparent = {startParent.name} {startParent.transform.position} exits: {exit}");
+        Debug.Log($"startparent = {startParent.name} {startParent.transform.position} exits: {exit}");
         if (exit == 0)
         { //---------------no exit-------------------
-            if (startParent.name == "Battery9V(Clone)")
+            if (startParent.GetComponent<Properties>().battery != null)
             {
                 //make a voltage source node for the battery
                 new Node(startParent, false, false, true);
@@ -99,7 +95,7 @@ public class WireManager : MonoBehaviour
             //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
             else
             {
-                //Debug.Log("ELSE NEW NODE " + startParent.transform.position);
+                Debug.Log("ELSE NEW NODE " + startParent.transform.position);
                 new Node(startParent);
             }
             parentsLeft.Remove(startParent);
@@ -108,11 +104,11 @@ public class WireManager : MonoBehaviour
             //stop if there are no parent objects left
             if (parentsLeft.Count == 0)
             {
-                //Debug.Log("PARENTSLEFT COUNT = 0");
+                Debug.Log("PARENTSLEFT COUNT = 0");
                 return false;
             }
             GameObject nextStartParent = parentsLeft[0];
-            //Debug.Log("FIND NEXT STARTPARENT " + nextStartParent.transform.position);
+            Debug.Log("FIND NEXT STARTPARENT " + nextStartParent.transform.position);
             //find the next startParent
             for (int i = 0; i < nextStartParent.GetComponent<Properties>().attachedWires.Count; i++)
             {
@@ -124,16 +120,19 @@ public class WireManager : MonoBehaviour
                     connectedWires.Add(wire);
                     wire.updated = true;
                     Debug.Log($"GetNextObject({nextStartParent.transform.position}, {wire.lineObject.name})");
+                    
+                    //remove this startparent, if all of its attached wires are updated
                     int count = 0;
                     foreach (Wire p in nextStartParent.GetComponent<Properties>().attachedWires)
                         if (!p.updated)
                             count += 1;
                     if (count == 0) 
                         parentsLeft.Remove(nextStartParent);
+                    
                     return RecursiveUpdateCurrent(GetNextObject(nextStartParent, wire));
                 }
             }
-            //Debug.Log("NEXT STARTPARENT NOT FOUND");
+            Debug.Log("NEXT STARTPARENT NOT FOUND");
         }
 
         if (IsItem(startParent) && startParent.GetComponent<Properties>().battery == null)
@@ -149,7 +148,7 @@ public class WireManager : MonoBehaviour
             }
         }
         //make a new node if the metal is not ground
-        else if (startParent != Node.groundNode.nodeObject)
+        else if (startParent)
             new Node(startParent);
 
         foreach (Wire wire in notVisited)
@@ -171,7 +170,6 @@ public class WireManager : MonoBehaviour
             {
                 parentsLeft.Add(startParent);
                 //Debug.Log("ADDED TO PARENTSLEFT " + startParent.transform.position + " COUNT AFTER ADD = " + parentsLeft.Count);
-
             }
             return RecursiveUpdateCurrent(GetNextObject(startParent, wire));
             
@@ -181,11 +179,20 @@ public class WireManager : MonoBehaviour
 
     public static GameObject GetNextObject(GameObject startParent, Wire wire)
     {
-        //find the gameobject to which the other end of the wire is attached to
+        //find the gameobject which the other end of the wire is attached to
         if (wire.startObject.transform.parent.gameObject == startParent)
             return wire.endObject.transform.parent.gameObject;
 
         return wire.startObject.transform.parent.gameObject;
+    }
+
+    public static GameObject GetNextMetal(GameObject startParent, Wire wire)
+    {
+        //find the metal which the other end of the wire is attached to
+        if (wire.startObject.transform.parent.gameObject == startParent)
+            return wire.endObject;
+
+        return wire.startObject;
     }
 
     public static GameObject GetObjectAfterItem(Wire wireToItem, GameObject itemObject)
@@ -260,6 +267,15 @@ public class WireManager : MonoBehaviour
                 return existingWire;
             }
         }
+        return null;
+    }
+
+    public static Wire GetWireBetweenTwoNodes(Node node1, Node node2)
+    {
+        foreach (Wire wireNode1 in node1.nodeObject.GetComponent<Properties>().attachedWires)
+            foreach (Wire wireNode2 in node2.nodeObject.GetComponent<Properties>().attachedWires)
+                if (wireNode1 == wireNode2)
+                    return wireNode1;
         return null;
     }
 }

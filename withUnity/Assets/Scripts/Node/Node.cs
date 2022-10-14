@@ -2,10 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using static UnityEditor.Rendering.CameraUI;
-using UnityEngine.Windows;
-using static UnityEngine.Rendering.DebugUI;
-using UnityEngine.UIElements;
 
 public class Node
 {
@@ -16,8 +12,8 @@ public class Node
     public static List<Node> _voltageSourcesRegistry = new List<Node>();
     public static List<Node[]> _neighborShortcircuitRegistry = new List<Node[]>();
 
-    public static bool foundGround = false;
-    public static Node groundNode;
+    public static Node groundNode = null;
+    public static Node groundNeighborNode = null;
 
     public GameObject nodeObject;
     private readonly List<Node> neighborNodes = new List<Node>();
@@ -36,58 +32,72 @@ public class Node
 
     public Node(GameObject _obj, bool _ground=false, bool _isResistor=false, bool _isVoltageSource=false, bool _isLED=false)
     {
+        nodeObject = _obj;
+        ground = _ground;
+
         //if an item has both ends on the same node, return
         if (_isResistor || _isLED)
             if (_obj.GetComponent<Properties>().item.startObject.transform.parent == _obj.GetComponent<Properties>().item.endObject.transform.parent)
                 return;
-            
+
         //dont make duplicate nodes
         foreach (Node node in Node._generalRegistry)
             if (node.nodeObject == _obj)
                 return;
 
+        //set the neighbor node for ground to make it easier to check if a node is connected to ground
+        if (groundNeighborNode == null && !_ground)
+            groundNeighborNode = this;
 
-        nodeObject = _obj;
-        ground = _ground;
+        //is null only when creating the new ground node which has no startparent
+        if (nodeObject != null)
+        {
+            //add node to list
+            SortNodeByType(_isResistor, _isVoltageSource, _isLED);
+            _obj.GetComponent<Properties>().node = this;
+        }
+    }
 
+    private void SortNodeByType(bool _isResistor, bool _isVoltageSource, bool _isLED)
+    {
+        //this method adds the node to the correct list
         if (_isResistor)
         {
-            //Debug.Log("NEW RESISTOR " + _obj.transform.position);
+            Debug.Log("NEW RESISTOR " + nodeObject.transform.position);
             _resistorsRegistry.Add(this);
         }
         else if (_isVoltageSource)
         {
-            //Debug.Log("NEW VOLTAGE SOURCE " + _obj.transform.position);
+            Debug.Log("NEW VOLTAGE SOURCE " + nodeObject.transform.position);
             _voltageSourcesRegistry.Add(this);
         }
         else if (_isLED)
         {
-            //Debug.Log("NEW LED " + _obj.transform.position);
+            Debug.Log("NEW LED " + nodeObject.transform.position);
             _ledRegistry.Add(this);
         }
         else
         {
-            //Debug.Log("NEW NODE " + _obj.transform.position);
+            Debug.Log("NEW NODE " + nodeObject.transform.position);
             _registry.Add(this);
         }
 
         _generalRegistry.Add(this);
-
-        //for optimization
-        _obj.GetComponent<Properties>().node = this;
     }
 
     public static void CalculateNodes()
     {
         Debug.Log("CALCULATE NODES");
+        AddNodeAfterBattery();
         unknownNodes = _registry;
         unknownNodes.Remove(GetGroundNode());
         matrixDimension = unknownNodes.Count + _neighborShortcircuitRegistry.Count + _voltageSourcesRegistry.Count + _ledRegistry.Count;
-        
+
+        PrintNeighbors();
         CreateMatrices();
         AssignValuesToMatrices();
-        //PrintMatrix("yMatrix", yMatrix);
-        //PrintMatrix("iMatrix", iMatrix);
+        PrintMatrix("yMatrix", yMatrix);
+        PrintMatrix("iMatrix", iMatrix);
 
         CalculateInverseMatrix();
         CalculateResultMatrix();
@@ -101,10 +111,51 @@ public class Node
         MakeLedsGlow();
     }
 
+    public static void AddNodeAfterBattery()
+    {
+        //add a node between the battery and the neighbor of the
+        //negative side of the battery as the ground node
+
+        //reset old ground node
+        Node oldGroundNode = groundNode;
+        groundNode.ground = false;
+
+        //set new ground node
+        Node newGroundNode = new Node(null, true);
+        groundNode = newGroundNode;
+        groundNode.ground = true;
+
+        //find the neighbor of the positive side of the battery
+        Node positiveNeighbor = null;
+        foreach (Wire w in oldGroundNode.nodeObject.GetComponent<Properties>().attachedWires)
+        { 
+            if (w.startObject.name == "mp" || w.endObject.name == "mp")
+            {
+                positiveNeighbor = WireManager.GetNextObject(oldGroundNode.nodeObject, w).GetComponent<Properties>().node;
+                Debug.Log("FOUND " + positiveNeighbor.nodeObject.transform.position);
+                break;
+            }
+        }
+        Debug.Log("GROUND NEIGHBOR NODE: " + groundNeighborNode.nodeObject.transform.position);
+        positiveNeighbor.neighborNodes.Remove(groundNeighborNode);
+
+        groundNeighborNode.neighborNodes.Remove(positiveNeighbor);
+        groundNeighborNode.neighborVoltageSources.Remove(oldGroundNode);
+        groundNeighborNode.neighborNodes.Add(newGroundNode);
+        
+        oldGroundNode.neighborNodes.Remove(groundNeighborNode);
+        oldGroundNode.neighborNodes.Add(newGroundNode);
+
+        newGroundNode.neighborNodes.Add(oldGroundNode);
+        newGroundNode.neighborNodes.Add(groundNeighborNode);
+
+        _neighborShortcircuitRegistry.Add(new Node[2] { groundNeighborNode, newGroundNode });
+    }
+
     public static void SetNeighborNodes()
     {
         //set the neighbor nodes of each node
-        foreach (Node node in Node._registry)
+        foreach (Node node in _registry)
         {
             foreach (Wire wire in node.nodeObject.GetComponent<Properties>().attachedWires)
             {
@@ -137,6 +188,7 @@ public class Node
                     //voltage source
                     else if (nextObject.GetComponent<Properties>().battery != null)
                         node.neighborVoltageSources.Add(nodeOfNextObject);
+                    
 
                     continue;
                 }
@@ -167,7 +219,7 @@ public class Node
         }
 
         //set the neighbor nodes of each voltage source
-        foreach (Node voltageSourceNode in Node._voltageSourcesRegistry)
+        foreach (Node voltageSourceNode in _voltageSourcesRegistry)
         {
             foreach (Wire wire in voltageSourceNode.nodeObject.GetComponent<Properties>().attachedWires)
             {
@@ -280,7 +332,9 @@ public class Node
         int ledCount = _ledRegistry.Count;
         int voltageSourcesCount = _voltageSourcesRegistry.Count;
 
-        Debug.Log($"unknownNodesCount = {unknownNodesCount}, shortcircuitsCount = {shortcircuitsCount}, ledCount = {ledCount}, voltageSourcesCount = {voltageSourcesCount}");
+        int resistorsCount = _resistorsRegistry.Count;
+
+        Debug.Log($"resistorsCount = {resistorsCount}, unknownNodesCount = {unknownNodesCount}, shortcircuitsCount = {shortcircuitsCount}, ledCount = {ledCount}, voltageSourcesCount = {voltageSourcesCount}");
 
         //start row in matrix of different components
         int startRowShortcircuit  = unknownNodesCount;
@@ -314,7 +368,7 @@ public class Node
             int startIndex = unknownNodes.IndexOf(shortCircuit[0]);
             int endIndex = unknownNodes.IndexOf(shortCircuit[1]);
 
-            if (!shortCircuit[0].ground && !shortCircuit[1].ground)
+            if (shortCircuit[0] != groundNeighborNode && shortCircuit[1] != groundNeighborNode)
             {
                 yMatrix[startIndex][startRowShortcircuit + i] = 1;
                 yMatrix[startRowShortcircuit + i][startIndex] = 1;
@@ -323,12 +377,12 @@ public class Node
             }
 
             //if one end is connected to ground
-            else if (shortCircuit[0].ground)
+            else if (shortCircuit[1] == groundNeighborNode)
             {
                 yMatrix[endIndex][startRowShortcircuit + i] = 1;
                 yMatrix[startRowShortcircuit + i][endIndex] = 1;
             }
-            else if (shortCircuit[1].ground)
+            else if (shortCircuit[0] == groundNeighborNode)
             {
                 yMatrix[startIndex][startRowShortcircuit + i] = 1;
                 yMatrix[startRowShortcircuit + i][startIndex] = 1;
@@ -347,7 +401,7 @@ public class Node
             int startIndex = unknownNodes.IndexOf(startNode);
             int endIndex = unknownNodes.IndexOf(endNode);
 
-            if (!startNode.ground && !endNode.ground)
+            if (startNode != groundNeighborNode && endNode != groundNeighborNode)
             {
                 yMatrix[startIndex][startRowLed + i] = 1;
                 yMatrix[startRowLed + i][startIndex] = 1;
@@ -356,12 +410,12 @@ public class Node
             }
 
             //if one end is connected to ground
-            else if (startNode.ground)
+            else if (endNode == groundNeighborNode)
             {
                 yMatrix[endIndex][startRowLed + i] = 1;
                 yMatrix[startRowLed + i][endIndex] = 1;
             }
-            else if (endNode.ground)
+            else if (startNode == groundNeighborNode)
             {
                 yMatrix[startIndex][startRowLed + i] = 1;
                 yMatrix[startRowLed + i][startIndex] = 1;
@@ -377,16 +431,17 @@ public class Node
 
             foreach (Node neighborNode in _voltageSourcesRegistry[i].neighborNodes)
             {
-                if (!neighborNode.ground)
-                {
-                    //get the index of the node which the voltage source is connected to
-                    int index = unknownNodes.IndexOf(neighborNode);
+                //skip the node which is connected to ground
+                if (neighborNode == groundNode)
+                    continue;
 
-                    yMatrix[index][startRowVoltageSource + i] = 1;
-                    yMatrix[startRowVoltageSource + i][index] = 1;
+                //get the index of the node which the voltage source is connected to
+                int index = unknownNodes.IndexOf(neighborNode);
 
-                    iMatrix[startRowVoltageSource + i][0] = voltage;
-                }
+                yMatrix[index][startRowVoltageSource + i] = 1;
+                yMatrix[startRowVoltageSource + i][index] = 1;
+
+                iMatrix[startRowVoltageSource + i][0] = voltage;
             }
         }
     }
@@ -394,18 +449,15 @@ public class Node
     public static int GetIndexOfNodeAfterResistor(Node startNode, Node resistorNode)
     {
         //get the index of the node after the resistor, -1 if not found
+        if (resistorNode == groundNeighborNode)
+            return -1;
+
         foreach (Node neighborNode in startNode.neighborNodes)
         {
             foreach (Node neighborResistorNode in neighborNode.neighborResistors)
             {
                 if (neighborResistorNode == resistorNode)
                 {
-                    //if the node after the resistor is the ground node: return -1
-                    if (neighborNode.ground == true)
-                    {
-                        return -1;
-                    }
-
                     return unknownNodes.IndexOf(neighborNode);
                 }
             }
@@ -431,7 +483,7 @@ public class Node
     public static void PrintNodes()
     {
         Debug.Log("START");
-        foreach (Node node in Node._registry)
+        foreach (Node node in Node._generalRegistry)
         {
             Debug.Log(node.nodeObject.name + " " + node.nodeObject.transform.position + " ground = " + node.ground + " voltage= " + node.nodeObject.GetComponent<Properties>().voltage);
         }
@@ -441,14 +493,38 @@ public class Node
     public static void PrintNeighbors()
     {
         Debug.Log("START");
-        foreach (Node node in Node._registry)
+        foreach (Node node in Node._generalRegistry)
         {
             Debug.Log(node.nodeObject.name + "  " + node.nodeObject.transform.position + ":");
             foreach (Node neighborNode in node.neighborNodes)
             {
-                if (neighborNode != null)
+                if (neighborNode.nodeObject != null)
                     Debug.Log("   Neighbor: " + neighborNode.nodeObject.name + " " + neighborNode.nodeObject.transform.position);
-                else Debug.Log("   NULL");
+                else Debug.Log("   GROUND");
+            }
+            foreach (Node neighborNode in node.neighborVoltageSources)
+            {
+                if (neighborNode.nodeObject != null)
+                    Debug.Log("   Neighbor: " + neighborNode.nodeObject.name + " " + neighborNode.nodeObject.transform.position);
+                else Debug.Log("   GROUND");
+            }
+            foreach (Node neighborNode in node.neighborLeds)
+            {
+                if (neighborNode.nodeObject != null)
+                    Debug.Log("   Neighbor: " + neighborNode.nodeObject.name + " " + neighborNode.nodeObject.transform.position);
+                else Debug.Log("   GROUND");
+            }
+            foreach (Node neighborNode in node.neighborResistors)
+            {
+                if (neighborNode.nodeObject != null)
+                    Debug.Log("   Neighbor: " + neighborNode.nodeObject.name + " " + neighborNode.nodeObject.transform.position);
+                else Debug.Log("   GROUND");
+            }
+            foreach (Node neighborNode in node.neighborShortCircuits)
+            {
+                if (neighborNode.nodeObject != null)
+                    Debug.Log("   Neighbor: " + neighborNode.nodeObject.name + " " + neighborNode.nodeObject.transform.position);
+                else Debug.Log("   GROUND");
             }
         }
         Debug.Log("END");
@@ -456,6 +532,8 @@ public class Node
 
     public static void ClearAllNodes()
     {
+        groundNode = null;
+        groundNeighborNode = null;
         _generalRegistry.Clear();
         _registry.Clear();
         _resistorsRegistry.Clear();
@@ -464,10 +542,9 @@ public class Node
         _neighborShortcircuitRegistry.Clear();
         unknownNodes.Clear();
     }
-
     public static Node GetGroundNode()
-    //get the node connected to the negative side of the battery
     {
+        //get the node connected to the negative side of the battery
         return groundNode;
     }
 }
