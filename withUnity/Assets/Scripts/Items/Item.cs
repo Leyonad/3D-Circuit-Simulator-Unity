@@ -4,6 +4,7 @@ using UnityEngine;
 public class Item
 {
     public GameObject itemObject;
+    public string type;
     public static Item justCreated = null;
     public static bool moveItemUpDown = false;
 
@@ -29,12 +30,20 @@ public class Item
 
     public static List<Item> _registry = new List<Item>();
 
-    public Item(GameObject collideObject, string type, string color="red")
+    public Item(GameObject collideObject, string _type, string color="red")
     {
         startObject = collideObject;
+        type = _type;
+
+        if (_type == "Battery")
+        {
+            itemObject = collideObject;
+            return;
+        }
+
         Vector3 spawnPosition = startObject.transform.position;
 
-        if (type == "LED")
+        if (_type == "LED")
         {
             defaultYValue = 3f;
             minItemY = 1.5f;
@@ -65,7 +74,7 @@ public class Item
             itemObject.GetComponent<Properties>().minCurrent = 2;
             itemObject.GetComponent<Properties>().maxCurrent = 30;
         }
-        else if (type == "Resistor")
+        else if (_type == "Resistor")
         {
             defaultYValue = 1.5f;
             minItemY = 1.3f;
@@ -79,7 +88,7 @@ public class Item
 
         currentYPosition = defaultYValue;
 
-        itemObject.name = type;
+        itemObject.name = _type;
         itemObject.GetComponent<Properties>().item = this;
         itemObject.transform.SetParent(ComponentsManager.components.transform);
 
@@ -89,7 +98,7 @@ public class Item
         wire1 = new Wire(startObject, m1obj, 1.5f, this);
         wire2 = new Wire(m2obj, null, 1.5f, this);
 
-        if (type == "LED")
+        if (_type == "LED")
         {
             //set poles for wires, where the first wire is negative and the last positive
             wire1.lineObject.GetComponent<Properties>().polarity = 1;

@@ -93,7 +93,10 @@ Bugs:
 [x] the algorithm that goes through metals/items and creates nodes has problems in certain circuits
 [?] singular matrix (determinant = 0) which cant be calculated, this happens if there are no resistors
 [ ] selected objects remain selected after moving component (cant reproduce)
-[n] problems with items connected to the battery directly (maybe make an invisible ground node then)
+[x] problems with items connected to the battery directly (maybe make an invisible ground node then)
+[#] new network of nodes
+[x] 1. get connections between nodes
+[n] 2. calculate matrices
 
 Optimization:
 [x] only move component if delta is not zero
@@ -118,3 +121,4 @@ Optimization:
 [x] zoom into the mouse position and not into the center of the screen
 [x] camera shoudn't move when rotating
 [x] shouldnt be able to drag the camera while changing a selected wires y value
+[ ] LED materials should be glass-like

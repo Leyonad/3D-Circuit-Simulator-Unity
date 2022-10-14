@@ -106,22 +106,7 @@ public class MouseInteraction : MonoBehaviour
                         //check if the wire is connected to an item
                         if (IsAttachedToItem(existingWire))
                         {
-                            Item item = null;
-                            //if clicked on a battery metal
-                            if (existingWire.startObject.name == "mn" || existingWire.startObject.name == "mp")
-                            {
-                                GameObject p = GetNextObject(existingWire.startObject.transform.parent.gameObject, existingWire);
-                                item = p.GetComponent<Properties>().item;
-                            }
-                            else if (existingWire.endObject.name == "mn" || existingWire.endObject.name == "mp")
-                            {
-                                GameObject p = GetNextObject(existingWire.endObject.transform.parent.gameObject, existingWire);
-                                item = p.GetComponent<Properties>().item;
-                            }
-                            else
-                            {
-                                item = GetItemAttachedToWire(existingWire);
-                            }
+                            Item item = GetItemAttachedToWire(existingWire);
                             new Selection(null, item);
                             foreach (Wire itemWire in item.itemObject.GetComponent<Properties>().attachedWires)
                                 new Selection(itemWire);
@@ -226,7 +211,7 @@ public class MouseInteraction : MonoBehaviour
                     return;
                 }
                 //clicked on an item (and not on battery)
-                else if (IsItem(selectedObject) && selectedObject.GetComponent<Properties>().battery == null)
+                else if (IsItem(selectedObject))
                 {
                     //select the wire and all wires attached to the item
                     Item item = selectedObject.GetComponent<Properties>().item;
@@ -370,12 +355,7 @@ public class MouseInteraction : MonoBehaviour
             }
             Debug.Log("SPACE PRESSED");
             UpdateElectricityParameters();
-            if (circuitComplete)
-            {
-                Node.SetNeighborNodes();
-                Node.CalculateNodes();
-            }
-            else Debug.Log("CIRCUIT IS NOT COMPLETE");
+            NodeManager.CalculateNodes();
         }
 
         //ctrl-key for enabling multiselection

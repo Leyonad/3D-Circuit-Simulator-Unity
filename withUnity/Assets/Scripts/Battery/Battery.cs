@@ -15,7 +15,6 @@ public class Battery
         if (batteryObject != null)
         {
             batteryObject.transform.SetParent(ComponentsManager.components.transform);
-            batteryObject.GetComponent<Properties>().battery = this;
         }
     }
 }

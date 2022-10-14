@@ -9,7 +9,6 @@ public class WireManager : MonoBehaviour
     public static List<Wire> connectedWires = new List<Wire>();
 
     public static bool electricityPathView = false;
-    public static bool circuitComplete = false;
 
     public static void ResetWire()
     {
@@ -19,11 +18,10 @@ public class WireManager : MonoBehaviour
 
     public static void UpdateElectricityParameters()
     {
-        Node.ClearAllNodes();
+        NodeManager.ClearAllNodes();
 
         parentsLeft.Clear(); 
         connectedWires.Clear();
-        circuitComplete = false;
 
         //find the metal2 object, since that is the start object
         bool found = false;
@@ -56,133 +54,97 @@ public class WireManager : MonoBehaviour
         //set the ground node and update the start wire
         if (found)
         {
-            Node ground = new Node(startObject, true, false, true);
-            Node.groundNode = ground;
-            Debug.Log("CREATED BATTERY NODE");
-
-            startWireNegative.updated = true;
-            if (electricityPathView)
-                startWireNegative.lineRenderer.material = ResourcesManager.yellow;
-            connectedWires.Add(startWireNegative);
-
-            //start with the battery as the first startParent
-            RecursiveUpdateCurrent(GetNextObject(startObject, startWireNegative));
+            new Node(startObject);
+            SetWireToVisited(startWireNegative);
+            RecursiveUpdateCurrent(GetObjectOfNextNode(startObject, startWireNegative));
         }
     }
 
     private static bool RecursiveUpdateCurrent(GameObject startParent)
     {
-        int exit = 0;
-        List<Wire> notVisited = new List<Wire>();
-        foreach (Wire wire in startParent.GetComponent<Properties>().attachedWires) {
-            if (!wire.updated)
-            {
-                exit++;
-                notVisited.Add(wire);
-            }
-            //else Debug.Log($"WIRE ALREDY UPDATED: {wire.lineObject.name}");
-        }
-        Debug.Log($"startparent = {startParent.name} {startParent.transform.position} exits: {exit}");
+        List<Wire> notVisited = GetNotVisitedWires(startParent);
+        int exit = notVisited.Count;
+
         if (exit == 0)
         { //---------------no exit-------------------
-            if (startParent.GetComponent<Properties>().battery != null)
-            {
-                //make a voltage source node for the battery
-                new Node(startParent, false, false, true);
-                circuitComplete = true;
-                Debug.Log("CIRCUIT COMPLETE");
-            }
-            //also make a node for a metalstrip if there are no exits (wire to a random metalstrip) 
-            else
-            {
-                Debug.Log("ELSE NEW NODE " + startParent.transform.position);
-                new Node(startParent);
-            }
+            new Node(startParent);
             parentsLeft.Remove(startParent);
-            //Debug.Log("REMOVED FROM PARENTSLEFT " + startParent.transform.position + " COUNT AFTER REMOVE = " + parentsLeft.Count);
             
             //stop if there are no parent objects left
             if (parentsLeft.Count == 0)
-            {
-                Debug.Log("PARENTSLEFT COUNT = 0");
                 return false;
-            }
-            GameObject nextStartParent = parentsLeft[0];
-            Debug.Log("FIND NEXT STARTPARENT " + nextStartParent.transform.position);
+
             //find the next startParent
+            GameObject nextStartParent = parentsLeft[0];
             for (int i = 0; i < nextStartParent.GetComponent<Properties>().attachedWires.Count; i++)
             {
                 Wire wire = nextStartParent.GetComponent<Properties>().attachedWires[i];
                 if (!wire.updated)
                 {
-                    if (electricityPathView)
-                        wire.lineRenderer.material = ResourcesManager.yellow;
-                    connectedWires.Add(wire);
-                    wire.updated = true;
-                    Debug.Log($"GetNextObject({nextStartParent.transform.position}, {wire.lineObject.name})");
+                    SetWireToVisited(wire);
                     
                     //remove this startparent, if all of its attached wires are updated
-                    int count = 0;
-                    foreach (Wire p in nextStartParent.GetComponent<Properties>().attachedWires)
-                        if (!p.updated)
-                            count += 1;
-                    if (count == 0) 
+                    if (GetNotVisitedWires(nextStartParent).Count == 0) 
                         parentsLeft.Remove(nextStartParent);
                     
-                    return RecursiveUpdateCurrent(GetNextObject(nextStartParent, wire));
+                    return RecursiveUpdateCurrent(GetObjectOfNextNode(nextStartParent, wire));
                 }
             }
-            Debug.Log("NEXT STARTPARENT NOT FOUND");
         }
 
-        if (IsItem(startParent) && startParent.GetComponent<Properties>().battery == null)
-        {
-            Item item = startParent.GetComponent<Properties>().item;
-            if (item.itemObject.name == "LED")
-            {
-                new Node(startParent, false, false, false, true);
-            }
-            else if (item.itemObject.name == "Resistor")
-            {
-                new Node(startParent, false, true);
-            }
-        }
-        //make a new node if the metal is not ground
-        else if (startParent)
-            new Node(startParent);
+        //make a new node 
+        new Node(startParent);
 
         foreach (Wire wire in notVisited)
         {
-            if (electricityPathView)
-                wire.lineRenderer.material = ResourcesManager.yellow;
-            connectedWires.Add(wire);
-            wire.updated = true;
-            
+            SetWireToVisited(wire);
+
             if (exit == 1) //------------one exit------------
             {
                 parentsLeft.Remove(startParent);
-                //Debug.Log("REMOVED FROM PARENTSLEFT " + startParent.transform.position + " COUNT AFTER REMOVE = " + parentsLeft.Count);
-                return RecursiveUpdateCurrent(GetNextObject(startParent, wire));
+                return RecursiveUpdateCurrent(GetObjectOfNextNode(startParent, wire));
             }
 
             //---------------multiple exits---------------
             if (!parentsLeft.Contains(startParent))
-            {
                 parentsLeft.Add(startParent);
-                //Debug.Log("ADDED TO PARENTSLEFT " + startParent.transform.position + " COUNT AFTER ADD = " + parentsLeft.Count);
-            }
-            return RecursiveUpdateCurrent(GetNextObject(startParent, wire));
+
+            return RecursiveUpdateCurrent(GetObjectOfNextNode(startParent, wire));
             
         }
         return false;
     }
 
-    public static GameObject GetNextObject(GameObject startParent, Wire wire)
+    private static void SetWireToVisited(Wire wire)
     {
-        //find the gameobject which the other end of the wire is attached to
-        if (wire.startObject.transform.parent.gameObject == startParent)
-            return wire.endObject.transform.parent.gameObject;
+        if (electricityPathView)
+            wire.lineRenderer.material = ResourcesManager.yellow;
+        connectedWires.Add(wire);
+        wire.updated = true;
+    }
 
+    private static List<Wire> GetNotVisitedWires(GameObject startParent)
+    {
+        List<Wire> notVisited = new();
+        foreach (Wire wire in startParent.GetComponent<Properties>().attachedWires)
+            if (!wire.updated)
+                notVisited.Add(wire);
+        
+        return notVisited;
+    }
+
+    public static GameObject GetObjectOfNextNode(GameObject startParent, Wire wire)
+    {
+        //find the gameobject which the other end of the wire is attached to (skip an item)
+        if (wire.startObject.transform.parent.gameObject == startParent)
+        {
+            if (IsItem(wire.endObject.transform.parent.gameObject))
+                return GetObjectAfterItem(wire, wire.endObject.transform.parent.gameObject);
+            return wire.endObject.transform.parent.gameObject;
+        }
+
+        if (IsItem(wire.startObject.transform.parent.gameObject))
+            return GetObjectAfterItem(wire, wire.startObject.transform.parent.gameObject);
         return wire.startObject.transform.parent.gameObject;
     }
 
@@ -202,7 +164,7 @@ public class WireManager : MonoBehaviour
         {
             if (wire != wireToItem)
             {
-                return GetNextObject(itemObject, wire);
+                return GetObjectOfNextNode(itemObject, wire);
             }
         }
         return null;
@@ -218,6 +180,12 @@ public class WireManager : MonoBehaviour
             return wire.endObject.transform.parent.GetComponent<Properties>().item;
 
         return null;
+    }
+
+    public static Node GetNodeAfterWire(Node startNode, Wire wire)
+    {
+        //this method returns the next node after a wire
+        return GetObjectOfNextNode(startNode.nodeObject, wire).GetComponent<Properties>().node;
     }
 
     public static bool IsMetal(GameObject obj)
