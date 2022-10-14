@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -26,7 +27,7 @@ public class NodeManager
         CalculateResultMatrix();
         PrintMatrix("resultMatrix", resultMatrix);
         AssignResultVoltagesToNodes();
-
+        AssignCurrentsToItems();
     }
 
     private static void MakeConnectionsBetweenNodes()
@@ -132,6 +133,8 @@ public class NodeManager
                     iMatrix[voltagesourceRow + voltagesourceSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltage;
                     voltagesourceSeen += 1;
                 }
+
+                Debug.Log("GROUND");
             }
 
             //if no node of the connection is ground
@@ -193,6 +196,38 @@ public class NodeManager
         for (int i = 0; i < unknownNodes.Count; i++)
         {
             unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
+        }
+    }
+
+    public static void AssignCurrentsToItems()
+    {
+        int ledSeen = 0;
+
+        //this method assigns currents to items in connections
+        foreach (NodeConnection nC in NodeConnection._registry)
+        {
+            if (nC.item != null)
+            {
+                //if the item is a resistor
+                if (nC.item.type == "Resistor")
+                {
+                    double resistance = nC.item.itemObject.GetComponent<Properties>().resistance;
+                    double voltageNode1 = nC.node1.nodeObject.GetComponent<Properties>().voltage;
+                    double voltageNode2 = nC.node2.nodeObject.GetComponent<Properties>().voltage;
+
+                    double current = (voltageNode1 - voltageNode2) / resistance;
+                    nC.item.itemObject.GetComponent<Properties>().current = Math.Abs(current);
+                }
+
+                // if the item is an led
+                else if (nC.item.type == "LED")
+                {
+                    int indexInResultMatrix = unknownNodes.Count + NodeConnection.shortcircuitAmount;
+                    double current = resultMatrix[indexInResultMatrix + ledSeen][0];
+                    nC.item.itemObject.GetComponent<Properties>().current = current;
+                    ledSeen += 1;
+                }
+            }
         }
     }
 

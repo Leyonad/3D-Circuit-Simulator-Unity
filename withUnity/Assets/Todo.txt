@@ -63,6 +63,7 @@ Todo:
 [#] new network of nodes
 [x] 1. get connections between nodes
 [x] 2. calculate matrices
+[x] 3. assign currents to items
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -99,6 +100,7 @@ Bugs:
 [x] problems with items connected to the battery directly (maybe make an invisible ground node then)
 [x] result matrix is wrong
 [ ] fps are not limited
+[n] different order of creating the circuit leads to different results
 
 Optimization:
 [x] only move component if delta is not zero
