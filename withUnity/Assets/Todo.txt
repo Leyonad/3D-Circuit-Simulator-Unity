@@ -97,7 +97,8 @@ Bugs:
 [?] singular matrix (determinant = 0) which cant be calculated, this happens if there are no resistors
 [ ] selected objects remain selected after moving component (cant reproduce)
 [x] problems with items connected to the battery directly (maybe make an invisible ground node then)
-[n] result matrix is wrong
+[x] result matrix is wrong
+[ ] fps are not limited
 
 Optimization:
 [x] only move component if delta is not zero

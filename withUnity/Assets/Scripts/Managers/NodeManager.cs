@@ -150,10 +150,11 @@ public class NodeManager
                 //if there is an led in the connection
                 else if (nC.item.type == "LED")
                 {
-                    yMatrix[indexNode1][ledRow + ledSeen] = 1;
-                    yMatrix[ledRow + ledSeen][indexNode1] = 1;
-                    yMatrix[indexNode2][ledRow + ledSeen] = -1;
-                    yMatrix[ledRow + ledSeen][indexNode2] = -1;
+                    yMatrix[indexNode1][ledRow + ledSeen] = -1;
+                    yMatrix[ledRow + ledSeen][indexNode1] = -1;
+                    yMatrix[indexNode2][ledRow + ledSeen] = 1;
+                    yMatrix[ledRow + ledSeen][indexNode2] = 1;
+                    iMatrix[ledRow + ledSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltageDrop;
                     ledSeen += 1;
                 }
 
