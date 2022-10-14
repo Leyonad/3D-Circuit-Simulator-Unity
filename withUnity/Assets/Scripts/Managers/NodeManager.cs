@@ -234,10 +234,43 @@ public class NodeManager
                     int indexInResultMatrix = unknownNodes.Count + NodeConnection.shortcircuitAmount;
                     double current = resultMatrix[indexInResultMatrix + ledSeen][0];
                     nC.item.itemObject.GetComponent<Properties>().current = current;
+                    UpdateGlowIntensity(nC.item.itemObject, current);
                     ledSeen += 1;
                 }
             }
         }
+    }
+
+    public static void UpdateGlowIntensity(GameObject itemObject, double _current)
+    {
+        //make a LED glow if not too less and not too much current flows through it
+        float current = (float) _current;
+        float minCurrent = (float) itemObject.GetComponent<Properties>().minCurrent;
+        float maxCurrent = (float) itemObject.GetComponent<Properties>().maxCurrent;
+
+        float minGlowIntensity = 1f;
+        float maxGlowIntensity = 5f;
+
+        float glowIntensity = Functions.MapToRange(current, minCurrent, maxCurrent, minGlowIntensity, maxGlowIntensity);
+
+        //get the current emissionColor
+        Vector4 currentEmissionColor = itemObject.GetComponent<Properties>().item.
+                    itemObject.GetComponent<MeshRenderer>().material.GetColor("_EmissionColor");
+
+        float newIntensity;
+        //if there is too less or too much current the led doesnt glow
+        if (current < minCurrent || current > maxCurrent)
+            newIntensity = 0f;
+        else
+            newIntensity = glowIntensity;
+
+        //get the new emissionColor
+        Color emissionColor = Functions.ChangeHDRColorIntensity(currentEmissionColor, newIntensity);
+
+        //set the new emissionColor
+        itemObject.GetComponent<Properties>().item.
+                    itemObject.GetComponent<MeshRenderer>().material.
+                    SetColor("_EmissionColor", emissionColor);
     }
 
     private static void CalculateInverseMatrix()

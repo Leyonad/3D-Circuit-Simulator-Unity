@@ -64,6 +64,8 @@ Todo:
 [x] 1. get connections between nodes
 [x] 2. calculate matrices
 [x] 3. assign currents to items
+[x] 3. assign currents to items
+[x] 4. make LEDs glow according to their currents
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
