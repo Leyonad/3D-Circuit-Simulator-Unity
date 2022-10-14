@@ -127,4 +127,5 @@ Optimization:
 [x] zoom into the mouse position and not into the center of the screen
 [x] camera shoudn't move when rotating
 [x] shouldnt be able to drag the camera while changing a selected wires y value
-[ ] LED materials should be glass-like
+[x] LED materials should be glass-like
+[ ] make it clear when there is too much current flowing through an LED
