@@ -100,9 +100,9 @@ public class Item
 
         if (_type == "LED")
         {
-            //set poles for wires, where the first wire is negative and the last positive
-            wire1.lineObject.GetComponent<Properties>().polarity = 1;
-            wire2.lineObject.GetComponent<Properties>().polarity = 0;
+            //set poles for wires, where the first wire is positive and the last one negative
+            wire1.lineObject.GetComponent<Properties>().polarity = 0;
+            wire2.lineObject.GetComponent<Properties>().polarity = 1;
         }
 
         wiresOfItem.Add(wire1);

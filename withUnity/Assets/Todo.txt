@@ -100,7 +100,7 @@ Bugs:
 [x] problems with items connected to the battery directly (maybe make an invisible ground node then)
 [x] result matrix is wrong
 [ ] fps are not limited
-[n] different order of creating the circuit leads to different results
+[x] different order of creating the circuit leads to different results (because of polarity of the LEDs)
 
 Optimization:
 [x] only move component if delta is not zero

@@ -4,7 +4,7 @@ using UnityEngine;
 public class Properties : MonoBehaviour
 {
     //wire
-    public double polarity; // + or - / 0 or 1
+    public int polarity; // + or - / 0 or 1
 
     //parentobject
     public double current; //in milliampere

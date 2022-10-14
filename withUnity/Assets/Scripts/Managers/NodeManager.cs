@@ -133,8 +133,6 @@ public class NodeManager
                     iMatrix[voltagesourceRow + voltagesourceSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltage;
                     voltagesourceSeen += 1;
                 }
-
-                Debug.Log("GROUND");
             }
 
             //if no node of the connection is ground
@@ -153,10 +151,21 @@ public class NodeManager
                 //if there is an led in the connection
                 else if (nC.item.type == "LED")
                 {
-                    yMatrix[indexNode1][ledRow + ledSeen] = -1;
-                    yMatrix[ledRow + ledSeen][indexNode1] = -1;
-                    yMatrix[indexNode2][ledRow + ledSeen] = 1;
-                    yMatrix[ledRow + ledSeen][indexNode2] = 1;
+                    //check if the connection is in the right direction because of polarity of the LED
+                    if (WireManager.GetWireBetweenTwoGameObjects(nC.node1.nodeObject, nC.item.itemObject) == nC.item.wire1)
+                    {
+                        yMatrix[indexNode1][ledRow + ledSeen] = 1;
+                        yMatrix[ledRow + ledSeen][indexNode1] = 1;
+                        yMatrix[indexNode2][ledRow + ledSeen] = -1;
+                        yMatrix[ledRow + ledSeen][indexNode2] = -1;
+                    }
+                    else
+                    {
+                        yMatrix[indexNode1][ledRow + ledSeen] = -1;
+                        yMatrix[ledRow + ledSeen][indexNode1] = -1;
+                        yMatrix[indexNode2][ledRow + ledSeen] = 1;
+                        yMatrix[ledRow + ledSeen][indexNode2] = 1;
+                    }
                     iMatrix[ledRow + ledSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltageDrop;
                     ledSeen += 1;
                 }

@@ -238,12 +238,12 @@ public class WireManager : MonoBehaviour
         return null;
     }
 
-    public static Wire GetWireBetweenTwoNodes(Node node1, Node node2)
+    public static Wire GetWireBetweenTwoGameObjects(GameObject obj1, GameObject obj2)
     {
-        foreach (Wire wireNode1 in node1.nodeObject.GetComponent<Properties>().attachedWires)
-            foreach (Wire wireNode2 in node2.nodeObject.GetComponent<Properties>().attachedWires)
-                if (wireNode1 == wireNode2)
-                    return wireNode1;
+        foreach (Wire wire in obj1.GetComponent<Properties>().attachedWires)
+            foreach (Wire wire2 in obj2.GetComponent<Properties>().attachedWires)
+                if (wire == wire2)
+                    return wire;
         return null;
     }
 }

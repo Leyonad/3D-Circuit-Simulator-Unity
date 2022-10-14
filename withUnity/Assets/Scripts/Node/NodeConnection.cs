@@ -31,12 +31,12 @@ public class NodeConnection
         {
             if (item.type == "LED")
                 ledAmount += 1;
-            Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {item.itemObject.name}   -->   {_node2.nodeObject.name}");
+            //Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {item.itemObject.name}   -->   {_node2.nodeObject.name}");
         }
         else
         {
             shortcircuitAmount += 1;
-            Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {_node2.nodeObject.name}");
+            //Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {_node2.nodeObject.name}");
         }
         _registry.Add(this);
     }
