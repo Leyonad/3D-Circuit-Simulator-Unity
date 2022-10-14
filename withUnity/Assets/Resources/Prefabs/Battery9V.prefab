@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 1320470979530682835}
   - component: {fileID: 1320470979530682834}
   - component: {fileID: 1320470979530682832}
+  - component: {fileID: 6215320116673787516}
   m_Layer: 0
   m_Name: Battery9V
   m_TagString: Component
@@ -195,6 +196,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoveringColor: {r: 0.1981132, g: 0.1981132, b: 0.1981132, a: 1}
+--- !u!114 &6215320116673787516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320470979530682837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e50b5dfaac10ef498b62e70aa1b2ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  polarity: 0
+  current: 0
+  voltage: 9
+  mAh: 0
+  voltageDrop: 0
+  requiredCurrent: 0
+  minCurrent: 0
+  maxCurrent: 0
+  resistance: 0
+  tolerance: 0
 --- !u!1 &3252021659558070358
 GameObject:
   m_ObjectHideFlags: 0

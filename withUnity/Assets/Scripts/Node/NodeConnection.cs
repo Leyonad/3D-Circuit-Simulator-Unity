@@ -4,9 +4,12 @@ using UnityEngine;
 public class NodeConnection
 {
     public static List<NodeConnection> _registry = new();
-    private readonly Node node1 = null;
-    private readonly Node node2 = null;
-    private readonly Item item = null;
+    public readonly Node node1 = null;
+    public readonly Node node2 = null;
+    public readonly Item item = null;
+
+    public static int shortcircuitAmount;
+    public static int ledAmount;
 
     public NodeConnection(Node _node1, Node _node2, Wire _wire=null)
     {
@@ -25,9 +28,16 @@ public class NodeConnection
             item = new Item(_node1.nodeObject.transform.parent.gameObject, "Battery");
 
         if (item != null)
+        {
+            if (item.type == "LED")
+                ledAmount += 1;
             Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {item.itemObject.name}   -->   {_node2.nodeObject.name}");
+        }
         else
+        {
+            shortcircuitAmount += 1;
             Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {_node2.nodeObject.name}");
+        }
         _registry.Add(this);
     }
 

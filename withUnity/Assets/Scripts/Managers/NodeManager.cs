@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -12,17 +11,26 @@ public class NodeManager
     private static double[][] iMatrix;
     private static double[][] resultMatrix;
 
+    //ground and positive node
+    private static Node groundNode = null;
+    private static Node positiveNode = null;
+
     public static void CalculateNodes()
     {
-        PrintNodes();
         MakeConnectionsBetweenNodes();
-        
+        CreateMatrices();
+        AssignValuesToMatrices();
+        PrintMatrix("yMatrix", yMatrix);
+        PrintMatrix("iMatrix", iMatrix);
+        CalculateInverseMatrix();
+        CalculateResultMatrix();
+        PrintMatrix("resultMatrix", resultMatrix);
+        AssignResultVoltagesToNodes();
+
     }
 
     private static void MakeConnectionsBetweenNodes()
     {
-        Node groundNode = null;
-        Node positiveNode = null;
         //this method creates connections between nodes
         foreach (Node node in Node._registry)
         {
@@ -43,16 +51,10 @@ public class NodeManager
         new NodeConnection(positiveNode, groundNode);
     }
 
-    private static void AssignResultVoltagesToNodes()
-    {
-        for (int i = 0; i < unknownNodes.Count; i++)
-        {
-            unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
-        }
-    }
-
     private static void CreateMatrices()
     {
+        //-1 for ground, +1 for battery
+        matrixDimension = Node._registry.Count - 1 + NodeConnection.shortcircuitAmount + NodeConnection.ledAmount + 1;
         int n = matrixDimension;
 
         //make the y and i matrix
@@ -64,22 +66,139 @@ public class NodeManager
             iMatrix[i] = new double[1];
         }
     }
+    private static void AssignValuesToMatrices()
+    {
+        unknownNodes = Node._registry;
+        unknownNodes.Remove(groundNode);
+
+        int shortcircuitRow = unknownNodes.Count;
+        int ledRow = shortcircuitRow + NodeConnection.shortcircuitAmount;
+        int voltagesourceRow = ledRow + NodeConnection.ledAmount;
+
+        int shortcircuitSeen = 0;
+        int ledSeen = 0;
+        int voltagesourceSeen = 0;
+
+        foreach (NodeConnection nC in NodeConnection._registry)
+        {
+            int indexNode1 = unknownNodes.IndexOf(nC.node1);
+            int indexNode2 = unknownNodes.IndexOf(nC.node2);
+
+            //if one node of the connection is ground
+            if (IsGround(nC.node1) || IsGround(nC.node2))
+            {
+                //find out which one of the nodes is the metalstrip
+                Node metalStripNode;
+                int metalStripIndex;
+                if (indexNode1 == -1)
+                {
+                    metalStripNode = nC.node2;
+                    metalStripIndex = indexNode2;
+                }
+                else
+                {
+                    metalStripNode = nC.node1;
+                    metalStripIndex = indexNode1;
+                }
+
+                //if there is no item in the connection (meaning a shortcircuit from ground to a node)
+                if (nC.item == null)
+                {
+                    yMatrix[metalStripIndex][shortcircuitRow + shortcircuitSeen] = 1;
+                    yMatrix[shortcircuitRow + shortcircuitSeen][metalStripIndex] = 1;
+                    shortcircuitSeen += 1;
+                }
+
+                //if there is an led in the connection
+                else if (nC.item.type == "LED")
+                {
+                    yMatrix[metalStripIndex][ledRow + ledSeen] = 1;
+                    yMatrix[ledRow + ledSeen][metalStripIndex] = 1;
+                    iMatrix[ledRow + ledSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltageDrop;
+                    ledSeen += 1;
+                }
+
+                //if there is a resistor in the connection
+                else if (nC.item.type == "Resistor")
+                {
+                    yMatrix[metalStripIndex][metalStripIndex] += 1 / nC.item.itemObject.GetComponent<Properties>().resistance;
+                }
+
+                //if there is a voltage source in the connection
+                else if (nC.item.type == "Battery")
+                {
+                    yMatrix[metalStripIndex][voltagesourceRow + voltagesourceSeen] = 1;
+                    yMatrix[voltagesourceRow + voltagesourceSeen][metalStripIndex] = 1;
+                    iMatrix[voltagesourceRow + voltagesourceSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltage;
+                    voltagesourceSeen += 1;
+                }
+            }
+
+            //if no node of the connection is ground
+            else
+            {
+                //if there is no item in the connection
+                if (nC.item == null)
+                {
+                    yMatrix[indexNode1][shortcircuitRow + shortcircuitSeen] = 1;
+                    yMatrix[shortcircuitRow + shortcircuitSeen][indexNode1] = 1;
+                    yMatrix[indexNode2][shortcircuitRow + shortcircuitSeen] = -1;
+                    yMatrix[shortcircuitRow + shortcircuitSeen][indexNode2] = -1;
+                    shortcircuitSeen += 1;
+                }
+
+                //if there is an led in the connection
+                else if (nC.item.type == "LED")
+                {
+                    yMatrix[indexNode1][ledRow + ledSeen] = 1;
+                    yMatrix[ledRow + ledSeen][indexNode1] = 1;
+                    yMatrix[indexNode2][ledRow + ledSeen] = -1;
+                    yMatrix[ledRow + ledSeen][indexNode2] = -1;
+                    ledSeen += 1;
+                }
+
+                //if there is a resistor in the connection
+                else if (nC.item.type == "Resistor")
+                {
+                    double resistance = nC.item.itemObject.GetComponent<Properties>().resistance;
+                    yMatrix[indexNode1][indexNode1] += 1 / resistance;
+                    yMatrix[indexNode2][indexNode2] += 1 / resistance;
+                    yMatrix[indexNode1][indexNode2] -= 1 / resistance;
+                    yMatrix[indexNode2][indexNode1] -= 1 / resistance;
+                }
+
+                //case with battery is not necessary as that case will never occur
+                //if there is a battery in the connection
+                else if (nC.item.type == "Battery")
+                {
+                    yMatrix[indexNode1][voltagesourceRow + voltagesourceSeen] = 1;
+                    yMatrix[voltagesourceRow + voltagesourceSeen][indexNode1] = 1;
+                    yMatrix[indexNode2][voltagesourceRow + voltagesourceSeen] = -1;
+                    yMatrix[voltagesourceRow + voltagesourceSeen][indexNode2] = -1;
+                    iMatrix[voltagesourceRow + voltagesourceSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltage;
+                    voltagesourceSeen += 1;
+                }
+            }
+        }
+    }
 
     private static void CalculateResultMatrix()
     {
         resultMatrix = Matrix.MatrixProduct(yMatrix, iMatrix);
     }
 
+    private static void AssignResultVoltagesToNodes()
+    {
+        for (int i = 0; i < unknownNodes.Count; i++)
+        {
+            unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
+        }
+    }
+
     private static void CalculateInverseMatrix()
     {
         //calculate the inverse matrix
         yMatrix = Matrix.MatrixInverse(yMatrix);
-    }
-
-    private static void AssignValuesToMatrices()
-    {
-        //count of different registry lists
-
     }
 
     public static void PrintMatrix(string title, double[][] matrix)
@@ -107,8 +226,19 @@ public class NodeManager
         Debug.Log("END");
     }
 
+    private static bool IsGround(Node node)
+    {
+        return node == groundNode;
+    }
+
     public static void ClearAllNodes()
     {
         Node._registry.Clear();
+        NodeConnection._registry.Clear();
+        NodeConnection.shortcircuitAmount = 0;
+        NodeConnection.ledAmount = 0;
+        groundNode = null;
+        positiveNode = null;
+
     }
 }
