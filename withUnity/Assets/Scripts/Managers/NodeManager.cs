@@ -18,16 +18,19 @@ public class NodeManager
 
     public static void CalculateNodes()
     {
-        MakeConnectionsBetweenNodes();
-        CreateMatrices();
-        AssignValuesToMatrices();
-        CalculateInverseMatrix();
-        CalculateResultMatrix();
-        AssignResultVoltagesToNodes();
-        AssignCurrentsToItems();
+        //if the connections can be made, move on with the next steps
+        if (MakeConnectionsBetweenNodes())
+        {
+            CreateMatrices();
+            AssignValuesToMatrices();
+            CalculateInverseMatrix();
+            CalculateResultMatrix();
+            AssignResultVoltagesToNodes();
+            AssignCurrentsToItems();
+        }
     }
 
-    private static void MakeConnectionsBetweenNodes()
+    private static bool MakeConnectionsBetweenNodes()
     {
         //this method creates connections between nodes
         foreach (Node node in Node._registry)
@@ -46,7 +49,17 @@ public class NodeManager
         }
 
         //create node between positive and ground
-        new NodeConnection(positiveNode, groundNode);
+        if (positiveNode != null && groundNode != null)
+        {
+            new NodeConnection(positiveNode, groundNode);
+            return true;
+        }
+        //if one of them is null, it means that the circuit is not complete
+        else
+        {
+            Debug.Log("CIRCUIT NOT COMPLETE");
+            return false;
+        }
     }
 
     private static void CreateMatrices()
