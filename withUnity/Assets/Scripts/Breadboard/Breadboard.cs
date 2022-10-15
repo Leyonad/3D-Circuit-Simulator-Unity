@@ -16,8 +16,8 @@ public class Breadboard
         breadboardObject.GetComponent<MeshRenderer>().material = ResourcesManager.breadboardMaterial;
         //breadboardObject.AddComponent<BoxCollider>();
 
-        breadboardObject.AddComponent<MouseHovering>();
-        ColorUtility.TryParseHtmlString("#7E7E7E", out breadboardObject.GetComponent<MouseHovering>().hoveringColor);
+        //breadboardObject.AddComponent<MouseHovering>();
+        //ColorUtility.TryParseHtmlString("#7E7E7E", out breadboardObject.GetComponent<MouseHovering>().hoveringColor);
 
         GameObject metals = new GameObject("Metals")
         {
@@ -26,7 +26,7 @@ public class Breadboard
         metals.transform.SetParent(breadboardObject.transform);
 
         //create the metal strips (inside)
-        float distToNextSide = 0.6f;
+        float distToNextSide = 0.4f;
         float XlengthWithGap = rows * eachMetalSize.x + (rows - 1) * margin;
         float ZlengthWithGap = 2 * (eachMetalSize.z * columns + (columns - 1) * margin) + distToNextSide;
         float metalStripLength = columns * eachMetalSize.z + (columns - 1) * margin;
@@ -36,13 +36,13 @@ public class Breadboard
         {
             for (int j = 0; j < 2; j++) //2 for left and right
             {
-                Vector3 position = new Vector3(positionBreadboard.x + (margin + eachMetalSize.x) * i, size.y, positionBreadboard.z + j * (distToNextSide + metalStripLength));
-                new MetalStrip(position - offset, columns, new Vector3(eachMetalSize.x, eachMetalSize.y, metalStripLength), eachMetalSize, metals, margin, breadboardObject.transform.localScale, material);
+                Vector3 position = new Vector3(positionBreadboard.x + (margin + eachMetalSize.x) * i, size.y - 0.03f, positionBreadboard.z + j * (distToNextSide + metalStripLength));
+                new MetalStrip(position - offset, columns, new Vector3(eachMetalSize.x - 0.08f, eachMetalSize.y, metalStripLength), eachMetalSize, metals, margin, breadboardObject.transform.localScale, material);
             }
         }
 
         //create the metal strips (outside)
-        Vector3 outsideSize = new Vector3(size.x * 0.90f, eachMetalSize.y, eachMetalSize.x);
+        Vector3 outsideSize = new Vector3(size.x * 0.90f, 0.07f, 0.13f);
         float distanceToNext = 0.4f;
         float innerP = size.z * 0.74f;
         float outerP = innerP + eachMetalSize.x + distanceToNext;
@@ -53,7 +53,7 @@ public class Breadboard
             if (sign == -1 && p == outerP || sign == 1 && p == innerP)
                 material = ResourcesManager.blue;
             else material = ResourcesManager.lightred;
-            Vector3 position = new Vector3(positionBreadboard.x, size.y + eachMetalSize.y / 2f, positionBreadboard.z + p / 2 * sign);
+            Vector3 position = new Vector3(positionBreadboard.x, size.y + eachMetalSize.y / 2f - 0.03f, positionBreadboard.z + p / 2 * sign);
             new MetalStrip(position, outsiderows, outsideSize, eachMetalSize, metals, margin, breadboardObject.transform.localScale, material, false);
             sign *= -1;
             if (i > 0)

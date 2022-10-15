@@ -150,7 +150,7 @@ public class MouseInteraction : MonoBehaviour
                         if (Item.justCreated == null)
                         {
                             if (GameManager.tabItem == 1)
-                                new Item(selectedObject, "LED", "blue");
+                                new Item(selectedObject, "LED", "green");
                             else if (GameManager.tabItem == 2)
                                 new Item(selectedObject, "Resistor");
 

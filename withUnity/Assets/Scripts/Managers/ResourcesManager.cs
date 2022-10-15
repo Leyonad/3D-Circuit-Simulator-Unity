@@ -15,6 +15,7 @@ public class ResourcesManager
     public static Material highlightItemMaterial;
     public static Material metalMaterial;
     public static Material breadboardMaterial;
+    public static Material breadboardMetalStrip;
 
     public static Material LED_default;
     public static Material LED_red;
@@ -36,11 +37,12 @@ public class ResourcesManager
         grey = LoadMaterial("PrimaryColors/Grey");
         black = LoadMaterial("PrimaryColors/Black");
 
-        wireMaterial = LoadMaterial("Wire_Material");
-        highlightWireMaterial = LoadMaterial("Highlight_Wire_Material");
-        highlightItemMaterial = LoadMaterial("Highlight_Item_Material");
-        metalMaterial = LoadMaterial("Breadboard_Metal_Normal_Material");
-        breadboardMaterial = LoadMaterial("Breadboard_Material");
+        wireMaterial = LoadMaterial("Wire/Wire_Material");
+        highlightWireMaterial = LoadMaterial("Wire/Highlight_Wire_Material");
+        highlightItemMaterial = LoadMaterial("Wire/Highlight_Item_Material");
+        metalMaterial = LoadMaterial("Breadboard/Breadboard_Metal_Normal_Material");
+        breadboardMaterial = LoadMaterial("Breadboard/Breadboard_Material");
+        breadboardMetalStrip = LoadMaterial("Breadboard/Breadboard_MetalStrip");
 
         LED_default = LoadMaterial("LED/LED_default");
         LED_red = LoadMaterial("LED/LED_red");

@@ -22,6 +22,5 @@ public class Metal
 
         //dont render the metal
         //metalObject.GetComponent<MeshRenderer>().enabled = false;
-
     }
 }

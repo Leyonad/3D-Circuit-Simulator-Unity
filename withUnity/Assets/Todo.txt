@@ -104,6 +104,7 @@ Bugs:
 [ ] fps are not limited
 [x] different order of creating the circuit leads to different results (because of polarity of the LEDs)
 [x] only calculate the nodes if the circuit is complete
+[ ] camera problems when dragging after rotating 
 
 Optimization:
 [x] only move component if delta is not zero
@@ -130,3 +131,4 @@ Optimization:
 [x] LED materials should be glass-like
 [ ] make it clear when there is too much current flowing through an LED
 [x] each negative current should be positive
+[x] make appearance of breadboard etc better
