@@ -18,10 +18,6 @@ public class MetalStrip
         metalStripObject.transform.position = this.position;
         metalStripObject.transform.localScale = this.size;
         metalStripObject.transform.SetParent(this.parent.transform);
-        //metalStripObject.GetComponent<BoxCollider>().enabled = false;
-
-        //dont render the metalstrip object
-        //metalStripObject.GetComponent<MeshRenderer>().enabled = false;
         metalStripObject.GetComponent<MeshRenderer>().material = ResourcesManager.breadboardMetalStrip;
         
         metalStripObject.AddComponent<Properties>();

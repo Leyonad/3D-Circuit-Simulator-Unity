@@ -144,7 +144,7 @@ public class CameraController : MonoBehaviour
         Vector3 posDiff = mouseOnWorld - cam.ScreenToWorldPoint(pos);
 
         // Apply Target-Position to Camera
-        cam.transform.position += posDiff;
+        transform.position += posDiff;
 
         //cam.orthographicSize = Mathf.Clamp(GameManager.cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
     }

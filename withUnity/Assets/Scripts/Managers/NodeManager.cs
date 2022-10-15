@@ -23,10 +23,17 @@ public class NodeManager
         {
             CreateMatrices();
             AssignValuesToMatrices();
+            //PrintMatrix("yMatrix", yMatrix);
+            //PrintMatrix("iMatrix", iMatrix);
             CalculateInverseMatrix();
             CalculateResultMatrix();
-            AssignResultVoltagesToNodes();
-            AssignCurrentsToItems();
+            //PrintMatrix("Result", resultMatrix);
+
+            //if the result voltages are not infinite, the current can be calculated
+            if (AssignResultVoltagesToNodes())
+            {
+                AssignCurrentsToItems();
+            }
         }
     }
 
@@ -77,6 +84,146 @@ public class NodeManager
             iMatrix[i] = new double[1];
         }
     }
+
+    private static void CalculateResultMatrix()
+    {
+        resultMatrix = Matrix.MatrixProduct(yMatrix, iMatrix);
+    }
+
+    private static bool AssignResultVoltagesToNodes()
+    {
+        for (int i = 0; i < unknownNodes.Count; i++)
+        {
+            if (Double.IsNaN(resultMatrix[i][0]))
+            {
+                Debug.Log("SINGULAR MATRIX: CIRCUIT CANNOT BE CALCULATED");
+                return false;
+            }
+            unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
+        }
+        return true;
+    }
+
+    public static void AssignCurrentsToItems()
+    {
+        int ledSeen = 0;
+
+        //this method assigns currents to items in connections
+        foreach (NodeConnection nC in NodeConnection._registry)
+        {
+            if (nC.item != null)
+            {
+                //if the item is a resistor
+                if (nC.item.type == "Resistor")
+                {
+                    double resistance = nC.item.itemObject.GetComponent<Properties>().resistance;
+                    double voltageNode1 = nC.node1.nodeObject.GetComponent<Properties>().voltage;
+                    double voltageNode2 = nC.node2.nodeObject.GetComponent<Properties>().voltage;
+
+                    double current = (voltageNode1 - voltageNode2) / resistance;
+                    nC.item.itemObject.GetComponent<Properties>().current = Math.Abs(current);
+                }
+
+                // if the item is an led
+                else if (nC.item.type == "LED")
+                {
+                    int indexInResultMatrix = unknownNodes.Count + NodeConnection.shortcircuitAmount;
+                    double current = resultMatrix[indexInResultMatrix + ledSeen][0];
+                    nC.item.itemObject.GetComponent<Properties>().current = Math.Abs(current);
+                    UpdateGlowIntensity(nC.item.itemObject, current);
+                    ledSeen += 1;
+                }
+            }
+        }
+    }
+
+    public static void UpdateGlowIntensity(GameObject itemObject, double _current)
+    {
+        //make a LED glow if not too less and not too much current flows through it
+        float current = (float) _current;
+        float minCurrent = (float) itemObject.GetComponent<Properties>().minCurrent;
+        float maxCurrent = (float) itemObject.GetComponent<Properties>().maxCurrent;
+
+        float minGlowIntensity = 1f;
+        float maxGlowIntensity = 5f;
+
+        float glowIntensity = Functions.MapToRange(current, minCurrent, maxCurrent, minGlowIntensity, maxGlowIntensity);
+
+        //get the current emissionColor
+        Vector4 currentEmissionColor = itemObject.GetComponent<Properties>().item.
+                    itemObject.GetComponent<MeshRenderer>().material.GetColor("_EmissionColor");
+
+        float newIntensity;
+        //if there is too less or too much current the led doesnt glow
+        if (current < minCurrent)
+        {
+            Debug.Log("Too less current is flowing through an LED!");
+            newIntensity = 0f;
+        }
+        else if (current > maxCurrent)
+        {
+            Debug.Log("Too much current is flowing through an LED!");
+            newIntensity = 0f;
+        }
+        else
+            newIntensity = glowIntensity;
+
+        //get the new emissionColor
+        Color emissionColor = Functions.ChangeHDRColorIntensity(currentEmissionColor, newIntensity);
+
+        //set the new emissionColor
+        itemObject.GetComponent<Properties>().item.
+                    itemObject.GetComponent<MeshRenderer>().material.
+                    SetColor("_EmissionColor", emissionColor);
+    }
+
+    private static void CalculateInverseMatrix()
+    {
+        //calculate the inverse matrix
+        yMatrix = Matrix.MatrixInverse(yMatrix);
+    }
+
+    public static void PrintMatrix(string title, double[][] matrix)
+    {
+        //print the given matrix
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            for (int j = 0; j < matrix[0].Length; j++)
+            {
+                sb.Append(matrix[i][j] + "  ");
+            }
+            sb.AppendLine();
+        }
+        Debug.Log("\n" + title + "\n" + sb.ToString());
+    }
+
+    public static void PrintNodes()
+    {
+        Debug.Log("START");
+        foreach (Node node in Node._registry)
+        {
+            Debug.Log(node.nodeObject.name + " " + node.nodeObject.transform.position);
+        }
+        Debug.Log("END");
+    }
+
+    private static bool IsGround(Node node)
+    {
+        return node == groundNode;
+    }
+
+    public static void ClearAllNodes()
+    {
+        Node._registry.Clear();
+        NodeConnection._registry.Clear();
+        NodeConnection.shortcircuitAmount = 0;
+        NodeConnection.ledAmount = 0;
+        groundNode = null;
+        positiveNode = null;
+
+    }
+
     private static void AssignValuesToMatrices()
     {
         unknownNodes = Node._registry;
@@ -212,130 +359,5 @@ public class NodeManager
                 }
             }
         }
-    }
-
-    private static void CalculateResultMatrix()
-    {
-        resultMatrix = Matrix.MatrixProduct(yMatrix, iMatrix);
-    }
-
-    private static void AssignResultVoltagesToNodes()
-    {
-        for (int i = 0; i < unknownNodes.Count; i++)
-        {
-            unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
-        }
-    }
-
-    public static void AssignCurrentsToItems()
-    {
-        int ledSeen = 0;
-
-        //this method assigns currents to items in connections
-        foreach (NodeConnection nC in NodeConnection._registry)
-        {
-            if (nC.item != null)
-            {
-                //if the item is a resistor
-                if (nC.item.type == "Resistor")
-                {
-                    double resistance = nC.item.itemObject.GetComponent<Properties>().resistance;
-                    double voltageNode1 = nC.node1.nodeObject.GetComponent<Properties>().voltage;
-                    double voltageNode2 = nC.node2.nodeObject.GetComponent<Properties>().voltage;
-
-                    double current = (voltageNode1 - voltageNode2) / resistance;
-                    nC.item.itemObject.GetComponent<Properties>().current = Math.Abs(current);
-                }
-
-                // if the item is an led
-                else if (nC.item.type == "LED")
-                {
-                    int indexInResultMatrix = unknownNodes.Count + NodeConnection.shortcircuitAmount;
-                    double current = resultMatrix[indexInResultMatrix + ledSeen][0];
-                    nC.item.itemObject.GetComponent<Properties>().current = Math.Abs(current);
-                    UpdateGlowIntensity(nC.item.itemObject, current);
-                    ledSeen += 1;
-                }
-            }
-        }
-    }
-
-    public static void UpdateGlowIntensity(GameObject itemObject, double _current)
-    {
-        //make a LED glow if not too less and not too much current flows through it
-        float current = (float) _current;
-        float minCurrent = (float) itemObject.GetComponent<Properties>().minCurrent;
-        float maxCurrent = (float) itemObject.GetComponent<Properties>().maxCurrent;
-
-        float minGlowIntensity = 1f;
-        float maxGlowIntensity = 5f;
-
-        float glowIntensity = Functions.MapToRange(current, minCurrent, maxCurrent, minGlowIntensity, maxGlowIntensity);
-
-        //get the current emissionColor
-        Vector4 currentEmissionColor = itemObject.GetComponent<Properties>().item.
-                    itemObject.GetComponent<MeshRenderer>().material.GetColor("_EmissionColor");
-
-        float newIntensity;
-        //if there is too less or too much current the led doesnt glow
-        if (current < minCurrent || current > maxCurrent)
-            newIntensity = 0f;
-        else
-            newIntensity = glowIntensity;
-
-        //get the new emissionColor
-        Color emissionColor = Functions.ChangeHDRColorIntensity(currentEmissionColor, newIntensity);
-
-        //set the new emissionColor
-        itemObject.GetComponent<Properties>().item.
-                    itemObject.GetComponent<MeshRenderer>().material.
-                    SetColor("_EmissionColor", emissionColor);
-    }
-
-    private static void CalculateInverseMatrix()
-    {
-        //calculate the inverse matrix
-        yMatrix = Matrix.MatrixInverse(yMatrix);
-    }
-
-    public static void PrintMatrix(string title, double[][] matrix)
-    {
-        //print the given matrix
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < matrix.Length; i++)
-        {
-            for (int j = 0; j < matrix[0].Length; j++)
-            {
-                sb.Append(matrix[i][j] + "  ");
-            }
-            sb.AppendLine();
-        }
-        Debug.Log("\n" + title + "\n" + sb.ToString());
-    }
-
-    public static void PrintNodes()
-    {
-        Debug.Log("START");
-        foreach (Node node in Node._registry)
-        {
-            Debug.Log(node.nodeObject.name + " " + node.nodeObject.transform.position);
-        }
-        Debug.Log("END");
-    }
-
-    private static bool IsGround(Node node)
-    {
-        return node == groundNode;
-    }
-
-    public static void ClearAllNodes()
-    {
-        Node._registry.Clear();
-        NodeConnection._registry.Clear();
-        NodeConnection.shortcircuitAmount = 0;
-        NodeConnection.ledAmount = 0;
-        groundNode = null;
-        positiveNode = null;
-
     }
 }
