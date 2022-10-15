@@ -140,6 +140,8 @@ public class MouseInteraction : MonoBehaviour
                             //UpdateElectricityParameters();
                             Wire.justCreated = null;
                             selectedObject = null;
+                            if (electricityPathView)
+                                UpdateElectricityParameters();
                             return;
                         }
                     }
@@ -158,6 +160,7 @@ public class MouseInteraction : MonoBehaviour
                             selectedObject = null;
                             return;
                         }
+                        //finish creation of a new item
                         else if (hit.collider.gameObject != Item.justCreated.startObject)
                         {
                             //endobject of LED item
@@ -178,6 +181,8 @@ public class MouseInteraction : MonoBehaviour
                             Item.justCreated = null;
                             Wire.justCreated = null;
                             selectedObject = null;
+                            if (electricityPathView)
+                                UpdateElectricityParameters();
                             return;
                         }
                     }
@@ -345,7 +350,15 @@ public class MouseInteraction : MonoBehaviour
         //space bar to toggle electricity path view
         else if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
+            UpdateElectricityParameters();
+            NodeManager.CalculateNodes();
+        }
+
+        //left shift key to toggle electricity path view
+        else if (Keyboard.current.leftShiftKey.wasPressedThisFrame)
+        {
             electricityPathView = !electricityPathView;
+            UpdateElectricityParameters();
             foreach (Wire wire in connectedWires)
             {
                 if (electricityPathView)
@@ -353,8 +366,6 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
-            UpdateElectricityParameters();
-            NodeManager.CalculateNodes();
         }
 
         //ctrl-key for enabling multiselection

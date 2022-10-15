@@ -4,13 +4,11 @@ using UnityEngine.InputSystem;
 
 public class Wire
 {
-    public static List<Wire> _registry = new List<Wire>();
+    public static List<Wire> _registry = new();
     public static int defaultVerticesAmount = 20;
     public int verticesAmount = defaultVerticesAmount;
 
-    public readonly float wireMouseY = 1.1f;
-
-    public float middlePointHeight = 4f;
+    public float middlePointHeight = 3.5f;
     public static float minMiddlePointHeight = 1.5f;
     public static float maxMiddlePointHeight = 5f;
 

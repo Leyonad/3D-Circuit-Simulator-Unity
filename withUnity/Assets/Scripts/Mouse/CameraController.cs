@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
 
     //vertical motion - zooming
     [SerializeField]
-    private float minHeight = 3f;
+    private float minHeight = 1f;
     [SerializeField]
     private float maxHeight = 17f;
     [SerializeField]
