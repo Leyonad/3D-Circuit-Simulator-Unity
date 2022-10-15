@@ -97,7 +97,7 @@ Bugs:
 [x] items with both ends on the same node should be ignored
 [x] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
 [x] the algorithm that goes through metals/items and creates nodes has problems in certain circuits
-[?] singular matrix (determinant = 0) which cant be calculated, this happens if there are no resistors
+[?] singular matrix if multiple short circuits are connected
 [ ] selected objects remain selected after moving component (cant reproduce)
 [x] problems with items connected to the battery directly (maybe make an invisible ground node then)
 [x] result matrix is wrong
@@ -119,7 +119,6 @@ Optimization:
 [x] swap positive and negative of the battery, because the electrons go from negative to positive
 [x] resistors dont have polarity
 [x] spawn resistors with a lower y value
-[ ] maybe make leds voltage sources and handle them in only one loop when assigning values to the matrix
 [x] current doesnt have to be positive, so the Math.Abs() method shouldnt be used when calculating current
 [x] calculate nodes should only be possible if a circuit is complete
 [?] make component-highlighting better
@@ -129,3 +128,4 @@ Optimization:
 [x] shouldnt be able to drag the camera while changing a selected wires y value
 [x] LED materials should be glass-like
 [ ] make it clear when there is too much current flowing through an LED
+[x] each negative current should be positive

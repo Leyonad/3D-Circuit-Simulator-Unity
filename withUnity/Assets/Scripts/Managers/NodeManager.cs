@@ -21,11 +21,8 @@ public class NodeManager
         MakeConnectionsBetweenNodes();
         CreateMatrices();
         AssignValuesToMatrices();
-        PrintMatrix("yMatrix", yMatrix);
-        PrintMatrix("iMatrix", iMatrix);
         CalculateInverseMatrix();
         CalculateResultMatrix();
-        PrintMatrix("resultMatrix", resultMatrix);
         AssignResultVoltagesToNodes();
         AssignCurrentsToItems();
     }
@@ -113,8 +110,17 @@ public class NodeManager
                 //if there is an led in the connection
                 else if (nC.item.type == "LED")
                 {
-                    yMatrix[metalStripIndex][ledRow + ledSeen] = 1;
-                    yMatrix[ledRow + ledSeen][metalStripIndex] = 1;
+                    //check if the connection is in the right direction because of polarity of the LED
+                    if (WireManager.GetWireBetweenTwoGameObjects(metalStripNode.nodeObject, nC.item.itemObject) == nC.item.wire1)
+                    {
+                        yMatrix[metalStripIndex][ledRow + ledSeen] = 1;
+                        yMatrix[ledRow + ledSeen][metalStripIndex] = 1;
+                    }
+                    else
+                    {
+                        yMatrix[metalStripIndex][ledRow + ledSeen] = -1;
+                        yMatrix[ledRow + ledSeen][metalStripIndex] = -1;
+                    }
                     iMatrix[ledRow + ledSeen][0] = nC.item.itemObject.GetComponent<Properties>().voltageDrop;
                     ledSeen += 1;
                 }
@@ -233,7 +239,7 @@ public class NodeManager
                 {
                     int indexInResultMatrix = unknownNodes.Count + NodeConnection.shortcircuitAmount;
                     double current = resultMatrix[indexInResultMatrix + ledSeen][0];
-                    nC.item.itemObject.GetComponent<Properties>().current = current;
+                    nC.item.itemObject.GetComponent<Properties>().current = Math.Abs(current);
                     UpdateGlowIntensity(nC.item.itemObject, current);
                     ledSeen += 1;
                 }

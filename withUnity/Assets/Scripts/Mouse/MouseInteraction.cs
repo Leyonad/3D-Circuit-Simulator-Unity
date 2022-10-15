@@ -353,7 +353,6 @@ public class MouseInteraction : MonoBehaviour
                 else
                     wire.lineRenderer.material = wire.wireColor;
             }
-            Debug.Log("SPACE PRESSED");
             UpdateElectricityParameters();
             NodeManager.CalculateNodes();
         }
