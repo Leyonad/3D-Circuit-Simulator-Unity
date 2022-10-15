@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = 60;
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         ResourcesManager.LoadResources();
         ComponentsManager.CreateAllObjects();

@@ -1,0 +1,62 @@
+Date : 2022-10-15 13:33:33
+Directory : c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts
+Total : 26 files,  1916 codes, 182 comments, 384 blanks, all 2482 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C#       |         21 |      1,893 |        182 |        384 |      2,459 |
+| JSON     |          5 |         23 |          0 |          0 |         23 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                            | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                               |         26 |      1,916 |        182 |        384 |      2,482 |
+| .vs                                                                                                                             |          3 |         14 |          0 |          0 |         14 |
+| .vs\Scripts                                                                                                                     |          1 |          5 |          0 |          0 |          5 |
+| Battery                                                                                                                         |          1 |         18 |          0 |          3 |         21 |
+| Breadboard                                                                                                                      |          3 |        119 |         11 |         23 |        153 |
+| GeneralFunctions                                                                                                                |          2 |        181 |         36 |         47 |        264 |
+| Items                                                                                                                           |          1 |        125 |          3 |         28 |        156 |
+| Managers                                                                                                                        |          6 |        568 |         49 |        106 |        723 |
+| Mouse                                                                                                                           |          3 |        489 |         63 |         94 |        646 |
+| Node                                                                                                                            |          2 |         58 |          5 |         13 |         76 |
+| Wire                                                                                                                            |          5 |        344 |         15 |         70 |        429 |
+| Wire\.vs                                                                                                                        |          2 |          9 |          0 |          0 |          9 |
++---------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                                        | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\.vs\ProjectSettings.json        | JSON     |          3 |          0 |          0 |          3 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\.vs\Scripts\project-colors.json | JSON     |          5 |          0 |          0 |          5 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\.vs\VSWorkspaceState.json       | JSON     |          6 |          0 |          0 |          6 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Battery\Battery.cs              | C#       |         18 |          0 |          3 |         21 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Breadboard\Breadboard.cs        | C#       |         51 |          5 |          8 |         64 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Breadboard\Metal.cs             | C#       |         20 |          2 |          5 |         27 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Breadboard\MetalStrip.cs        | C#       |         48 |          4 |         10 |         62 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\GeneralFunctions\Functions.cs   | C#       |         27 |          5 |          9 |         41 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\GeneralFunctions\Matrix.cs      | C#       |        154 |         31 |         38 |        223 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Items\Item.cs                   | C#       |        125 |          3 |         28 |        156 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Managers\ComponentsManager.cs   | C#       |         26 |          1 |          7 |         34 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Managers\GameManager.cs         | C#       |         13 |          0 |          3 |         16 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Managers\ItemManager.cs         | C#       |          5 |          0 |          2 |          7 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Managers\NodeManager.cs         | C#       |        269 |         33 |         40 |        342 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Managers\ResourcesManager.cs    | C#       |         63 |          0 |         11 |         74 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Managers\WireManager.cs         | C#       |        192 |         15 |         43 |        250 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Mouse\CameraController.cs       | C#       |        138 |         15 |         38 |        191 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Mouse\MouseHovering.cs          | C#       |         22 |          0 |          6 |         28 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Mouse\MouseInteraction.cs       | C#       |        329 |         48 |         50 |        427 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Node\Node.cs                    | C#       |         20 |          1 |          5 |         26 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Node\NodeConnection.cs          | C#       |         38 |          4 |          8 |         50 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Wire\.vs\ProjectSettings.json   | JSON     |          3 |          0 |          0 |          3 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Wire\.vs\VSWorkspaceState.json  | JSON     |          6 |          0 |          0 |          6 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Wire\Properties.cs              | C#       |         19 |          7 |          8 |         34 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Wire\Selection.cs               | C#       |        120 |          2 |         20 |        142 |
+| c:\Users\Daniel\Desktop\Programmieren\Electronics\ElectronicsWithUnity\withUnity\Assets\Scripts\Wire\Wire.cs                    | C#       |        196 |          6 |         42 |        244 |
+| Total                                                                                                                           |          |      1,916 |        182 |        384 |      2,482 |
++---------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
