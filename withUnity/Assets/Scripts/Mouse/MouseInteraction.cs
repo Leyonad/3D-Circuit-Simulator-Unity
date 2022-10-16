@@ -389,6 +389,10 @@ public class MouseInteraction : MonoBehaviour
         Vector3 targetPosition = GetNewPosition(mousePosition, offsetOnScreen, obj.transform.position);
         //move the object to the target position smoothly
         obj.transform.position = Vector3.Lerp(obj.transform.position, targetPosition, speed * Time.deltaTime);
+
+        float limit = GameManager.mapLimit + 3;
+        obj.transform.position = Functions.KeepObjectInBounds(obj, -limit, limit, -limit, limit);
+
         return true;
     }
 

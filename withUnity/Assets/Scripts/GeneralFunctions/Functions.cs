@@ -37,4 +37,18 @@ public class Functions
         // Return color
         return colorToRetun;
     }
+
+    public static Vector3 KeepObjectInBounds(GameObject obj, float xmin, float xmax, float zmin, float zmax)
+    {
+        if (obj.transform.position.x > xmax)
+            obj.transform.position = new Vector3(xmax, obj.transform.position.y, obj.transform.position.z);
+        else if (obj.transform.position.x < xmin)
+            obj.transform.position = new Vector3(xmin, obj.transform.position.y, obj.transform.position.z);
+        if (obj.transform.position.z > zmax)
+            obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, zmax);
+        else if (obj.transform.position.z < zmin)
+            obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, zmin);
+        
+        return obj.transform.position;
+    }
 }

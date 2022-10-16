@@ -1,13 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
-using static UnityEngine.Rendering.DebugUI;
 
 public class CameraController : MonoBehaviour
 {
     private CameraControlActions cameraActions;
-    private InputAction movement;
-    private Transform cameraTransform;
 
     //make a reference to the MouseInteraction script
     MouseInteraction components;
@@ -36,9 +32,7 @@ public class CameraController : MonoBehaviour
     //used to update the position of the camera base object
     private Vector3 targetPosition;
 
-    //used to track and maintain velocity w/o a rigidbody
-    private Vector3 lastPosition;
-    private float moveRadius = 12f;
+    private float moveRadius = GameManager.mapLimit;
 
     //tracks where the dragging action started
     Vector3 startDrag;
@@ -47,15 +41,10 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         cameraActions = new CameraControlActions();
-        cameraTransform = GetComponentInChildren<Camera>().transform;
     }
 
     private void OnEnable()
     {
-        //cameraTransform.LookAt(this.transform);
-
-        lastPosition = transform.position;
-        movement = cameraActions.Camera.Movement;
         cameraActions.Camera.RotateCamera.performed += RotateCamera;
         cameraActions.Camera.ZoomCamera.performed += ZoomCamera;
         cameraActions.Camera.Enable();
@@ -81,43 +70,13 @@ public class CameraController : MonoBehaviour
 
     private void UpdateBasePosition()
     {
-        lastPosition = transform.position;
         speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
         transform.position += speed * Time.deltaTime * targetPosition;
 
         //limitation of camera movement
-        LimitCameraMovement();
+        transform.position = Functions.KeepObjectInBounds(transform.gameObject, -moveRadius, moveRadius, -moveRadius, moveRadius);
 
         targetPosition = Vector3.zero;
-    }
-
-    private bool MoveWithKeyboard()
-    {
-        Vector3 inputValue = movement.ReadValue<Vector2>().x * GetCameraRight()
-                               + movement.ReadValue<Vector2>().y * GetCameraForward();
-        Debug.Log(inputValue);
-        if (inputValue == Vector3.zero)
-            return false;
-
-        inputValue = inputValue.normalized;
-        if(inputValue.sqrMagnitude > 0.1f)
-            targetPosition += inputValue;
-
-        return true;
-    }
-
-    private Vector3 GetCameraRight()
-    {
-        Vector3 right = cameraTransform.right;
-        right.y = 0;
-        return right;
-    }
-
-    private Vector3 GetCameraForward()
-    {
-        Vector3 forward = cameraTransform.forward;
-        forward.y = 0;
-        return forward;
     }
 
     private void ZoomCamera(InputAction.CallbackContext inputValue)
@@ -139,7 +98,7 @@ public class CameraController : MonoBehaviour
 
         // Apply Target-Position to Camera
         transform.position += posDiff;
-        LimitCameraMovement();
+        transform.position = Functions.KeepObjectInBounds(transform.gameObject, -moveRadius, moveRadius, -moveRadius, moveRadius);
         targetPosition = Vector3.zero;
     }
 
@@ -199,17 +158,5 @@ public class CameraController : MonoBehaviour
             }
         }
         return;
-    }
-
-    private void LimitCameraMovement()
-    {
-        if (transform.position.x > moveRadius)
-            transform.position = new Vector3(moveRadius, lastPosition.y, transform.position.z);
-        else if (transform.position.x < -moveRadius)
-            transform.position = new Vector3(-moveRadius, lastPosition.y, transform.position.z);
-        if (transform.position.z > moveRadius)
-            transform.position = new Vector3(transform.position.x, lastPosition.y, moveRadius);
-        else if (transform.position.z < -moveRadius)
-            transform.position = new Vector3(transform.position.x, lastPosition.y, -moveRadius);
     }
 }
