@@ -136,3 +136,4 @@ Optimization:
 [ ] make it clear when there is too much current flowing through an LED
 [x] each negative current should be positive
 [x] make appearance of breadboard etc better
+[x] clean shadows
