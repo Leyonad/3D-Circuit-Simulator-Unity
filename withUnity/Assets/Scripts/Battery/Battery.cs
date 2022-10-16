@@ -9,7 +9,7 @@ public class Battery
         if (type == "9V")
         {
             batteryObject = Object.Instantiate(ResourcesManager.prefabBattery9V, batteryPosition, Quaternion.identity);
-            batteryObject.transform.rotation = Quaternion.Euler(new Vector3(0, -90f, 0));
+            batteryObject.transform.rotation = Quaternion.Euler(new Vector3(0, -90f, -90f));
         }
         else Debug.Log("Type of Battery not found!");
         if (batteryObject != null)

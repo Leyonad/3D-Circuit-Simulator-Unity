@@ -137,3 +137,4 @@ Optimization:
 [x] each negative current should be positive
 [x] make appearance of breadboard etc better
 [x] clean shadows
+[x] different colors for wires

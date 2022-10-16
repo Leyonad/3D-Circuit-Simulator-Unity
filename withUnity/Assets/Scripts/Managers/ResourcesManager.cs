@@ -11,6 +11,7 @@ public class ResourcesManager
     public static Material black;
 
     public static Material wireMaterial;
+    public static Material wireShortcircuitMaterial;
     public static Material highlightWireMaterial;
     public static Material highlightItemMaterial;
     public static Material metalMaterial;
@@ -38,6 +39,7 @@ public class ResourcesManager
         black = LoadMaterial("PrimaryColors/Black");
 
         wireMaterial = LoadMaterial("Wire/Wire_Material");
+        wireShortcircuitMaterial = LoadMaterial("Wire/Wire_Shortcircuit_Material");
         highlightWireMaterial = LoadMaterial("Wire/Highlight_Wire_Material");
         highlightItemMaterial = LoadMaterial("Wire/Highlight_Item_Material");
         metalMaterial = LoadMaterial("Breadboard/Breadboard_Metal_Normal_Material");

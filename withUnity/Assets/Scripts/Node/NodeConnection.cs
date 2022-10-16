@@ -13,9 +13,15 @@ public class NodeConnection
 
     public NodeConnection(Node _node1, Node _node2, Wire _wire=null)
     {
-        //get the item between the two nodes (null if shortcircuit)
+        node1 = _node1;
+        node2 = _node2;
+
+        //get the item between the two nodes (item = null if shortcircuit)
         if (_wire != null)
+        {
             item = GetItemInConnection(_wire);
+            SetWireColor(_wire);
+        }
         //this is the only case where _wire == null, since ground and positive are not connected with a wire
         else
             item = new Item(_node1.nodeObject.transform.parent.gameObject, "Battery");
@@ -25,9 +31,6 @@ public class NodeConnection
             if ((nodeConnection.node1 == _node1 && nodeConnection.node2 == _node2 && nodeConnection.item == item)
                 || (nodeConnection.node2 == _node1 && nodeConnection.node1 == _node2 && nodeConnection.item == item))
                 return;
-
-        node1 = _node1;
-        node2 = _node2;
 
         if (item != null)
         {
@@ -47,5 +50,32 @@ public class NodeConnection
     {
         //return the item which is between the two nodes, null if there is no item
         return WireManager.GetItemAttachedToWire(wire);
-    } 
+    }
+
+    private void SetWireColor(Wire wire)
+    {
+        //this method changes the color of the wire depending on the type of connection
+        if (WireManager.electricityPathView)
+            return;
+
+        if (item != null)
+            return;
+
+        //shortcircuit to positive
+        if (NodeManager.IsPositive(node1) || NodeManager.IsPositive(node2))
+        {
+            wire.wireColor = ResourcesManager.wireMaterial;
+            Debug.Log("POSIRIVR");
+        }
+        
+        //shortcircuit to ground
+        else if (NodeManager.IsGround(node1) || NodeManager.IsGround(node2))
+            wire.wireColor = ResourcesManager.black;
+        
+        //normal shortcircuit
+        else
+            wire.wireColor = ResourcesManager.wireShortcircuitMaterial;
+
+        wire.lineRenderer.material = wire.wireColor;
+    }
 }

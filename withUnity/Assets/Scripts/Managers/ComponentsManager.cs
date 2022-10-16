@@ -17,7 +17,7 @@ public class ComponentsManager : MonoBehaviour
             0.1f);
 
         CreateBattery(
-            new Vector3(-3.8f, 0.5f, 4.7f), 
+            new Vector3(-3.8f, 0.95f, 4.7f), 
             "9V");
     }
 

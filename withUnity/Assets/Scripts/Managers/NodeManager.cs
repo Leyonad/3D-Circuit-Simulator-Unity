@@ -42,17 +42,17 @@ public class NodeManager
         //this method creates connections between nodes
         foreach (Node node in Node._registry)
         {
+            //find positive and ground node
+            if (groundNode == null && node.nodeObject.name == "Ground")
+                groundNode = node;
+            else if (positiveNode == null && node.nodeObject.name == "Positive")
+                positiveNode = node;
+
             foreach (Wire wire in node.GetAttachedWires())
             {
                 Node node2 = WireManager.GetNodeAfterWire(node, wire);
                 new NodeConnection(node, node2, wire);
             }
-
-            //find positive and ground node
-            if (groundNode == null && node.nodeObject.name == "Ground")
-                groundNode = node; 
-            else if (positiveNode == null && node.nodeObject.name == "Positive") 
-                positiveNode = node;
         }
 
         //create node between positive and ground
@@ -208,9 +208,14 @@ public class NodeManager
         Debug.Log("END");
     }
 
-    private static bool IsGround(Node node)
+    public static bool IsGround(Node node)
     {
         return node == groundNode;
+    }
+
+    public static bool IsPositive(Node node)
+    {
+        return node == positiveNode;
     }
 
     public static void ClearAllNodes()

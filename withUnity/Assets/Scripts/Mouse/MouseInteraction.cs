@@ -306,8 +306,9 @@ public class MouseInteraction : MonoBehaviour
             if (Selection.oneItemIsSelected || Selection.oneWireIsSelected)
             {
                 Selection.DeleteSelection();
-                Selection.UnselectSelection();
-                //UpdateElectricityParameters();
+                Selection.UnselectSelection(); 
+                UpdateElectricityParameters();
+                NodeManager.CalculateNodes();
             }
         }
 

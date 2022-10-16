@@ -117,10 +117,10 @@ public class WireManager : MonoBehaviour
 
     private static void SetWireToVisited(Wire wire)
     {
-        if (electricityPathView)
-            wire.lineRenderer.material = ResourcesManager.yellow;
         connectedWires.Add(wire);
         wire.updated = true;
+        if (electricityPathView)
+            wire.lineRenderer.material = ResourcesManager.yellow;
     }
 
     private static List<Wire> GetNotVisitedWires(GameObject startParent)
