@@ -36,7 +36,6 @@ public class CameraController : MonoBehaviour
     private Vector3 targetPosition;
 
     //used to track and maintain velocity w/o a rigidbody
-    private Vector3 horizontalVelocity;
     private Vector3 lastPosition;
     private float moveRadius = 12f;
 
@@ -80,20 +79,14 @@ public class CameraController : MonoBehaviour
         
         if (!rotatingTheCamera && (DragCamera() || MoveWithKeyboard()))
         {
-            UpdateVelocity();
             UpdateBasePosition();
         }
     }
 
-    private void UpdateVelocity()
-    {
-        horizontalVelocity = (transform.position - lastPosition) / Time.deltaTime;
-        horizontalVelocity.y = 0;
-        lastPosition = transform.position;
-    }
 
     private void UpdateBasePosition()
     {
+        lastPosition = transform.position;
         speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
         transform.position += speed * Time.deltaTime * targetPosition;
 
@@ -101,18 +94,6 @@ public class CameraController : MonoBehaviour
         LimitCameraMovement();
 
         targetPosition = Vector3.zero;
-    }
-
-    private void LimitCameraMovement()
-    {
-        if (transform.position.x > moveRadius)
-            transform.position = new Vector3(moveRadius, lastPosition.y, transform.position.z);
-        else if (transform.position.x < -moveRadius)
-            transform.position = new Vector3(-moveRadius, lastPosition.y, transform.position.z);
-        if (transform.position.z > moveRadius)
-            transform.position = new Vector3(transform.position.x, lastPosition.y, moveRadius);
-        else if (transform.position.z < -moveRadius)
-            transform.position = new Vector3(transform.position.x, lastPosition.y, -moveRadius);
     }
 
     private bool MoveWithKeyboard()
@@ -150,7 +131,6 @@ public class CameraController : MonoBehaviour
 
         Camera cam = GameManager.cam;
         Vector2 pos = Mouse.current.position.ReadValue();
-        //Vector3 mousePosition = cam.ScreenToWorldPoint(new Vector3(pos.x, cam.transform.position.y, pos.y));
 
         // Get Position before and after zooming
         Vector3 mouseOnWorld = cam.ScreenToWorldPoint(pos);
@@ -162,8 +142,6 @@ public class CameraController : MonoBehaviour
         // Apply Target-Position to Camera
         transform.position += posDiff;
         LimitCameraMovement();
-
-        //cam.orthographicSize = Mathf.Clamp(GameManager.cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
     }
 
     private void RotateCamera(InputAction.CallbackContext inputValue)
@@ -177,6 +155,7 @@ public class CameraController : MonoBehaviour
         rotatingTheCamera = true;
         float value = inputValue.ReadValue<Vector2>().x;
         transform.rotation = Quaternion.Euler(0f, value * maxRotationSpeed + transform.rotation.eulerAngles.y, 0f);
+
     }
 
     private bool DragCamera()
@@ -198,10 +177,25 @@ public class CameraController : MonoBehaviour
         if(plane.Raycast(ray, out float distance))
         {
             if (Mouse.current.rightButton.wasPressedThisFrame)
+            {
+                targetPosition = Vector3.zero;
                 startDrag = ray.GetPoint(distance);
+            }
             else
                 targetPosition += startDrag - ray.GetPoint(distance);
         }
         return true;
+    }
+
+    private void LimitCameraMovement()
+    {
+        if (transform.position.x > moveRadius)
+            transform.position = new Vector3(moveRadius, lastPosition.y, transform.position.z);
+        else if (transform.position.x < -moveRadius)
+            transform.position = new Vector3(-moveRadius, lastPosition.y, transform.position.z);
+        if (transform.position.z > moveRadius)
+            transform.position = new Vector3(transform.position.x, lastPosition.y, moveRadius);
+        else if (transform.position.z < -moveRadius)
+            transform.position = new Vector3(transform.position.x, lastPosition.y, -moveRadius);
     }
 }

@@ -108,6 +108,7 @@ Bugs:
 [x] different order of creating the circuit leads to different results (because of polarity of the LEDs)
 [x] only calculate the nodes if the circuit is complete
 [x] camera position doesnt move when zooming which leads to rotation around wrong origin
+[x] camera jumps around when dragging after rotating
 
 Optimization:
 [x] only move component if delta is not zero
