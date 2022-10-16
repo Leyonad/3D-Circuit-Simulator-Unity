@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 using static UnityEngine.Rendering.DebugUI;
 
 public class CameraController : MonoBehaviour
@@ -74,13 +75,7 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        if (components.selectedObject != null)
-            return;
-        
-        if (!rotatingTheCamera && (DragCamera() || MoveWithKeyboard()))
-        {
-            UpdateBasePosition();
-        }
+        DragCamera();
     }
 
 
@@ -100,7 +95,7 @@ public class CameraController : MonoBehaviour
     {
         Vector3 inputValue = movement.ReadValue<Vector2>().x * GetCameraRight()
                                + movement.ReadValue<Vector2>().y * GetCameraForward();
-
+        Debug.Log(inputValue);
         if (inputValue == Vector3.zero)
             return false;
 
@@ -127,6 +122,9 @@ public class CameraController : MonoBehaviour
 
     private void ZoomCamera(InputAction.CallbackContext inputValue)
     {
+        if (components.selectedObject != null)
+            return;
+
         float value = inputValue.ReadValue<Vector2>().y;
 
         Camera cam = GameManager.cam;
@@ -142,11 +140,18 @@ public class CameraController : MonoBehaviour
         // Apply Target-Position to Camera
         transform.position += posDiff;
         LimitCameraMovement();
+        targetPosition = Vector3.zero;
     }
 
     private void RotateCamera(InputAction.CallbackContext inputValue)
     {
-        if (!Mouse.current.middleButton.isPressed || dragginTheCamera)
+        if (!Mouse.current.middleButton.isPressed)
+        {
+            rotatingTheCamera = false;
+            return;
+        }
+
+        if (components.selectedObject != null)
         {
             rotatingTheCamera = false;
             return;
@@ -155,36 +160,45 @@ public class CameraController : MonoBehaviour
         rotatingTheCamera = true;
         float value = inputValue.ReadValue<Vector2>().x;
         transform.rotation = Quaternion.Euler(0f, value * maxRotationSpeed + transform.rotation.eulerAngles.y, 0f);
-
     }
 
-    private bool DragCamera()
+    private void DragCamera()
     {
         if (!Mouse.current.rightButton.isPressed){
             dragginTheCamera = false;
-            return false;
+            return;
+        }
+
+        if (rotatingTheCamera || components.selectedObject != null)
+        {
+            startDrag = Vector3.zero;
+            dragginTheCamera = false;
+            return;
         }
 
         //cant drag the camera while changing the y value of a wire
         if (MouseInteraction.changeMiddlePoint)
-            return false;
+        {
+            dragginTheCamera = false;
+            return;
+        }
 
         dragginTheCamera = true;
 
         Plane plane = new(Vector3.up, Vector3.zero);
         Ray ray = GameManager.cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        if(plane.Raycast(ray, out float distance))
+        if (plane.Raycast(ray, out float distance))
         {
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-            {
-                targetPosition = Vector3.zero;
+            if (Mouse.current.rightButton.wasPressedThisFrame || startDrag == Vector3.zero)
                 startDrag = ray.GetPoint(distance);
-            }
             else
-                targetPosition += startDrag - ray.GetPoint(distance);
+            {
+                targetPosition = startDrag - ray.GetPoint(distance);
+                UpdateBasePosition();
+            }
         }
-        return true;
+        return;
     }
 
     private void LimitCameraMovement()
