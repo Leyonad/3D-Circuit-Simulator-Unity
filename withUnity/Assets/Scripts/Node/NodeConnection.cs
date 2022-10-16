@@ -13,30 +13,32 @@ public class NodeConnection
 
     public NodeConnection(Node _node1, Node _node2, Wire _wire=null)
     {
+        //get the item between the two nodes (null if shortcircuit)
+        if (_wire != null)
+            item = GetItemInConnection(_wire);
+        //this is the only case where _wire == null, since ground and positive are not connected with a wire
+        else
+            item = new Item(_node1.nodeObject.transform.parent.gameObject, "Battery");
+
         //dont make duplicate connections
         foreach (NodeConnection nodeConnection in _registry)
-            if ((nodeConnection.node1 == _node1 && nodeConnection.node2 == _node2)
-                || (nodeConnection.node2 == _node1 && nodeConnection.node1 == _node2))
+            if ((nodeConnection.node1 == _node1 && nodeConnection.node2 == _node2 && nodeConnection.item == item)
+                || (nodeConnection.node2 == _node1 && nodeConnection.node1 == _node2 && nodeConnection.item == item))
                 return;
 
         node1 = _node1;
         node2 = _node2;
 
-        if (_wire != null)
-            item = GetItemInConnection(_wire);
-        else
-            item = new Item(_node1.nodeObject.transform.parent.gameObject, "Battery");
-
         if (item != null)
         {
             if (item.type == "LED")
                 ledAmount += 1;
-            //Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {item.itemObject.name}   -->   {_node2.nodeObject.name}");
+            Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {item.itemObject.name}   -->   {_node2.nodeObject.name}");
         }
         else
         {
             shortcircuitAmount += 1;
-            //Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {_node2.nodeObject.name}");
+            Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {_node2.nodeObject.name}");
         }
         _registry.Add(this);
     }

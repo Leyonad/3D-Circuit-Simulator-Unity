@@ -67,6 +67,8 @@ Todo:
 [x] 3. assign currents to items
 [x] 4. make LEDs glow according to their currents
 [x] left shift for switching electricity path view
+[x] camera drag limitation
+[ ] components drag limitation
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

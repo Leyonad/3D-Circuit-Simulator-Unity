@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float minHeight = 1f;
     [SerializeField]
-    private float maxHeight = 17f;
+    private float maxHeight = 15f;
     [SerializeField]
     private float zoomFactor = 5f;
 
@@ -38,6 +38,7 @@ public class CameraController : MonoBehaviour
     //used to track and maintain velocity w/o a rigidbody
     private Vector3 horizontalVelocity;
     private Vector3 lastPosition;
+    private float moveRadius = 12f;
 
     //tracks where the dragging action started
     Vector3 startDrag;
@@ -91,6 +92,29 @@ public class CameraController : MonoBehaviour
         lastPosition = transform.position;
     }
 
+    private void UpdateBasePosition()
+    {
+        speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
+        transform.position += speed * Time.deltaTime * targetPosition;
+
+        //limitation of camera movement
+        LimitCameraMovement();
+
+        targetPosition = Vector3.zero;
+    }
+
+    private void LimitCameraMovement()
+    {
+        if (transform.position.x > moveRadius)
+            transform.position = new Vector3(moveRadius, lastPosition.y, transform.position.z);
+        else if (transform.position.x < -moveRadius)
+            transform.position = new Vector3(-moveRadius, lastPosition.y, transform.position.z);
+        if (transform.position.z > moveRadius)
+            transform.position = new Vector3(transform.position.x, lastPosition.y, moveRadius);
+        else if (transform.position.z < -moveRadius)
+            transform.position = new Vector3(transform.position.x, lastPosition.y, -moveRadius);
+    }
+
     private bool MoveWithKeyboard()
     {
         Vector3 inputValue = movement.ReadValue<Vector2>().x * GetCameraRight()
@@ -120,14 +144,6 @@ public class CameraController : MonoBehaviour
         return forward;
     }
 
-    private void UpdateBasePosition()
-    {
-        speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
-        transform.position += speed * Time.deltaTime * targetPosition; 
-
-        targetPosition = Vector3.zero;
-    }
-
     private void ZoomCamera(InputAction.CallbackContext inputValue)
     {
         float value = inputValue.ReadValue<Vector2>().y;
@@ -145,6 +161,7 @@ public class CameraController : MonoBehaviour
 
         // Apply Target-Position to Camera
         transform.position += posDiff;
+        LimitCameraMovement();
 
         //cam.orthographicSize = Mathf.Clamp(GameManager.cam.orthographicSize - value * zoomFactor / 100, minHeight, maxHeight);
     }

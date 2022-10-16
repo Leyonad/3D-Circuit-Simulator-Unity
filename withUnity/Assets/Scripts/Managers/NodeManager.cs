@@ -23,8 +23,8 @@ public class NodeManager
         {
             CreateMatrices();
             AssignValuesToMatrices();
-            //PrintMatrix("yMatrix", yMatrix);
-            //PrintMatrix("iMatrix", iMatrix);
+            PrintMatrix("yMatrix", yMatrix);
+            PrintMatrix("iMatrix", iMatrix);
             CalculateInverseMatrix();
             CalculateResultMatrix();
             //PrintMatrix("Result", resultMatrix);
@@ -221,7 +221,6 @@ public class NodeManager
         NodeConnection.ledAmount = 0;
         groundNode = null;
         positiveNode = null;
-
     }
 
     private static void AssignValuesToMatrices()
