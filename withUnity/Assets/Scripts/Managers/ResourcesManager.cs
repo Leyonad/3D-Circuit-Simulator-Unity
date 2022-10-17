@@ -25,6 +25,7 @@ public class ResourcesManager
     public static Material LED_blue;
 
     public static GameObject prefabBattery9V;
+    public static GameObject prefabBatteryV2;
     public static GameObject prefabLED;
     public static GameObject prefabResistor;
 
@@ -53,6 +54,7 @@ public class ResourcesManager
         LED_blue = LoadMaterial("LED/LED_blue");
 
         prefabBattery9V = LoadPrefab("Battery9V");
+        prefabBatteryV2 = LoadPrefab("BatteryV2");
         prefabLED = LoadPrefab("LED");
         prefabResistor = LoadPrefab("Resistor");
     }

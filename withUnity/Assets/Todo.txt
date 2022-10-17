@@ -138,3 +138,4 @@ Optimization:
 [x] make appearance of breadboard etc better
 [x] clean shadows
 [x] different colors for wires
+[x] visuals
