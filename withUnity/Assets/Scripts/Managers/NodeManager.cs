@@ -23,8 +23,8 @@ public class NodeManager
         {
             CreateMatrices();
             AssignValuesToMatrices();
-            PrintMatrix("yMatrix", yMatrix);
-            PrintMatrix("iMatrix", iMatrix);
+            //PrintMatrix("yMatrix", yMatrix);
+            //PrintMatrix("iMatrix", iMatrix);
             CalculateInverseMatrix();
             CalculateResultMatrix();
             //PrintMatrix("Result", resultMatrix);
@@ -32,7 +32,7 @@ public class NodeManager
             //if the result voltages are not infinite, the current can be calculated
             if (AssignResultVoltagesToNodes())
             {
-                AssignCurrentsToItems();
+                AssignCurrents();
             }
 
             //if singular matrix, set all node values to zero
@@ -137,11 +137,12 @@ public class NodeManager
             
     }
 
-    public static void AssignCurrentsToItems()
+    public static void AssignCurrents()
     {
         int ledSeen = 0;
+        int shortcircuitSeen = 0;
 
-        //this method assigns currents to items in connections
+        //this method assigns currents to items and shortcircuits
         foreach (NodeConnection nC in NodeConnection._registry)
         {
             if (nC.item != null)
@@ -166,6 +167,15 @@ public class NodeManager
                     UpdateGlowIntensity(nC.item.itemObject, current);
                     ledSeen += 1;
                 }
+            }
+
+            //shortcircuit
+            else
+            {
+                int indexInResultMatrix = unknownNodes.Count;
+                double current = resultMatrix[indexInResultMatrix + shortcircuitSeen][0];
+                nC.wire.lineObject.GetComponent<Properties>().current = Math.Abs(current);
+                shortcircuitSeen += 1;
             }
         }
     }

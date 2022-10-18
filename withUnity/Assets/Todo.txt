@@ -72,6 +72,7 @@ Todo:
 [x] gui display values of items
 [x] gui display values of normal nodes
 [x] ui notification if singular matrix
+[x] assign currents to shortcircuit wires and display them in the ui
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

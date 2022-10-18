@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Progress;
 using static WireManager;
 
 public class MouseInteraction : MonoBehaviour
@@ -90,7 +91,7 @@ public class MouseInteraction : MonoBehaviour
                 {
                     Selection.UnselectSelection();
                 }
-                UIManager.SetValuesToDefault();
+                UIManager.SetAllValuesToDefault();
                                             
                 //clicked on plane for example
                 if (selectedObject.CompareTag("Untagged"))
@@ -118,6 +119,9 @@ public class MouseInteraction : MonoBehaviour
                             new Selection(null, item);
                             foreach (Wire itemWire in item.itemObject.GetComponent<Properties>().attachedWires)
                                 new Selection(itemWire);
+
+                            //set values of ui properties
+                            UIManager.DisplayItemProperties(item);
                         }
                         //if not connected to an item, only select the wire
                         else 
@@ -173,14 +177,12 @@ public class MouseInteraction : MonoBehaviour
                         {
                             //endobject of LED item
                             Item.justCreated.endObject = hit.collider.gameObject;
-
                             Item.justCreated.wire2.endObject = hit.collider.gameObject;
                             
                             Item.justCreated.wire1.FinishWireCreation();
                             Item.justCreated.wire2.FinishWireCreation();
 
                             Item._registry.Add(Item.justCreated);
-
                             Item.justCreated.UpdateItem();
 
                             //Update the electricity parameters of all wires
@@ -210,6 +212,9 @@ public class MouseInteraction : MonoBehaviour
                     {
                         changeMiddlePoint = true;
                         new Selection(wire);
+
+                        //set values of ui properties
+                        UIManager.DisplayWireProperties(wire);
                     }
 
                     //select the item and all wires attached to the item
@@ -219,6 +224,9 @@ public class MouseInteraction : MonoBehaviour
                         new Selection(null, item);
                         foreach (Wire itemWire in item.itemObject.GetComponent<Properties>().attachedWires)
                             new Selection(itemWire);
+
+                        //set values of ui properties
+                        UIManager.DisplayItemProperties(item);
                     }
                     previousPosition = Mouse.current.position.ReadValue();
                     return;
@@ -235,6 +243,9 @@ public class MouseInteraction : MonoBehaviour
                     Item.moveItemUpDown = true;
                     previousPosition = Mouse.current.position.ReadValue();
                     selectedObject = null;
+
+                    //set values of ui properties
+                    UIManager.DisplayItemProperties(item);
                 }
             }
         }
@@ -315,7 +326,6 @@ public class MouseInteraction : MonoBehaviour
             {
                 Selection.DeleteSelection();
                 Selection.UnselectSelection();
-                NodeManager.CalculateNodes();
             }
         }
 

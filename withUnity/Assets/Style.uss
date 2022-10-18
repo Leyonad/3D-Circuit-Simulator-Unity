@@ -28,3 +28,13 @@
     background-color: rgb(191, 161, 132);
     color: rgb(51, 49, 47);
 }
+
+.unity-base-text-field__label {
+    -unity-text-align: middle-left
+}
+
+.unity-text-field__label {
+    padding-left: 5px;
+    margin-right: 10px;
+}
+

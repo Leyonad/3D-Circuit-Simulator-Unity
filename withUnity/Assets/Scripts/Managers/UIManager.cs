@@ -39,10 +39,27 @@ public class UIManager : MonoBehaviour
     {
         //this method updates the values of the ui with the properties of an item
         SetLabelText(propertiesTitle, item.type);
-        SetTextFieldValue(voltageField, item.itemObject.GetComponent<Properties>().voltage);
         SetTextFieldValue(currentField, item.itemObject.GetComponent<Properties>().current);
-        SetTextFieldValue(resistanceField, item.itemObject.GetComponent<Properties>().resistance);
+        SetTextFieldValue(resistanceField, item.itemObject.GetComponent<Properties>().resistance * 1000);
         SetTextFieldValue(voltageDropField, item.itemObject.GetComponent<Properties>().voltageDrop);
+        SetValueToDefault(voltageField);
+
+        if (item.type == "LED")
+            SetValueToDefault(resistanceField);
+        else if (item.type == "Resistor")
+            SetValueToDefault(voltageDropField);
+
+    }
+
+    public static void DisplayWireProperties(Wire wire)
+    {
+        //this method updates the values of the ui with the properties of a wire
+        SetLabelText(propertiesTitle, "Wire");
+        SetTextFieldValue(currentField, wire.lineObject.GetComponent<Properties>().current);
+
+        SetValueToDefault(voltageField);
+        SetValueToDefault(resistanceField);
+        SetValueToDefault(voltageDropField);
     }
 
     public static void DisplayMetalStripProperties(GameObject metalStripObj)
@@ -51,11 +68,18 @@ public class UIManager : MonoBehaviour
         SetLabelText(propertiesTitle, "Metalstrip");
         SetTextFieldValue(voltageField, metalStripObj.GetComponent<Properties>().voltage);
         SetTextFieldValue(currentField, metalStripObj.GetComponent<Properties>().current);
-        SetTextFieldValue(resistanceField, metalStripObj.GetComponent<Properties>().resistance);
-        SetTextFieldValue(voltageDropField, metalStripObj.GetComponent<Properties>().voltageDrop);
+
+        SetValueToDefault(resistanceField);
+        SetValueToDefault(voltageDropField);
     }
 
-    public static void SetValuesToDefault()
+    public static void SetValueToDefault(TextField textField)
+    {
+        //this method resets one value of the ui
+        textField.value = "";
+    }
+
+    public static void SetAllValuesToDefault()
     {
         //this method resets the values of the ui
         propertiesTitle.text = "";

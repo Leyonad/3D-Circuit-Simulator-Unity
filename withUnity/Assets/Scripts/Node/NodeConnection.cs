@@ -7,6 +7,7 @@ public class NodeConnection
     public readonly Node node1 = null;
     public readonly Node node2 = null;
     public readonly Item item = null;
+    public readonly Wire wire = null;
 
     public static int shortcircuitAmount;
     public static int ledAmount;
@@ -15,6 +16,7 @@ public class NodeConnection
     {
         node1 = _node1;
         node2 = _node2;
+        wire = _wire;
 
         //get the item between the two nodes (item = null if shortcircuit)
         if (_wire != null)
@@ -36,12 +38,12 @@ public class NodeConnection
         {
             if (item.type == "LED")
                 ledAmount += 1;
-            Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {item.itemObject.name}   -->   {_node2.nodeObject.name}");
+            //Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {item.itemObject.name}   -->   {_node2.nodeObject.name}");
         }
         else
         {
             shortcircuitAmount += 1;
-            Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {_node2.nodeObject.name}");
+            //Debug.Log($"NEW CONNECTION:   {_node1.nodeObject.name}   -->   {_node2.nodeObject.name}");
         }
         _registry.Add(this);
     }
@@ -65,7 +67,6 @@ public class NodeConnection
         if (NodeManager.IsPositive(node1) || NodeManager.IsPositive(node2))
         {
             wire.wireColor = ResourcesManager.wireMaterial;
-            Debug.Log("POSIRIVR");
         }
         
         //shortcircuit to ground

@@ -36,9 +36,6 @@ public class Selection
             SetNewItemMaterial();
             currentlySelectedItems.Add(this);
             oneItemIsSelected = true;
-
-            //set values of ui properties
-            UIManager.DisplayItemProperties(_item);
         }
     }
 
