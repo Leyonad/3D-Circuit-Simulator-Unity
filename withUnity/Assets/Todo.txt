@@ -69,7 +69,7 @@ Todo:
 [x] left shift for switching electricity path view
 [x] camera drag limitation
 [x] components drag limitation
-[n] gui inspector
+[x] gui display values of items
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it

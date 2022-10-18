@@ -36,7 +36,14 @@ public class Selection
             SetNewItemMaterial();
             currentlySelectedItems.Add(this);
             oneItemIsSelected = true;
+
+            //set values of ui properties
+            UIManager.SetValue(UIManager.voltageField, _item.itemObject.GetComponent<Properties>().voltage);
+            UIManager.SetValue(UIManager.currentField, _item.itemObject.GetComponent<Properties>().current);
+            UIManager.SetValue(UIManager.resistanceField, _item.itemObject.GetComponent<Properties>().resistance);
+            UIManager.SetValue(UIManager.voltageDropField, _item.itemObject.GetComponent<Properties>().voltageDrop);
         }
+
 
     }
 
@@ -44,6 +51,8 @@ public class Selection
     {
         if (oneWireIsSelected) UnselectAllWires();
         if (oneItemIsSelected) UnselectAllItems();
+
+        UIManager.SetValuesToDefault();
     }
 
     public static void DeleteSelection()

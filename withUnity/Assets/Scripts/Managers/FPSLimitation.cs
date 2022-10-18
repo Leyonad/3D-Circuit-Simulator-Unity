@@ -5,6 +5,6 @@ public class FPSLimitation : MonoBehaviour
     void Start()
     {
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 50;
+        Application.targetFrameRate = 80;
     }
 }
