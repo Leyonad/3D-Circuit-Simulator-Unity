@@ -66,12 +66,14 @@ public class NodeManager
         if (positiveNode != null && groundNode != null)
         {
             new NodeConnection(positiveNode, groundNode);
+            UIManager.StopWarningNotification();
             return true;
         }
         //if one of them is null, it means that the circuit is not complete
         else
         {
             Debug.Log("CIRCUIT NOT COMPLETE");
+            UIManager.SendWarningNotification("Warning: Circuit is not complete!");
             return false;
         }
     }
@@ -104,10 +106,12 @@ public class NodeManager
             if (double.IsNaN(resultMatrix[i][0]))
             {
                 Debug.Log("SINGULAR MATRIX: CIRCUIT CANNOT BE CALCULATED");
+                UIManager.SendWarningNotification("Warning: Circuit cannot be solved! \r\n(No Resistor?)");
                 return false;
             }
             unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
         }
+        UIManager.StopWarningNotification();
         return true;
     }
 

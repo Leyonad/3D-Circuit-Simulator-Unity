@@ -71,6 +71,7 @@ Todo:
 [x] components drag limitation
 [x] gui display values of items
 [x] gui display values of normal nodes
+[x] ui notification if singular matrix
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -112,6 +113,7 @@ Bugs:
 [x] camera position doesnt move when zooming which leads to rotation around wrong origin
 [x] camera jumps around when dragging after rotating
 [x] reset node values if singular matrix
+[ ] resistor and led is not visible if connecting them to ground and positive (default y value)
 
 Optimization:
 [x] only move component if delta is not zero

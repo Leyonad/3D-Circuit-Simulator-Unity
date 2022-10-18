@@ -1,12 +1,15 @@
 ﻿using System.Globalization;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 public class UIManager : MonoBehaviour
 {
-    public static Label propertiesTitle;
+    //notification if an error occurs (singular matrix)
+    public static VisualElement warningNotification;
+    public static Label warningNotificationText;
 
+    //properties segment
+    public static Label propertiesTitle;
     public static TextField voltageField;
     public static TextField currentField;
     public static TextField resistanceField;
@@ -25,6 +28,9 @@ public class UIManager : MonoBehaviour
         currentField = root.Q<TextField>("currentField");
         resistanceField = root.Q<TextField>("resistanceField");
         voltageDropField = root.Q<TextField>("voltageDropField");
+
+        warningNotification = root.Q<VisualElement>("WarningNotification");
+        warningNotificationText = root.Q<Label>("NotificationText");
 
         textFormat = new() { NumberDecimalSeparator = "." };
     }
@@ -74,6 +80,17 @@ public class UIManager : MonoBehaviour
         else if (textField == resistanceField) unit = "Ω";
 
         textField.value = value.ToString(textFormat) + " " +unit;
+    }
+
+    public static void SendWarningNotification(string message)
+    {
+        warningNotificationText.text = message;
+        warningNotification.style.display = DisplayStyle.Flex;
+    }
+
+    public static void StopWarningNotification()
+    {
+        warningNotification.style.display = DisplayStyle.None;
     }
 
 }
