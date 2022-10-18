@@ -111,7 +111,7 @@ Bugs:
 [x] only calculate the nodes if the circuit is complete
 [x] camera position doesnt move when zooming which leads to rotation around wrong origin
 [x] camera jumps around when dragging after rotating
-[ ] reset node values if singular matrix
+[x] reset node values if singular matrix
 
 Optimization:
 [x] only move component if delta is not zero

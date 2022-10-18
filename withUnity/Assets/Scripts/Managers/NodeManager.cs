@@ -34,6 +34,13 @@ public class NodeManager
             {
                 AssignCurrentsToItems();
             }
+
+            //if singular matrix, set all node values to zero
+            else
+            {
+                ResetVoltages();
+                ResetCurrents();
+            }
         }
     }
 
@@ -102,6 +109,28 @@ public class NodeManager
             unknownNodes[i].nodeObject.GetComponent<Properties>().voltage = resultMatrix[i][0];
         }
         return true;
+    }
+
+    public static void ResetVoltages()
+    {
+        //this method sets all voltages to zero
+        foreach (Node unknownNode in unknownNodes)
+        {
+            unknownNode.nodeObject.GetComponent<Properties>().voltage = 0;
+        }
+    }
+
+    public static void ResetCurrents()
+    {
+        //this method sets all currents to zero
+        foreach (NodeConnection nC in NodeConnection._registry)
+        {
+            if (nC.item != null)
+            {
+                nC.item.itemObject.GetComponent<Properties>().current = 0;
+            }
+        }
+            
     }
 
     public static void AssignCurrentsToItems()
