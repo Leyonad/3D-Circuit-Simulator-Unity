@@ -90,10 +90,18 @@ public class MouseInteraction : MonoBehaviour
                 {
                     Selection.UnselectSelection();
                 }
-
+                UIManager.SetValuesToDefault();
+                                            
                 //clicked on plane for example
                 if (selectedObject.CompareTag("Untagged"))
                     selectedObject = null;
+
+                //clicked on a metalstrip
+                else if (selectedObject.CompareTag("MetalStrip"))
+                {
+                    UIManager.DisplayMetalStripProperties(selectedObject);
+                    selectedObject = null;
+                }
 
                 //clicked on a metal
                 else if (IsMetal(selectedObject))

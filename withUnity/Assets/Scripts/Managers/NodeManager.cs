@@ -94,7 +94,7 @@ public class NodeManager
     {
         for (int i = 0; i < unknownNodes.Count; i++)
         {
-            if (Double.IsNaN(resultMatrix[i][0]))
+            if (double.IsNaN(resultMatrix[i][0]))
             {
                 Debug.Log("SINGULAR MATRIX: CIRCUIT CANNOT BE CALCULATED");
                 return false;

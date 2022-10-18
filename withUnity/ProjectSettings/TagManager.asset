@@ -9,16 +9,14 @@ TagManager:
   - Metals
   - Components
   - Metal
-  - MetalStrip
   - BatteryMetal
   - Wire
-  - NMB
-  - MBreadboardP
-  - MBreadboardN
   - Item
-  - LED
   - mP
   - mN
+  - UI
+  - Component
+  - MetalStrip
   layers:
   - Default
   - TransparentFX

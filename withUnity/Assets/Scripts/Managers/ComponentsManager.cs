@@ -10,14 +10,14 @@ public class ComponentsManager : MonoBehaviour
         components = GameObject.FindGameObjectWithTag("Components");
 
         CreateBreadboard(
-            new Vector3(1.5f, 0.35f, -0.75f), 
+            new Vector3(-1.2f, 0.35f, -0.4f), 
             new Vector3(10f, 0.7f, 5.5f), 
             30, 5, 25, 
             new Vector3(0.2f, 0.07f, 0.2f), 
             0.1f);
 
         CreateBattery(
-            new Vector3(-3.8f, 0.95f, 4.7f), 
+            new Vector3(-6.5f, 0.95f, 4.7f), 
             "9V");
     }
 

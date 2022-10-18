@@ -70,6 +70,7 @@ Todo:
 [x] camera drag limitation
 [x] components drag limitation
 [x] gui display values of items
+[x] gui display values of normal nodes
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -110,6 +111,7 @@ Bugs:
 [x] only calculate the nodes if the circuit is complete
 [x] camera position doesnt move when zooming which leads to rotation around wrong origin
 [x] camera jumps around when dragging after rotating
+[ ] reset node values if singular matrix
 
 Optimization:
 [x] only move component if delta is not zero

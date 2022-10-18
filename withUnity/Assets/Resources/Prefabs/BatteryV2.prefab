@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 3045297552226068205}
   m_Layer: 0
   m_Name: BatteryV2
-  m_TagString: Component
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

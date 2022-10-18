@@ -38,21 +38,14 @@ public class Selection
             oneItemIsSelected = true;
 
             //set values of ui properties
-            UIManager.SetValue(UIManager.voltageField, _item.itemObject.GetComponent<Properties>().voltage);
-            UIManager.SetValue(UIManager.currentField, _item.itemObject.GetComponent<Properties>().current);
-            UIManager.SetValue(UIManager.resistanceField, _item.itemObject.GetComponent<Properties>().resistance);
-            UIManager.SetValue(UIManager.voltageDropField, _item.itemObject.GetComponent<Properties>().voltageDrop);
+            UIManager.DisplayItemProperties(_item);
         }
-
-
     }
 
     public static void UnselectSelection()
     {
         if (oneWireIsSelected) UnselectAllWires();
         if (oneItemIsSelected) UnselectAllItems();
-
-        UIManager.SetValuesToDefault();
     }
 
     public static void DeleteSelection()
