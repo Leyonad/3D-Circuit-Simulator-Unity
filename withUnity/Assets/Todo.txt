@@ -73,6 +73,7 @@ Todo:
 [x] gui display values of normal nodes
 [x] ui notification if singular matrix
 [x] assign currents to shortcircuit wires and display them in the ui
+[x] gui display components (breadboard, battery)
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -115,6 +116,7 @@ Bugs:
 [x] camera jumps around when dragging after rotating
 [x] reset node values if singular matrix
 [ ] resistor and led is not visible if connecting them to ground and positive (default y value)
+[ ] positive led red, red led blue, blue resistor ground. wrong voltage and current
 
 Optimization:
 [x] only move component if delta is not zero
@@ -139,7 +141,7 @@ Optimization:
 [x] camera shoudn't move when rotating
 [x] shouldnt be able to drag the camera while changing a selected wires y value
 [x] LED materials should be glass-like
-[ ] make it clear when there is too much current flowing through an LED
+[ ] make it clear when there is too much/less current flowing through an LED
 [x] each negative current should be positive
 [x] make appearance of breadboard etc better
 [x] clean shadows

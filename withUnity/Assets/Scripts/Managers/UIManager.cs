@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.Rendering.DebugUI.MessageBox;
 
 public class UIManager : MonoBehaviour
 {
@@ -35,6 +36,16 @@ public class UIManager : MonoBehaviour
         textFormat = new() { NumberDecimalSeparator = "." };
     }
 
+    public static void DisplayComponentProperties(GameObject componentObj)
+    {
+        //this method updates the values of the ui with the properties of a component
+        SetAllValuesToDefault();
+        SetLabelText(propertiesTitle, componentObj.name);
+        if (componentObj.CompareTag("Battery")){
+            SetTextFieldValue(voltageField, componentObj.GetComponent<Properties>().voltage);
+        }
+    }
+
     public static void DisplayItemProperties(Item item)
     {
         //this method updates the values of the ui with the properties of an item
@@ -48,45 +59,40 @@ public class UIManager : MonoBehaviour
             SetValueToDefault(resistanceField);
         else if (item.type == "Resistor")
             SetValueToDefault(voltageDropField);
-
     }
 
     public static void DisplayWireProperties(Wire wire)
     {
         //this method updates the values of the ui with the properties of a wire
+        SetAllValuesToDefault();
         SetLabelText(propertiesTitle, "Wire");
         SetTextFieldValue(currentField, wire.lineObject.GetComponent<Properties>().current);
-
-        SetValueToDefault(voltageField);
-        SetValueToDefault(resistanceField);
-        SetValueToDefault(voltageDropField);
     }
 
     public static void DisplayMetalStripProperties(GameObject metalStripObj)
     {
         //this method updates the values of the ui with the properties of a metalstrip
+        SetAllValuesToDefault();
         SetLabelText(propertiesTitle, "Metalstrip");
         SetTextFieldValue(voltageField, metalStripObj.GetComponent<Properties>().voltage);
-        SetTextFieldValue(currentField, metalStripObj.GetComponent<Properties>().current);
-
-        SetValueToDefault(resistanceField);
-        SetValueToDefault(voltageDropField);
     }
 
     public static void SetValueToDefault(TextField textField)
     {
         //this method resets one value of the ui
         textField.value = "";
+        textField.EnableInClassList("text-field-input-hide", true);
+        //textField.Q<VisualElement>("unity-text-input").EnableInClassList("text-field-input-highlight", true);
     }
 
     public static void SetAllValuesToDefault()
     {
         //this method resets the values of the ui
         propertiesTitle.text = "";
-        voltageField.value = "";
-        currentField.value = "";
-        resistanceField.value = "";
-        voltageDropField.value = "";
+        SetValueToDefault(voltageField);
+        SetValueToDefault(currentField);
+        SetValueToDefault(resistanceField);
+        SetValueToDefault(voltageDropField);
     }
 
     public static void SetLabelText(Label label, string text)
@@ -104,6 +110,8 @@ public class UIManager : MonoBehaviour
         else if (textField == resistanceField) unit = "Ω";
 
         textField.value = value.ToString(textFormat) + " " +unit;
+        textField.EnableInClassList("text-field-input-hide", false);
+        //textField.Q<VisualElement>("unity-text-input").EnableInClassList("text-field-input-highlight", false);
     }
 
     public static void SendWarningNotification(string message)

@@ -164,7 +164,7 @@ public class MouseInteraction : MonoBehaviour
                         if (Item.justCreated == null)
                         {
                             if (GameManager.tabItem == 1)
-                                new Item(selectedObject, "LED", "yellow");
+                                new Item(selectedObject, "LED", "blue");
                             else if (GameManager.tabItem == 2)
                                 new Item(selectedObject, "Resistor");
 
@@ -246,6 +246,12 @@ public class MouseInteraction : MonoBehaviour
 
                     //set values of ui properties
                     UIManager.DisplayItemProperties(item);
+                }
+
+                //clicked on a component
+                else if (selectedObject.CompareTag("Battery") || selectedObject.CompareTag("Breadboard"))
+                {
+                    UIManager.DisplayComponentProperties(selectedObject);
                 }
             }
         }

@@ -38,3 +38,10 @@
     margin-right: 10px;
 }
 
+.text-field-input-highlight {
+    background-color: rgb(148, 130, 112);
+}
+
+.text-field-input-hide {
+    display: none;
+}

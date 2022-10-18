@@ -200,6 +200,7 @@ public class NodeManager
         //if there is too less or too much current the led doesnt glow
         if (current < minCurrent)
         {
+            Debug.Log(current + " " + minCurrent);
             Debug.Log("Too less current is flowing through an LED!");
             newIntensity = 0f;
         }
