@@ -132,9 +132,12 @@ public class NodeManager
             if (nC.item != null)
             {
                 nC.item.itemObject.GetComponent<Properties>().current = 0;
+
+                //reset LED glow
+                if (nC.item.type == "LED")
+                    UpdateGlowIntensity(nC.item.itemObject, 0);
             }
         }
-            
     }
 
     public static void AssignCurrents()
@@ -200,7 +203,6 @@ public class NodeManager
         //if there is too less or too much current the led doesnt glow
         if (current < minCurrent)
         {
-            Debug.Log(current + " " + minCurrent);
             Debug.Log("Too less current is flowing through an LED!");
             newIntensity = 0f;
         }

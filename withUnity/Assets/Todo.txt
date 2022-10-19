@@ -75,6 +75,7 @@ Todo:
 [x] assign currents to shortcircuit wires and display them in the ui
 [x] gui display components (breadboard, battery)
 [ ] selection circle 
+[ ] dont interact with things behind the ui when clicking somewhere in the ui
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -119,6 +120,7 @@ Bugs:
 [ ] resistor and led is not visible if connecting them to ground and positive (default y value)
 [ ] positive led red, red led blue, blue resistor ground. wrong voltage and current
 [x] it doesnt display wire in ui when clicking on a shortcircuit metal
+[x] LED still glowing after resetting all values if circuit cannot be solved
 
 Optimization:
 [x] only move component if delta is not zero

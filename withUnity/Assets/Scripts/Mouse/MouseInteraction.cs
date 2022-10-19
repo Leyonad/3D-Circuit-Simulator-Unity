@@ -83,7 +83,6 @@ public class MouseInteraction : MonoBehaviour
 
             if (hit.collider != null)
             {
-                Debug.Log(hit.collider.gameObject);
                 selectedObject = hit.collider.gameObject; 
                 offsetOnScreen = GetOffsetOfObject(selectedObject);
 
@@ -465,5 +464,4 @@ public class MouseInteraction : MonoBehaviour
 
         return hit;
     }
-
 }

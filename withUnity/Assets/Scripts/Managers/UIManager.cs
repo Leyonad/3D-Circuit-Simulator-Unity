@@ -1,10 +1,12 @@
 ﻿using System.Globalization;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEngine.Rendering.DebugUI.MessageBox;
 
 public class UIManager : MonoBehaviour
 {
+    //inspector panel //NOT USED YET
+    public static VisualElement inspectorPanel;
+
     //notification if an error occurs (singular matrix)
     public static VisualElement warningNotification;
     public static Label warningNotificationText;
@@ -23,6 +25,8 @@ public class UIManager : MonoBehaviour
     {
         //get the ui elements
         var root = GetComponent<UIDocument>().rootVisualElement;
+
+        inspectorPanel = root.Q<VisualElement>("SidePanel");
 
         propertiesTitle = root.Q<Label>("propertiesTitle");
         voltageField = root.Q<TextField>("voltageField");
