@@ -74,6 +74,7 @@ Todo:
 [x] ui notification if singular matrix
 [x] assign currents to shortcircuit wires and display them in the ui
 [x] gui display components (breadboard, battery)
+[ ] selection circle 
 
 Bugs:
 [?] problems with object color when dragging the object and releasing it
@@ -117,6 +118,7 @@ Bugs:
 [x] reset node values if singular matrix
 [ ] resistor and led is not visible if connecting them to ground and positive (default y value)
 [ ] positive led red, red led blue, blue resistor ground. wrong voltage and current
+[x] it doesnt display wire in ui when clicking on a shortcircuit metal
 
 Optimization:
 [x] only move component if delta is not zero

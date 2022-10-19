@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Progress;
 using static WireManager;
 
 public class MouseInteraction : MonoBehaviour
@@ -81,8 +80,10 @@ public class MouseInteraction : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             RaycastHit hit = CastRay();
+
             if (hit.collider != null)
             {
+                Debug.Log(hit.collider.gameObject);
                 selectedObject = hit.collider.gameObject; 
                 offsetOnScreen = GetOffsetOfObject(selectedObject);
 
@@ -124,8 +125,11 @@ public class MouseInteraction : MonoBehaviour
                             UIManager.DisplayItemProperties(item);
                         }
                         //if not connected to an item, only select the wire
-                        else 
+                        else
+                        {
                             new Selection(existingWire);
+                            UIManager.DisplayWireProperties(existingWire);
+                        }
                         selectedObject = null;
                     }
 
