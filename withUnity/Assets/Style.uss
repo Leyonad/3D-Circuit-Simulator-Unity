@@ -45,3 +45,7 @@
 .text-field-input-hide {
     display: none;
 }
+
+.label-hide {
+    display: none;
+}

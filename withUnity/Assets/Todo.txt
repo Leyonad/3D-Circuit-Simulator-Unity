@@ -17,10 +17,7 @@ Todo:
 [x] get connections from one metal strip to another and to battery working
 [x] change color of led if circuit is complete
 [x] be able to remove the middle point of a wire so that its not a curve anymore
-[ ] be able to move one end of wire around if its selected
-[ ] be able to move wires into a certain position
 [x] can click on a wire and select it
-[ ] different types of batteries
 [x] introduce more properties for resistor, led, and battery
 [x] make the current flow in the right direction, change the algorithm
 [x] change the height of the middle point of a wire by clicking on the wire and dragging it
@@ -78,7 +75,6 @@ Todo:
 [ ] dont interact with things behind the ui when clicking somewhere in the ui
 
 Bugs:
-[?] problems with object color when dragging the object and releasing it
 [x] check if the new wire doesnt already exist
 [x] immediately makes a new wire when pressing mousebutton left to finish the last one
 [x] plane can be moved
@@ -107,8 +103,6 @@ Bugs:
 [x] items with both ends on the same node should be ignored
 [x] deleted wires are still in "connecteWires" list after being deleted which leads to an error when pressing space
 [x] the algorithm that goes through metals/items and creates nodes has problems in certain circuits
-[?] singular matrix if multiple short circuits are connected
-[ ] selected objects remain selected after moving component (cant reproduce)
 [x] problems with items connected to the battery directly (maybe make an invisible ground node then)
 [x] result matrix is wrong
 [x] fps are not limited
@@ -117,10 +111,12 @@ Bugs:
 [x] camera position doesnt move when zooming which leads to rotation around wrong origin
 [x] camera jumps around when dragging after rotating
 [x] reset node values if singular matrix
-[ ] resistor and led is not visible if connecting them to ground and positive (default y value)
-[ ] positive led red, red led blue, blue resistor ground. wrong voltage and current
 [x] it doesnt display wire in ui when clicking on a shortcircuit metal
 [x] LED still glowing after resetting all values if circuit cannot be solved
+[?] singular matrix if multiple short circuits are connected
+[ ] selected objects remain selected after moving component (cant reproduce)
+[ ] resistor and led is not visible if connecting them to ground and positive (default y value)
+[ ] positive led red, red led blue, blue resistor ground. wrong voltage and current
 
 Optimization:
 [x] only move component if delta is not zero
@@ -139,15 +135,16 @@ Optimization:
 [x] spawn resistors with a lower y value
 [x] current doesnt have to be positive, so the Math.Abs() method shouldnt be used when calculating current
 [x] calculate nodes should only be possible if a circuit is complete
-[?] make component-highlighting better
 [x] make camera drag smooth
 [x] zoom into the mouse position and not into the center of the screen
 [x] camera shoudn't move when rotating
 [x] shouldnt be able to drag the camera while changing a selected wires y value
 [x] LED materials should be glass-like
-[ ] make it clear when there is too much/less current flowing through an LED
 [x] each negative current should be positive
 [x] make appearance of breadboard etc better
 [x] clean shadows
 [x] different colors for wires
 [x] visuals
+[x] display the wire/item in the ui when finished creating a wire/item
+[ ] make it clear when there is too much/less current flowing through an LED
+[ ] make component-highlighting better

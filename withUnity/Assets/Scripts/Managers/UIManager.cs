@@ -57,12 +57,12 @@ public class UIManager : MonoBehaviour
         SetTextFieldValue(currentField, item.itemObject.GetComponent<Properties>().current);
         SetTextFieldValue(resistanceField, item.itemObject.GetComponent<Properties>().resistance * 1000);
         SetTextFieldValue(voltageDropField, item.itemObject.GetComponent<Properties>().voltageDrop);
-        SetValueToDefault(voltageField);
+        SetInputFieldZero(voltageField);
 
         if (item.type == "LED")
-            SetValueToDefault(resistanceField);
+            SetInputFieldZero(resistanceField);
         else if (item.type == "Resistor")
-            SetValueToDefault(voltageDropField);
+            SetInputFieldZero(voltageDropField);
     }
 
     public static void DisplayWireProperties(Wire wire)
@@ -81,7 +81,7 @@ public class UIManager : MonoBehaviour
         SetTextFieldValue(voltageField, metalStripObj.GetComponent<Properties>().voltage);
     }
 
-    public static void SetValueToDefault(TextField textField)
+    public static void SetInputFieldZero(TextField textField)
     {
         //this method resets one value of the ui
         textField.value = "";
@@ -89,20 +89,27 @@ public class UIManager : MonoBehaviour
         //textField.Q<VisualElement>("unity-text-input").EnableInClassList("text-field-input-highlight", true);
     }
 
+    public static void SetLabelFieldZero(Label label)
+    {
+        label.text = "";
+        label.EnableInClassList("label-hide", true);
+    }
+
     public static void SetAllValuesToDefault()
     {
         //this method resets the values of the ui
-        propertiesTitle.text = "";
-        SetValueToDefault(voltageField);
-        SetValueToDefault(currentField);
-        SetValueToDefault(resistanceField);
-        SetValueToDefault(voltageDropField);
+        SetLabelFieldZero(propertiesTitle);
+        SetInputFieldZero(voltageField);
+        SetInputFieldZero(currentField);
+        SetInputFieldZero(resistanceField);
+        SetInputFieldZero(voltageDropField);
     }
 
     public static void SetLabelText(Label label, string text)
     {
         //this method changes the text of a label
         label.text = text;
+        label.EnableInClassList("label-hide", false);
     }
 
     public static void SetTextFieldValue(TextField textField, double value)

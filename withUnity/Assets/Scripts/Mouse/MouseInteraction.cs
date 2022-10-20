@@ -140,6 +140,9 @@ public class MouseInteraction : MonoBehaviour
                         {
                             //create a wire 
                             new Wire(selectedObject);
+                            
+                            UIManager.DisplayMetalStripProperties(selectedObject.transform.parent.gameObject);
+
                             selectedObject = null;
                             return;
                         }
@@ -153,6 +156,9 @@ public class MouseInteraction : MonoBehaviour
 
                             //Update the electricity parameters of all wires
                             //UpdateElectricityParameters();
+
+                            UIManager.DisplayWireProperties(Wire.justCreated);
+
                             Wire.justCreated = null;
                             selectedObject = null;
                             if (electricityPathView)
@@ -170,6 +176,8 @@ public class MouseInteraction : MonoBehaviour
                                 new Item(selectedObject, "LED", "blue");
                             else if (GameManager.tabItem == 2)
                                 new Item(selectedObject, "Resistor");
+
+                            UIManager.DisplayMetalStripProperties(selectedObject.transform.parent.gameObject);
 
                             //create an item
                             selectedObject = null;
@@ -190,6 +198,8 @@ public class MouseInteraction : MonoBehaviour
 
                             //Update the electricity parameters of all wires
                             //UpdateElectricityParameters();
+
+                            UIManager.DisplayItemProperties(Item.justCreated);
 
                             Item.justCreated = null;
                             Wire.justCreated = null;
