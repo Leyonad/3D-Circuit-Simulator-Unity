@@ -146,5 +146,5 @@ Optimization:
 [x] different colors for wires
 [x] visuals
 [x] display the wire/item in the ui when finished creating a wire/item
+[x] make highlighting better
 [ ] make it clear when there is too much/less current flowing through an LED
-[ ] make component-highlighting better
