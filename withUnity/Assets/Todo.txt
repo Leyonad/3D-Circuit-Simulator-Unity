@@ -114,8 +114,8 @@ Bugs:
 [x] it doesnt display wire in ui when clicking on a shortcircuit metal
 [x] LED still glowing after resetting all values if circuit cannot be solved
 [?] singular matrix if multiple short circuits are connected
+[?] resistor is not visible if connecting them to ground and positive (default y value)
 [ ] selected objects remain selected after moving component (cant reproduce)
-[ ] resistor and led is not visible if connecting them to ground and positive (default y value)
 [ ] positive led red, red led blue, blue resistor ground. wrong voltage and current
 
 Optimization:
